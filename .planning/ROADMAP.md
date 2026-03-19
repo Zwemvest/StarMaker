@@ -48,7 +48,7 @@ Plans:
   3. User can choose to attend University or Military Academy with correct entry rolls, skill grants, graduation/honours rolls, and all education events
   4. Failed education entry or graduation is handled correctly (skills retained, no benefits, proper state transitions)
   5. The wizard enforces creation sequence — user cannot skip ahead or access steps out of order
-**Plans:** 5 plans
+**Plans:** 1/5 plans executed
 
 Plans:
 - [ ] 02-01-PLAN.md — Wizard shell, shared DnD components, UI primitives, and core hooks
@@ -113,7 +113,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/4 | In Progress|  |
-| 2. Pre-Career Creation | 0/5 | Not started | - |
+| 2. Pre-Career Creation | 1/5 | In Progress|  |
 | 3. Career Lifecycle | 0/? | Not started | - |
 | 4. Post-Career and Character Sheet | 0/? | Not started | - |
 | 5. Override Mode and Persistence | 0/? | Not started | - |

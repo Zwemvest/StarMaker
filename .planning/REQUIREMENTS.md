@@ -32,15 +32,15 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Pre-Career Education
 
 - [ ] **EDUC-01**: User can choose to attend University or Military Academy (Army/Marines/Navy)
-- [ ] **EDUC-02**: University entry roll (EDU 7+) with term-based DMs and SOC bonus calculated correctly
-- [ ] **EDUC-03**: Military Academy entry rolls (Army END 8+, Marines END 9+, Navy INT 9+) with term DMs
-- [ ] **EDUC-04**: Pre-career education available terms 1-3 only, with increasing DM penalties
-- [ ] **EDUC-05**: University skills selection (level 0 and level 1 from specified list) and EDU +1
-- [ ] **EDUC-06**: Military Academy basic training (all service skills of tied career at level 0)
-- [ ] **EDUC-07**: Graduation roll with honours possibility (11+), all graduation benefits applied correctly
-- [ ] **EDUC-08**: Pre-career education events table (2D, 12 entries) fully implemented
-- [ ] **EDUC-09**: Failed graduation handles correctly (no benefits, but skills earned during term retained)
-- [ ] **EDUC-10**: Academy graduation without honours but failed 2- still allows auto-entry but no commission
+- [x] **EDUC-02**: University entry roll (EDU 7+) with term-based DMs and SOC bonus calculated correctly
+- [x] **EDUC-03**: Military Academy entry rolls (Army END 8+, Marines END 9+, Navy INT 9+) with term DMs
+- [x] **EDUC-04**: Pre-career education available terms 1-3 only, with increasing DM penalties
+- [x] **EDUC-05**: University skills selection (level 0 and level 1 from specified list) and EDU +1
+- [x] **EDUC-06**: Military Academy basic training (all service skills of tied career at level 0)
+- [x] **EDUC-07**: Graduation roll with honours possibility (11+), all graduation benefits applied correctly
+- [x] **EDUC-08**: Pre-career education events table (2D, 12 entries) fully implemented
+- [x] **EDUC-09**: Failed graduation handles correctly (no benefits, but skills earned during term retained)
+- [x] **EDUC-10**: Academy graduation without honours but failed 2- still allows auto-entry but no commission
 
 ### Careers
 
@@ -190,15 +190,15 @@ Deferred to future release. Tracked but not in current roadmap.
 | BGSK-01 | Phase 2 | Pending |
 | BGSK-02 | Phase 2 | Pending |
 | EDUC-01 | Phase 2 | Pending |
-| EDUC-02 | Phase 2 | Pending |
-| EDUC-03 | Phase 2 | Pending |
-| EDUC-04 | Phase 2 | Pending |
-| EDUC-05 | Phase 2 | Pending |
-| EDUC-06 | Phase 2 | Pending |
-| EDUC-07 | Phase 2 | Pending |
-| EDUC-08 | Phase 2 | Pending |
-| EDUC-09 | Phase 2 | Pending |
-| EDUC-10 | Phase 2 | Pending |
+| EDUC-02 | Phase 2 | Complete |
+| EDUC-03 | Phase 2 | Complete |
+| EDUC-04 | Phase 2 | Complete |
+| EDUC-05 | Phase 2 | Complete |
+| EDUC-06 | Phase 2 | Complete |
+| EDUC-07 | Phase 2 | Complete |
+| EDUC-08 | Phase 2 | Complete |
+| EDUC-09 | Phase 2 | Complete |
+| EDUC-10 | Phase 2 | Complete |
 | CRER-01 | Phase 3 | Pending |
 | CRER-02 | Phase 3 | Pending |
 | CRER-03 | Phase 3 | Pending |
