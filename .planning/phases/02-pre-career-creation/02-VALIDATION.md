@@ -38,22 +38,22 @@ created: 2026-03-19
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 02-01-01 | 01 | 1 | CHAR-01 | unit | `npx vitest run tests/engine/characteristics.test.ts -t "roll" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-01-02 | 01 | 1 | CHAR-02 | unit + integration | `npx vitest run tests/components/characteristics.test.ts --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-03-01 | 03 | 2 | CHAR-01 | unit + integration | `npx vitest run tests/components/characteristics.test.ts -t "roll" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-03-02 | 03 | 2 | CHAR-02 | unit + integration | `npx vitest run tests/components/characteristics.test.ts --reporter=verbose` | ❌ W0 | ⬜ pending |
 | 02-01-03 | 01 | 1 | CHAR-03 | unit | `npx vitest run tests/types/types.test.ts -t "modifier" --reporter=verbose` | ✅ partial | ⬜ pending |
-| 02-01-04 | 01 | 1 | CHAR-04 | unit | `npx vitest run tests/stores/character.test.ts -t "max" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-03-03 | 03 | 2 | CHAR-04 | unit | `npx vitest run tests/stores/character.test.ts -t "max" --reporter=verbose` | ❌ W0 | ⬜ pending |
 | 02-02-01 | 02 | 1 | BGSK-01 | unit | `npx vitest run tests/data/background-skills.test.ts --reporter=verbose` | ❌ W0 | ⬜ pending |
 | 02-02-02 | 02 | 1 | BGSK-02 | unit | `npx vitest run tests/stores/character.test.ts -t "background" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-01 | 03 | 2 | EDUC-01 | unit | `npx vitest run tests/machines/creation.test.ts -t "education" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-02 | 03 | 2 | EDUC-02 | unit | `npx vitest run tests/data/education.test.ts -t "university entry" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-03 | 03 | 2 | EDUC-03 | unit | `npx vitest run tests/data/education.test.ts -t "academy entry" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-04 | 03 | 2 | EDUC-04 | unit | `npx vitest run tests/machines/creation.test.ts -t "term limit" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-05 | 03 | 2 | EDUC-05 | unit | `npx vitest run tests/data/education.test.ts -t "university skills" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-06 | 03 | 2 | EDUC-06 | unit | `npx vitest run tests/data/education.test.ts -t "academy training" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-07 | 03 | 2 | EDUC-07 | unit | `npx vitest run tests/data/education.test.ts -t "graduation" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-08 | 03 | 2 | EDUC-08 | unit | `npx vitest run tests/data/education-events.test.ts --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-09 | 03 | 2 | EDUC-09 | integration | `npx vitest run tests/machines/creation.test.ts -t "failed graduation" --reporter=verbose` | ❌ W0 | ⬜ pending |
-| 02-03-10 | 03 | 2 | EDUC-10 | unit | `npx vitest run tests/data/education.test.ts -t "no commission" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-05-01 | 05 | 3 | EDUC-01 | unit | `npx vitest run tests/machines/creation.test.ts -t "education" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-02-03 | 02 | 1 | EDUC-02 | unit | `npx vitest run tests/data/education.test.ts -t "university entry" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-02-04 | 02 | 1 | EDUC-03 | unit | `npx vitest run tests/data/education.test.ts -t "academy entry" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-05-02 | 05 | 3 | EDUC-04 | unit | `npx vitest run tests/machines/creation.test.ts -t "term limit" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-02-05 | 02 | 1 | EDUC-05 | unit | `npx vitest run tests/data/education.test.ts -t "university skills" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-02-06 | 02 | 1 | EDUC-06 | unit | `npx vitest run tests/data/education.test.ts -t "academy training" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-02-07 | 02 | 1 | EDUC-07 | unit | `npx vitest run tests/data/education.test.ts -t "graduation" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-02-08 | 02 | 1 | EDUC-08 | unit | `npx vitest run tests/data/education-events.test.ts --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-05-03 | 05 | 3 | EDUC-09 | integration | `npx vitest run tests/machines/creation.test.ts -t "failed graduation" --reporter=verbose` | ❌ W0 | ⬜ pending |
+| 02-02-09 | 02 | 1 | EDUC-10 | unit | `npx vitest run tests/data/education.test.ts -t "no commission" --reporter=verbose` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
