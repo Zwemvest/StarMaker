@@ -201,54 +201,54 @@ Deferred to future release. Tracked but not in current roadmap.
 | EDUC-10 | Phase 2 | Pending |
 | CRER-01 | Phase 3 | Pending |
 | CRER-02 | Phase 3 | Pending |
-| CRER-03 | Phase 4 | Pending |
-| CRER-04 | Phase 4 | Pending |
-| CRER-05 | Phase 4 | Pending |
-| CRER-06 | Phase 4 | Pending |
-| CRER-07 | Phase 4 | Pending |
+| CRER-03 | Phase 3 | Pending |
+| CRER-04 | Phase 3 | Pending |
+| CRER-05 | Phase 3 | Pending |
+| CRER-06 | Phase 3 | Pending |
+| CRER-07 | Phase 3 | Pending |
 | CRER-08 | Phase 3 | Pending |
 | CRER-09 | Phase 3 | Pending |
-| CRER-10 | Phase 4 | Pending |
-| CRER-11 | Phase 4 | Pending |
-| CRER-12 | Phase 4 | Pending |
-| CRER-13 | Phase 4 | Pending |
-| CRER-14 | Phase 4 | Pending |
-| CRER-15 | Phase 4 | Pending |
+| CRER-10 | Phase 3 | Pending |
+| CRER-11 | Phase 3 | Pending |
+| CRER-12 | Phase 3 | Pending |
+| CRER-13 | Phase 3 | Pending |
+| CRER-14 | Phase 3 | Pending |
+| CRER-15 | Phase 3 | Pending |
 | CRER-16 | Phase 3 | Pending |
-| CRER-17 | Phase 4 | Pending |
-| CRER-18 | Phase 4 | Pending |
-| CRER-19 | Phase 4 | Pending |
-| CRER-20 | Phase 4 | Pending |
-| CRER-21 | Phase 4 | Pending |
-| CRER-22 | Phase 4 | Pending |
-| CRER-23 | Phase 4 | Pending |
-| CRER-24 | Phase 4 | Pending |
-| AGNG-01 | Phase 4 | Pending |
-| AGNG-02 | Phase 4 | Pending |
-| AGNG-03 | Phase 4 | Pending |
-| MSTR-01 | Phase 4 | Pending |
-| MSTR-02 | Phase 4 | Pending |
-| MSTR-03 | Phase 4 | Pending |
-| MSTR-04 | Phase 4 | Pending |
-| MSTR-05 | Phase 4 | Pending |
-| PSIN-01 | Phase 5 | Pending |
-| PSIN-02 | Phase 5 | Pending |
-| PSIN-03 | Phase 5 | Pending |
-| PSIN-04 | Phase 5 | Pending |
-| PSIN-05 | Phase 5 | Pending |
-| PSIN-06 | Phase 5 | Pending |
-| EQUP-01 | Phase 5 | Pending |
-| EQUP-02 | Phase 5 | Pending |
-| EQUP-03 | Phase 5 | Pending |
-| EQUP-04 | Phase 5 | Pending |
-| SOCL-01 | Phase 4 | Pending |
-| SOCL-02 | Phase 4 | Pending |
-| SKPK-01 | Phase 5 | Pending |
-| SHEE-01 | Phase 5 | Pending |
-| SHEE-02 | Phase 5 | Pending |
-| SHEE-03 | Phase 5 | Pending |
-| SHEE-04 | Phase 5 | Pending |
-| SHEE-05 | Phase 5 | Pending |
+| CRER-17 | Phase 3 | Pending |
+| CRER-18 | Phase 3 | Pending |
+| CRER-19 | Phase 3 | Pending |
+| CRER-20 | Phase 3 | Pending |
+| CRER-21 | Phase 3 | Pending |
+| CRER-22 | Phase 3 | Pending |
+| CRER-23 | Phase 3 | Pending |
+| CRER-24 | Phase 3 | Pending |
+| AGNG-01 | Phase 3 | Pending |
+| AGNG-02 | Phase 3 | Pending |
+| AGNG-03 | Phase 3 | Pending |
+| MSTR-01 | Phase 3 | Pending |
+| MSTR-02 | Phase 3 | Pending |
+| MSTR-03 | Phase 3 | Pending |
+| MSTR-04 | Phase 3 | Pending |
+| MSTR-05 | Phase 3 | Pending |
+| SOCL-01 | Phase 3 | Pending |
+| SOCL-02 | Phase 3 | Pending |
+| PSIN-01 | Phase 4 | Pending |
+| PSIN-02 | Phase 4 | Pending |
+| PSIN-03 | Phase 4 | Pending |
+| PSIN-04 | Phase 4 | Pending |
+| PSIN-05 | Phase 4 | Pending |
+| PSIN-06 | Phase 4 | Pending |
+| EQUP-01 | Phase 4 | Pending |
+| EQUP-02 | Phase 4 | Pending |
+| EQUP-03 | Phase 4 | Pending |
+| EQUP-04 | Phase 4 | Pending |
+| SKPK-01 | Phase 4 | Pending |
+| SHEE-01 | Phase 4 | Pending |
+| SHEE-02 | Phase 4 | Pending |
+| SHEE-03 | Phase 4 | Pending |
+| SHEE-04 | Phase 4 | Pending |
+| SHEE-05 | Phase 4 | Pending |
 | OVRD-01 | Phase 5 | Pending |
 | OVRD-02 | Phase 5 | Pending |
 | OVRD-03 | Phase 5 | Pending |
@@ -263,8 +263,8 @@ Deferred to future release. Tracked but not in current roadmap.
 **Coverage:**
 - v1 requirements: 75 total
 - Mapped to phases: 75
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after initial definition*
+*Last updated: 2026-03-19 after roadmap creation*
