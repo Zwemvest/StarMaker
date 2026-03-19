@@ -30,11 +30,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Every dice roll is automatically recorded in an append-only roll log and a SHA-256 hash is computed from the canonical log
   4. The XState creation workflow state machine models at least the top-level creation lifecycle (characteristics through mustering out) with placeholder nested states
   5. Pushing to main triggers a CI/CD pipeline that builds and deploys the app to GitHub Pages
-**Plans**: TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Project scaffold, dependencies, TypeScript types and Zod schemas
+- [ ] 01-02-PLAN.md — Dice engine, roll log, and SHA-256 legitimacy hash (TDD)
+- [ ] 01-03-PLAN.md — XState creation machine and Zustand character store (TDD)
+- [ ] 01-04-PLAN.md — GitHub Actions CI/CD pipeline and GitHub Pages deployment
 
 ### Phase 2: Pre-Career Creation
 **Goal**: Users can generate characteristics, select background skills, and optionally attend University or Military Academy — the complete pre-career creation flow with real UI
@@ -107,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/? | Not started | - |
+| 1. Foundation | 0/4 | Planning complete | - |
 | 2. Pre-Career Creation | 0/? | Not started | - |
 | 3. Career Lifecycle | 0/? | Not started | - |
 | 4. Post-Career and Character Sheet | 0/? | Not started | - |
