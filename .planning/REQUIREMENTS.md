@@ -21,7 +21,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **CHAR-01**: User can roll 2D for each of the 6 characteristics (STR, DEX, END, INT, EDU, SOC)
 - [ ] **CHAR-02**: User can assign rolled values to characteristics in any order
-- [ ] **CHAR-03**: Characteristic DMs auto-calculated from the modifier table (0→-3, 1-2→-2, 3-5→-1, 6-8→0, 9-11→+1, 12-14→+2, 15+→+3)
+- [x] **CHAR-03**: Characteristic DMs auto-calculated from the modifier table (0→-3, 1-2→-2, 3-5→-1, 6-8→0, 9-11→+1, 12-14→+2, 15+→+3)
 - [ ] **CHAR-04**: Maximum unaugmented characteristic score enforced at 15
 
 ### Background Skills
@@ -185,7 +185,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | FNDN-07 | Phase 1 | Complete |
 | CHAR-01 | Phase 2 | Pending |
 | CHAR-02 | Phase 2 | Pending |
-| CHAR-03 | Phase 2 | Pending |
+| CHAR-03 | Phase 2 | Complete |
 | CHAR-04 | Phase 2 | Pending |
 | BGSK-01 | Phase 2 | Pending |
 | BGSK-02 | Phase 2 | Pending |

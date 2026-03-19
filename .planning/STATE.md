@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-02 (Education Data & Engine)
-last_updated: "2026-03-19T15:24:09Z"
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-19T15:26:41.791Z"
 last_activity: 2026-03-19 — Completed Plan 02-02 (Education Data & Engine)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 9
-  completed_plans: 5
+  completed_plans: 6
   percent: 56
 ---
 
@@ -52,6 +52,7 @@ Progress: [█████▌░░░░] 56%
 *Updated after each plan completion*
 | Phase 01 P02 | 2min | 2 tasks | 6 files |
 | Phase 01 P03 | 2min | 2 tasks | 4 files |
+| Phase 02 P01 | 5min | 3 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [Phase 01-03]: XState manages workflow position ONLY; Zustand manages character data ONLY -- strict separation from day one
 - [Phase 02-02]: Education events use faithful approximations with TODO for Core Rulebook verification (p.16-18)
 - [Phase 02-02]: Game data as typed constants in src/data/ with pure engine functions in src/engine/ extending Phase 1 pattern
+- [Phase 02-01]: PointerSensor with distance:8 activation constraint to prevent accidental drags
+- [Phase 02-01]: CSS-only animations for step transitions (no motion library needed)
+- [Phase 02-01]: useCharacterStore.getState() for synchronous log access in useLoggedRoll
 
 ### Pending Todos
 
@@ -83,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T15:24:09Z
-Stopped at: Completed 02-02 (Education Data & Engine)
-Resume file: .planning/phases/02-pre-career-creation/02-02-SUMMARY.md
+Last session: 2026-03-19T15:26:41.789Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None
