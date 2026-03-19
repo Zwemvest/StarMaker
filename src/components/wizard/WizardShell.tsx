@@ -3,6 +3,7 @@ import { ProgressBar } from './ProgressBar';
 import { StepContainer } from './StepContainer';
 import { HashBar } from './HashBar';
 import { CharacterPanel } from '../character-panel/CharacterPanel';
+import { BackgroundSkillsStep } from '../background-skills/BackgroundSkillsStep';
 import { Button } from '../ui/Button';
 import { useCreationMachine } from '../../hooks/useCreationMachine';
 import type { CreationPhase } from '../../machines/creation';
@@ -109,10 +110,14 @@ export function WizardShell() {
             direction={direction}
             stepKey={STEPS[currentStepIndex].id}
           >
-            <StepPlaceholder
-              label={stepLabels[currentStepIndex]}
-              onContinue={currentPhase !== 'complete' ? handleContinue : undefined}
-            />
+            {currentPhase === 'backgroundSkills' ? (
+              <BackgroundSkillsStep onContinue={handleContinue} />
+            ) : (
+              <StepPlaceholder
+                label={stepLabels[currentStepIndex]}
+                onContinue={currentPhase !== 'complete' ? handleContinue : undefined}
+              />
+            )}
           </StepContainer>
         </main>
 

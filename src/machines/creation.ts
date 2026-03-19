@@ -20,6 +20,9 @@ interface CreationContext {
 /** All events the creation machine responds to */
 type CreationEvent =
   | { type: 'START_CREATION' }
+  | { type: 'ROLL_ALL' }
+  | { type: 'ASSIGN_COMPLETE' }
+  | { type: 'CONFIRM' }
   | { type: 'CHARACTERISTICS_COMPLETE' }
   | { type: 'BACKGROUND_COMPLETE' }
   | { type: 'EDUCATION_COMPLETE' }
@@ -44,6 +47,7 @@ export const creationMachine = setup({
   guards: {
     hasCharacteristics: () => true,
     hasBackgroundSkills: () => true,
+    allCharacteristicsAssigned: () => true,
   },
 }).createMachine({
   id: 'creation',
@@ -60,10 +64,25 @@ export const creationMachine = setup({
       },
     },
     characteristics: {
-      on: {
-        CHARACTERISTICS_COMPLETE: {
-          target: 'backgroundSkills',
-          guard: 'hasCharacteristics',
+      initial: 'rolling',
+      states: {
+        rolling: {
+          on: {
+            ROLL_ALL: 'assigning',
+          },
+        },
+        assigning: {
+          on: {
+            ASSIGN_COMPLETE: {
+              target: 'review',
+              guard: 'allCharacteristicsAssigned',
+            },
+          },
+        },
+        review: {
+          on: {
+            CONFIRM: '#creation.backgroundSkills',
+          },
         },
       },
     },

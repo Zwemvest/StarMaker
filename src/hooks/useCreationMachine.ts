@@ -21,14 +21,27 @@ export function useCreationMachine() {
   }, []);
 
   const snapshot = useSelector(actor, (s) => s);
-  const currentPhase = useSelector(
-    actor,
-    (s) => s.value as CreationPhase,
-  );
+  const currentPhase = useSelector(actor, (s) => {
+    const value = s.value;
+    // XState v5 nested states return objects like { characteristics: 'rolling' }
+    if (typeof value === 'string') return value as CreationPhase;
+    return Object.keys(value)[0] as CreationPhase;
+  });
+
+  // For nested states, expose the sub-state (e.g., 'rolling', 'assigning', 'review')
+  const subState = useSelector(actor, (s) => {
+    const value = s.value;
+    if (typeof value === 'object' && value !== null) {
+      const vals = Object.values(value);
+      return vals[0] as string | undefined;
+    }
+    return undefined;
+  });
 
   return {
     state: snapshot,
     send: actor.send,
     currentPhase,
+    subState,
   };
 }

@@ -10,11 +10,11 @@ describe('Creation State Machine', () => {
     actor.stop();
   });
 
-  it('transitions from idle to characteristics on START_CREATION', () => {
+  it('transitions from idle to characteristics.rolling on START_CREATION', () => {
     const actor = createActor(creationMachine);
     actor.start();
     actor.send({ type: 'START_CREATION' });
-    expect(actor.getSnapshot().value).toBe('characteristics');
+    expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
     actor.stop();
   });
 
@@ -23,9 +23,16 @@ describe('Creation State Machine', () => {
     actor.start();
 
     actor.send({ type: 'START_CREATION' });
-    expect(actor.getSnapshot().value).toBe('characteristics');
+    expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
 
-    actor.send({ type: 'CHARACTERISTICS_COMPLETE' });
+    // Navigate through characteristics nested states
+    actor.send({ type: 'ROLL_ALL' });
+    expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+
+    actor.send({ type: 'ASSIGN_COMPLETE' });
+    expect(actor.getSnapshot().value).toEqual({ characteristics: 'review' });
+
+    actor.send({ type: 'CONFIRM' });
     expect(actor.getSnapshot().value).toBe('backgroundSkills');
 
     actor.send({ type: 'BACKGROUND_COMPLETE' });
@@ -57,7 +64,9 @@ describe('Creation State Machine', () => {
 
     // Navigate to complete
     actor.send({ type: 'START_CREATION' });
-    actor.send({ type: 'CHARACTERISTICS_COMPLETE' });
+    actor.send({ type: 'ROLL_ALL' });
+    actor.send({ type: 'ASSIGN_COMPLETE' });
+    actor.send({ type: 'CONFIRM' });
     actor.send({ type: 'BACKGROUND_COMPLETE' });
     actor.send({ type: 'EDUCATION_COMPLETE' });
     actor.send({ type: 'MUSTER_OUT' });
@@ -84,7 +93,9 @@ describe('Creation State Machine', () => {
     actor.start();
 
     actor.send({ type: 'START_CREATION' });
-    actor.send({ type: 'CHARACTERISTICS_COMPLETE' });
+    actor.send({ type: 'ROLL_ALL' });
+    actor.send({ type: 'ASSIGN_COMPLETE' });
+    actor.send({ type: 'CONFIRM' });
     actor.send({ type: 'BACKGROUND_COMPLETE' });
     actor.send({ type: 'EDUCATION_COMPLETE' });
 
@@ -117,5 +128,66 @@ describe('Creation State Machine', () => {
     expect(actor.getSnapshot().value).toBe('idle');
 
     actor.stop();
+  });
+
+  describe('Characteristics nested states', () => {
+    it('starts in rolling sub-state', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
+      actor.stop();
+    });
+
+    it('transitions rolling -> assigning on ROLL_ALL', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+      actor.stop();
+    });
+
+    it('transitions assigning -> review on ASSIGN_COMPLETE', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'review' });
+      actor.stop();
+    });
+
+    it('transitions review -> backgroundSkills on CONFIRM', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      actor.send({ type: 'CONFIRM' });
+      expect(actor.getSnapshot().value).toBe('backgroundSkills');
+      actor.stop();
+    });
+
+    it('ignores ASSIGN_COMPLETE from rolling state', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      // Try to skip rolling
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
+      actor.stop();
+    });
+
+    it('ignores CONFIRM from assigning state', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      // Try to skip assigning
+      actor.send({ type: 'CONFIRM' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+      actor.stop();
+    });
   });
 });

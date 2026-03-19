@@ -62,7 +62,7 @@ export const useCharacterStore = create<CharacterStore>()(
 
     setCharacteristic: (id, value) =>
       set((state) => {
-        state.characteristics[id] = value;
+        state.characteristics[id] = Math.min(value, 15);
       }),
 
     addSkill: (name, level) =>

@@ -104,4 +104,17 @@ describe('Character Store', () => {
     useCharacterStore.getState().setLegitimacyHash('a3f7c2b1');
     expect(useCharacterStore.getState().legitimacyHash).toBe('a3f7c2b1');
   });
+
+  it('setCharacteristic caps values at 15 maximum (CHAR-04)', () => {
+    useCharacterStore.getState().setCharacteristic('STR', 18);
+    expect(useCharacterStore.getState().characteristics.STR).toBe(15);
+  });
+
+  it('setCharacteristic allows values at or below 15', () => {
+    useCharacterStore.getState().setCharacteristic('DEX', 12);
+    expect(useCharacterStore.getState().characteristics.DEX).toBe(12);
+
+    useCharacterStore.getState().setCharacteristic('END', 15);
+    expect(useCharacterStore.getState().characteristics.END).toBe(15);
+  });
 });
