@@ -132,8 +132,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Deployment
 
-- [ ] **DEPL-01**: App deployed to GitHub Pages as static site
-- [ ] **DEPL-02**: CI/CD pipeline builds and deploys on push to main
+- [x] **DEPL-01**: App deployed to GitHub Pages as static site
+- [x] **DEPL-02**: CI/CD pipeline builds and deploys on push to main
 
 ## v2 Requirements
 
@@ -257,8 +257,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | SAVE-01 | Phase 5 | Pending |
 | SAVE-02 | Phase 5 | Pending |
 | SAVE-03 | Phase 5 | Pending |
-| DEPL-01 | Phase 1 | Pending |
-| DEPL-02 | Phase 1 | Pending |
+| DEPL-01 | Phase 1 | Complete |
+| DEPL-02 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 75 total

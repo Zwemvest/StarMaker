@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-03-19T13:57:50Z"
-last_activity: 2026-03-19 — Completed Plan 01-01 (Project Scaffold & Type System)
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-03-19T14:02:46.875Z"
+last_activity: 2026-03-19 — Completed Plan 01-04 (CI/CD Pipeline)
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 5
-  completed_plans: 1
+  total_plans: 4
+  completed_plans: 2
   percent: 20
 ---
 
@@ -26,28 +26,28 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 ## Current Position
 
 Phase: 1 of 5 (Foundation)
-Plan: 1 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: Executing Phase 1
-Last activity: 2026-03-19 — Completed Plan 01-01 (Project Scaffold & Type System)
+Last activity: 2026-03-19 — Completed Plan 01-04 (CI/CD Pipeline)
 
-Progress: [##░░░░░░░░] 20%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 7min
+- Total plans completed: 2
+- Average duration: 4min
 - Total execution time: 0.1 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation | 1 | 7min | 7min |
+| 01-foundation | 2 | 8min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7min)
-- Trend: starting
+- Last 5 plans: 01-01 (7min), 01-04 (1min)
+- Trend: accelerating
 
 *Updated after each plan completion*
 
@@ -63,6 +63,7 @@ Recent decisions affecting current work:
 - [01-01]: Downgraded jsdom from v27 to v25 for Node 22.11 compatibility (ESM require issue with @csstools/css-calc)
 - [01-01]: Types-first architecture: src/types/ canonical, src/schemas/ for runtime Zod validation
 - [01-01]: Tailwind v4 CSS-native config with @theme block, no tailwind.config.js
+- [01-04]: Single-job CI/CD pipeline: test-gated GitHub Pages deployment via actions/deploy-pages@v4
 
 ### Pending Todos
 
@@ -75,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T13:57:50Z
-Stopped at: Completed 01-01-PLAN.md
-Resume file: .planning/phases/01-foundation/01-01-SUMMARY.md
+Last session: 2026-03-19T14:02:09Z
+Stopped at: Completed 01-04-PLAN.md
+Resume file: .planning/phases/01-foundation/01-04-SUMMARY.md

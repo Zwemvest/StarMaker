@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Every dice roll is automatically recorded in an append-only roll log and a SHA-256 hash is computed from the canonical log
   4. The XState creation workflow state machine models at least the top-level creation lifecycle (characteristics through mustering out) with placeholder nested states
   5. Pushing to main triggers a CI/CD pipeline that builds and deploys the app to GitHub Pages
-**Plans:** 4 plans
+**Plans:** 2/4 plans executed
 
 Plans:
 - [x] 01-01-PLAN.md — Project scaffold, dependencies, TypeScript types and Zod schemas
@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 1/4 | In progress | - |
+| 1. Foundation | 2/4 | In Progress|  |
 | 2. Pre-Career Creation | 0/? | Not started | - |
 | 3. Career Lifecycle | 0/? | Not started | - |
 | 4. Post-Career and Character Sheet | 0/? | Not started | - |
