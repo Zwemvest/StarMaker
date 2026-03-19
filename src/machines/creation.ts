@@ -18,7 +18,7 @@ interface CreationContext {
 }
 
 /** All events the creation machine responds to */
-type CreationEvent =
+export type CreationEvent =
   | { type: 'START_CREATION' }
   | { type: 'ROLL_ALL' }
   | { type: 'ASSIGN_COMPLETE' }
