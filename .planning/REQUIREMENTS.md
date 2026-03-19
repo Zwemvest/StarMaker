@@ -10,11 +10,11 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Foundation
 
 - [x] **FNDN-01**: App scaffolded with React 19 + TypeScript + Vite, building to static assets for GitHub Pages
-- [ ] **FNDN-02**: Dice engine using crypto.getRandomValues() produces correct distributions for 1D, 2D, 3D, D3, D66
-- [ ] **FNDN-03**: Every dice roll is recorded in an append-only roll log with roll ID, context, and results
-- [ ] **FNDN-04**: SHA-256 legitimacy hash computed from canonically serialized roll log (deterministic — same rolls = same hash)
-- [ ] **FNDN-05**: XState creation workflow state machine models the full creation lifecycle with nested states, guards, and transitions
-- [ ] **FNDN-06**: Zustand character data store holds all character state with Immer for immutable updates
+- [x] **FNDN-02**: Dice engine using crypto.getRandomValues() produces correct distributions for 1D, 2D, 3D, D3, D66
+- [x] **FNDN-03**: Every dice roll is recorded in an append-only roll log with roll ID, context, and results
+- [x] **FNDN-04**: SHA-256 legitimacy hash computed from canonically serialized roll log (deterministic — same rolls = same hash)
+- [x] **FNDN-05**: XState creation workflow state machine models the full creation lifecycle with nested states, guards, and transitions
+- [x] **FNDN-06**: Zustand character data store holds all character state with Immer for immutable updates
 - [x] **FNDN-07**: TypeScript type system covers all game concepts (characteristics, skills, careers, ranks, equipment)
 
 ### Characteristics
@@ -177,11 +177,11 @@ Deferred to future release. Tracked but not in current roadmap.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | FNDN-01 | Phase 1 | Complete |
-| FNDN-02 | Phase 1 | Pending |
-| FNDN-03 | Phase 1 | Pending |
-| FNDN-04 | Phase 1 | Pending |
-| FNDN-05 | Phase 1 | Pending |
-| FNDN-06 | Phase 1 | Pending |
+| FNDN-02 | Phase 1 | Complete |
+| FNDN-03 | Phase 1 | Complete |
+| FNDN-04 | Phase 1 | Complete |
+| FNDN-05 | Phase 1 | Complete |
+| FNDN-06 | Phase 1 | Complete |
 | FNDN-07 | Phase 1 | Complete |
 | CHAR-01 | Phase 2 | Pending |
 | CHAR-02 | Phase 2 | Pending |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-03-19T14:02:46.875Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-03-19T14:05:18.294Z"
 last_activity: 2026-03-19 — Completed Plan 01-04 (CI/CD Pipeline)
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 2
-  percent: 20
+  completed_plans: 4
+  percent: 50
 ---
 
 # Project State
@@ -50,6 +50,8 @@ Progress: [█████░░░░░] 50%
 - Trend: accelerating
 
 *Updated after each plan completion*
+| Phase 01 P02 | 2min | 2 tasks | 6 files |
+| Phase 01 P03 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -64,6 +66,9 @@ Recent decisions affecting current work:
 - [01-01]: Types-first architecture: src/types/ canonical, src/schemas/ for runtime Zod validation
 - [01-01]: Tailwind v4 CSS-native config with @theme block, no tailwind.config.js
 - [01-04]: Single-job CI/CD pipeline: test-gated GitHub Pages deployment via actions/deploy-pages@v4
+- [Phase 01-02]: Canonical serialization v1: JSON array of {context, id, results} with sorted keys - changing this invalidates all hashes
+- [Phase 01-02]: Pure engine functions pattern: dice/hash/roll-log in src/engine/ with no React or state management dependencies
+- [Phase 01-03]: XState manages workflow position ONLY; Zustand manages character data ONLY -- strict separation from day one
 
 ### Pending Todos
 
@@ -76,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T14:02:09Z
-Stopped at: Completed 01-04-PLAN.md
-Resume file: .planning/phases/01-foundation/01-04-SUMMARY.md
+Last session: 2026-03-19T14:05:18.292Z
+Stopped at: Completed 01-03-PLAN.md
+Resume file: None
