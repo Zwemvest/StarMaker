@@ -26,8 +26,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Background Skills
 
-- [ ] **BGSK-01**: User can select EDU DM+3 background skills (0 to 6) from the adolescence skill list
-- [ ] **BGSK-02**: Background skills are granted at level 0
+- [x] **BGSK-01**: User can select EDU DM+3 background skills (0 to 6) from the adolescence skill list
+- [x] **BGSK-02**: Background skills are granted at level 0
 
 ### Pre-Career Education
 
@@ -187,8 +187,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | CHAR-02 | Phase 2 | Pending |
 | CHAR-03 | Phase 2 | Complete |
 | CHAR-04 | Phase 2 | Pending |
-| BGSK-01 | Phase 2 | Pending |
-| BGSK-02 | Phase 2 | Pending |
+| BGSK-01 | Phase 2 | Complete |
+| BGSK-02 | Phase 2 | Complete |
 | EDUC-01 | Phase 2 | Pending |
 | EDUC-02 | Phase 2 | Complete |
 | EDUC-03 | Phase 2 | Complete |
