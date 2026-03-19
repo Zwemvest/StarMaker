@@ -9,3 +9,39 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
   --font-sans: 'Inter', system-ui, sans-serif;
 }
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.slide-from-right {
+  animation-name: slide-in-right;
+}
+
+.slide-from-left {
+  animation-name: slide-in-left;
+}
