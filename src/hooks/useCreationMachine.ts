@@ -53,7 +53,8 @@ function deriveReplayEvents(): Array<{ type: string; [key: string]: unknown }> {
     if (hasSkills) {
       // Has skills — at least through backgroundSkills
       events.push({ type: 'CONFIRM' });
-      events.push({ type: 'BACKGROUND_COMPLETE' });
+      events.push({ type: 'SKILLS_SELECTED' });
+      events.push({ type: 'CONFIRM' });
 
       if (hasEducationRolls) {
         // Has education rolls — skip education to get to career

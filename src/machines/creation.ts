@@ -27,6 +27,7 @@ export type CreationEvent =
   | { type: 'CONFIRM' }
   | { type: 'CHARACTERISTICS_COMPLETE' }
   | { type: 'BACKGROUND_COMPLETE' }
+  | { type: 'SKILLS_SELECTED' }
   | { type: 'EDUCATION_COMPLETE' }
   | { type: 'CAREER_TERM_COMPLETE' }
   | { type: 'MUSTER_OUT' }
@@ -104,10 +105,17 @@ export const creationMachine = setup({
       },
     },
     backgroundSkills: {
-      on: {
-        BACKGROUND_COMPLETE: {
-          target: 'education',
-          guard: 'hasBackgroundSkills',
+      initial: 'selecting',
+      states: {
+        selecting: {
+          on: {
+            SKILLS_SELECTED: 'review',
+          },
+        },
+        review: {
+          on: {
+            CONFIRM: '#creation.education',
+          },
         },
       },
     },

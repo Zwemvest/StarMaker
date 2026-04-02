@@ -10,7 +10,8 @@ function navigateToEducation() {
   actor.send({ type: 'ROLL_ALL' });
   actor.send({ type: 'ASSIGN_COMPLETE' });
   actor.send({ type: 'CONFIRM' });
-  actor.send({ type: 'BACKGROUND_COMPLETE' });
+  actor.send({ type: 'SKILLS_SELECTED' });
+  actor.send({ type: 'CONFIRM' });
   return actor;
 }
 
@@ -151,14 +152,14 @@ describe('Creation State Machine', () => {
       actor.stop();
     });
 
-    it('transitions review -> backgroundSkills on CONFIRM', () => {
+    it('transitions review -> backgroundSkills.selecting on CONFIRM', () => {
       const actor = createActor(creationMachine);
       actor.start();
       actor.send({ type: 'START_CREATION' });
       actor.send({ type: 'ROLL_ALL' });
       actor.send({ type: 'ASSIGN_COMPLETE' });
       actor.send({ type: 'CONFIRM' });
-      expect(actor.getSnapshot().value).toBe('backgroundSkills');
+      expect(actor.getSnapshot().value).toEqual({ backgroundSkills: 'selecting' });
       actor.stop();
     });
 
@@ -180,6 +181,44 @@ describe('Creation State Machine', () => {
       // Try to skip assigning
       actor.send({ type: 'CONFIRM' });
       expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+      actor.stop();
+    });
+  });
+
+  describe('BackgroundSkills nested states', () => {
+    it('starts in selecting sub-state', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      actor.send({ type: 'CONFIRM' });
+      expect(actor.getSnapshot().value).toEqual({ backgroundSkills: 'selecting' });
+      actor.stop();
+    });
+
+    it('transitions selecting -> review on SKILLS_SELECTED', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      actor.send({ type: 'CONFIRM' });
+      actor.send({ type: 'SKILLS_SELECTED' });
+      expect(actor.getSnapshot().value).toEqual({ backgroundSkills: 'review' });
+      actor.stop();
+    });
+
+    it('transitions review -> education on CONFIRM', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      actor.send({ type: 'CONFIRM' });
+      actor.send({ type: 'SKILLS_SELECTED' });
+      actor.send({ type: 'CONFIRM' });
+      expect(actor.getSnapshot().value).toEqual({ education: 'choosing' });
       actor.stop();
     });
   });
