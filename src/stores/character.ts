@@ -1,8 +1,10 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { CharacteristicId } from '../types/common';
 import type { Characteristics, Skill } from '../types/character';
 import type { RollLogEntry } from '../types/dice';
+import type { PoolItem } from '../components/characteristics/DicePool';
 
 /** Initial characteristics — all six stats at 0 */
 function initialCharacteristics(): Characteristics {
@@ -23,6 +25,7 @@ interface CharacterState {
   rollLog: RollLogEntry[];
   legitimacyHash: string;
   isModified: boolean;
+  dicePool: PoolItem[];
 }
 
 /** Character store actions */
@@ -33,6 +36,7 @@ interface CharacterActions {
   appendRoll: (entry: RollLogEntry) => void;
   setLegitimacyHash: (hash: string) => void;
   setModified: () => void;
+  setDicePool: (pool: PoolItem[]) => void;
   resetCharacter: () => void;
 }
 
@@ -46,59 +50,73 @@ const initialState: CharacterState = {
   rollLog: [],
   legitimacyHash: '',
   isModified: false,
+  dicePool: [],
 };
 
 /**
- * Zustand + Immer character data store.
+ * Zustand + Immer + Persist character data store.
  *
- * Manages ONLY character data (stats, skills, roll log, etc.).
+ * Manages ONLY character data (stats, skills, roll log, dice pool, etc.).
  * Workflow position lives in the XState machine — never duplicated here.
  *
  * Immer enables mutable-style syntax while maintaining immutable state updates.
+ * Persist middleware saves to sessionStorage so page refresh preserves data.
  */
 export const useCharacterStore = create<CharacterStore>()(
-  immer((set) => ({
-    ...initialState,
+  persist(
+    immer((set) => ({
+      ...initialState,
 
-    setCharacteristic: (id, value) =>
-      set((state) => {
-        state.characteristics[id] = Math.min(value, 15);
-      }),
+      setCharacteristic: (id, value) =>
+        set((state) => {
+          state.characteristics[id] = Math.min(value, 15);
+        }),
 
-    addSkill: (name, level) =>
-      set((state) => {
-        state.skills.push({ name, level });
-      }),
+      addSkill: (name, level) =>
+        set((state) => {
+          state.skills.push({ name, level });
+        }),
 
-    updateSkillLevel: (name, level) =>
-      set((state) => {
-        const skill = state.skills.find((s) => s.name === name);
-        if (skill) {
-          skill.level = level;
-        }
-      }),
+      updateSkillLevel: (name, level) =>
+        set((state) => {
+          const skill = state.skills.find((s) => s.name === name);
+          if (skill) {
+            skill.level = level;
+          }
+        }),
 
-    appendRoll: (entry) =>
-      set((state) => {
-        state.rollLog.push(entry);
-      }),
+      appendRoll: (entry) =>
+        set((state) => {
+          state.rollLog.push(entry);
+        }),
 
-    setLegitimacyHash: (hash) =>
-      set((state) => {
-        state.legitimacyHash = hash;
-      }),
+      setLegitimacyHash: (hash) =>
+        set((state) => {
+          state.legitimacyHash = hash;
+        }),
 
-    setModified: () =>
-      set((state) => {
-        state.isModified = true;
-      }),
+      setModified: () =>
+        set((state) => {
+          state.isModified = true;
+        }),
 
-    resetCharacter: () =>
-      set(() => ({
-        ...initialState,
-        characteristics: initialCharacteristics(),
-        skills: [],
-        rollLog: [],
-      })),
-  })),
+      setDicePool: (pool) =>
+        set((state) => {
+          state.dicePool = pool;
+        }),
+
+      resetCharacter: () =>
+        set(() => ({
+          ...initialState,
+          characteristics: initialCharacteristics(),
+          skills: [],
+          rollLog: [],
+          dicePool: [],
+        })),
+    })),
+    {
+      name: 'starmaker-character',
+      storage: createJSONStorage(() => sessionStorage),
+    },
+  ),
 );

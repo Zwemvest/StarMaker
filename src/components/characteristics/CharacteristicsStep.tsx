@@ -37,9 +37,8 @@ interface CharacteristicsStepProps {
 export function CharacteristicsStep({ subState, send }: CharacteristicsStepProps) {
   const { loggedRoll2D } = useLoggedRoll();
   const setCharacteristic = useCharacterStore((s) => s.setCharacteristic);
-
-  // Pool of rolled values
-  const [pool, setPool] = useState<PoolItem[]>([]);
+  const pool = useCharacterStore((s) => s.dicePool);
+  const setDicePool = useCharacterStore((s) => s.setDicePool);
 
   // Active drag state for overlay and preview
   const [activeDragItem, setActiveDragItem] = useState<PoolItem | null>(null);
@@ -73,9 +72,9 @@ export function CharacteristicsStep({ subState, send }: CharacteristicsStepProps
         total: entry.total,
       });
     }
-    setPool(results);
+    setDicePool(results);
     send({ type: 'ROLL_ALL' });
-  }, [loggedRoll2D, send]);
+  }, [loggedRoll2D, setDicePool, send]);
 
   // Drag start: track active item for overlay
   const handleDragStart = useCallback(
