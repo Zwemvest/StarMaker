@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-19T15:35:50.930Z"
-last_activity: 2026-03-19 — Completed Plan 02-04 (Background Skills Step)
+stopped_at: Completed 02-05-PLAN.md
+last_updated: "2026-04-02T08:51:16.534Z"
+last_activity: 2026-04-02
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
   percent: 78
 ---
 
@@ -21,20 +21,21 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Faithful implementation of Mongoose Traveller 2E character creation rules with override mode and legitimacy verification
-**Current focus:** Phase 2: Pre-Career Creation
+**Current focus:** Phase 02 — pre-career-creation
 
 ## Current Position
 
-Phase: 2 of 5 (Pre-Career Creation)
-Plan: 4 of 5 in current phase
-Status: Executing Phase 2
-Last activity: 2026-03-19 — Completed Plan 02-04 (Background Skills Step)
+Phase: 02 (pre-career-creation) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-04-02
 
 Progress: [███████▊░░] 78%
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 2
 - Average duration: 4min
 - Total execution time: 0.1 hours
@@ -46,6 +47,7 @@ Progress: [███████▊░░] 78%
 | 01-foundation | 2 | 8min | 4min |
 
 **Recent Trend:**
+
 - Last 5 plans: 01-01 (7min), 01-04 (1min)
 - Trend: accelerating
 
@@ -55,6 +57,7 @@ Progress: [███████▊░░] 78%
 | Phase 02 P01 | 5min | 3 tasks | 17 files |
 | Phase 02 P04 | 2min | 1 tasks | 5 files |
 | Phase 02 P03 | 3min | 2 tasks | 10 files |
+| Phase 02 P05 | 5min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -82,6 +85,9 @@ Recent decisions affecting current work:
 - [Phase 02-03]: Exported CreationEvent type from creation.ts for typed component props
 - [Phase 02-03]: useCreationMachine exposes subState for nested XState state rendering
 - [Phase 02-03]: CONFIRM event replaces CHARACTERISTICS_COMPLETE for explicit review-to-next transition
+- [Phase 02]: Entry roll and graduation roll fire immediately on action trigger for smooth UX flow
+- [Phase 02]: EducationStep uses local React state for UI flow data, separate from XState/Zustand separation pattern
+- [Phase 02]: Academy card uses branch sub-selection buttons inside single card (3-card layout: University | Academy | Skip)
 
 ### Pending Todos
 
@@ -94,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T15:35:50.928Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-04-02T08:51:16.531Z
+Stopped at: Completed 02-05-PLAN.md
 Resume file: None

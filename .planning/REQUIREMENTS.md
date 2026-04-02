@@ -31,7 +31,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Pre-Career Education
 
-- [ ] **EDUC-01**: User can choose to attend University or Military Academy (Army/Marines/Navy)
+- [x] **EDUC-01**: User can choose to attend University or Military Academy (Army/Marines/Navy)
 - [x] **EDUC-02**: University entry roll (EDU 7+) with term-based DMs and SOC bonus calculated correctly
 - [x] **EDUC-03**: Military Academy entry rolls (Army END 8+, Marines END 9+, Navy INT 9+) with term DMs
 - [x] **EDUC-04**: Pre-career education available terms 1-3 only, with increasing DM penalties
@@ -189,7 +189,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | CHAR-04 | Phase 2 | Complete |
 | BGSK-01 | Phase 2 | Complete |
 | BGSK-02 | Phase 2 | Complete |
-| EDUC-01 | Phase 2 | Pending |
+| EDUC-01 | Phase 2 | Complete |
 | EDUC-02 | Phase 2 | Complete |
 | EDUC-03 | Phase 2 | Complete |
 | EDUC-04 | Phase 2 | Complete |
