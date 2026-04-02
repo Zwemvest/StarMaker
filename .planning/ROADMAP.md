@@ -57,7 +57,7 @@ Plans:
 - [x] 02-04-PLAN.md — Background skills step with drag-from-pool skill picker
 - [x] 02-05-PLAN.md — Education step with card selection, entry rolls, events, and graduation
 - [x] 02-06-PLAN.md — Fix drag offset and add session persistence (gap closure)
-- [ ] 02-07-PLAN.md — Confirmation dialogs with irreversibility warnings (gap closure)
+- [x] 02-07-PLAN.md — Confirmation dialogs with irreversibility warnings (gap closure)
 - [x] 02-08-PLAN.md — Education entry roll UX, event choices, roll log labels, relevance tooltips (gap closure)
 
 ### Phase 3: Career Lifecycle
