@@ -120,7 +120,7 @@ export function WizardShell() {
             {currentPhase === 'characteristics' ? (
               <CharacteristicsStep subState={subState} send={send} />
             ) : currentPhase === 'backgroundSkills' ? (
-              <BackgroundSkillsStep onContinue={handleContinue} />
+              <BackgroundSkillsStep subState={subState} send={send} />
             ) : currentPhase === 'education' ? (
               <EducationStep
                 subState={subState}

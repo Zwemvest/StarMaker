@@ -15,7 +15,8 @@ import { Button } from '../ui/Button';
 import { useLoggedRoll } from '../../hooks/useLoggedRoll';
 import { useDragAssign } from '../../hooks/useDragAssign';
 import { useCharacterStore } from '../../stores/character';
-import { CHARACTERISTIC_IDS } from '../../types/common';
+import { CHARACTERISTIC_IDS, characteristicModifier } from '../../types/common';
+import { Card } from '../ui/Card';
 import type { CreationEvent } from '../../machines/creation';
 
 /** Number of characteristics to roll */
@@ -243,54 +244,38 @@ export function CharacteristicsStep({ subState, send }: CharacteristicsStepProps
     );
   }
 
-  // Review sub-state: Read-only grid + Continue button
+  // Review sub-state: Distinct confirmation dialog with irreversibility warning
   if (subState === 'review') {
+    const characteristics = useCharacterStore.getState().characteristics;
     return (
-      <div className="flex flex-col gap-6">
-        <h2 className="text-xl font-sans text-white">Review Characteristics</h2>
-        <p className="text-gray-400 text-sm">
-          Confirm your characteristic assignments before proceeding.
-        </p>
+      <div className="flex flex-col gap-6 max-w-lg mx-auto">
+        <h2 className="text-xl font-sans text-white">Confirm Characteristics</h2>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <h3 className="text-sm text-gray-400 uppercase tracking-wide">Physical</h3>
-            {CHARACTERISTIC_IDS.slice(0, 3).map((charId, i) => {
-              const item = assignments[i];
+        <Card className="border-l-4 border-l-modified">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-2 mb-4">
+            {CHARACTERISTIC_IDS.map((charId) => {
+              const value = characteristics[charId];
+              const dm = characteristicModifier(value);
+              const dmStr = dm >= 0 ? `+${dm}` : `${dm}`;
               return (
-                <StatSlot
-                  key={charId}
-                  id={charId}
-                  slotIndex={i}
-                  value={item?.total ?? null}
-                  dice={item?.dice ?? null}
-                  previewValue={null}
-                />
+                <div key={charId} className="flex justify-between text-sm">
+                  <span className="text-gray-400 font-mono">{charId}</span>
+                  <span className="text-white font-mono">
+                    {value} <span className="text-gray-500">({dmStr})</span>
+                  </span>
+                </div>
               );
             })}
           </div>
-          <div className="space-y-3">
-            <h3 className="text-sm text-gray-400 uppercase tracking-wide">Mental</h3>
-            {CHARACTERISTIC_IDS.slice(3, 6).map((charId, i) => {
-              const slotIndex = i + 3;
-              const item = assignments[slotIndex];
-              return (
-                <StatSlot
-                  key={charId}
-                  id={charId}
-                  slotIndex={slotIndex}
-                  value={item?.total ?? null}
-                  dice={item?.dice ?? null}
-                  previewValue={null}
-                />
-              );
-            })}
-          </div>
-        </div>
 
-        <div className="flex justify-center mt-4">
+          <p className="text-modified text-sm leading-relaxed">
+            Once you confirm your characteristics and proceed to background skills, you cannot change them later.
+          </p>
+        </Card>
+
+        <div className="flex justify-center">
           <Button variant="primary" onClick={handleConfirm}>
-            Continue
+            Confirm Characteristics
           </Button>
         </div>
       </div>

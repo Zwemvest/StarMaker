@@ -86,19 +86,19 @@ describe('CharacteristicsStep', () => {
     expect(screen.getByText('Mental')).toBeTruthy();
   });
 
-  it('renders review state with Continue button', () => {
+  it('renders review state with confirmation dialog and warning', () => {
     const send = vi.fn();
     render(createElement(CharacteristicsStep, { subState: 'review', send }));
 
-    expect(screen.getByText('Review Characteristics')).toBeTruthy();
-    expect(screen.getByText('Continue')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Confirm Characteristics' })).toBeTruthy();
+    expect(screen.getByText(/cannot change them later/)).toBeTruthy();
   });
 
-  it('clicking Continue in review state sends CONFIRM event', () => {
+  it('clicking Confirm Characteristics button in review state sends CONFIRM event', () => {
     const send = vi.fn();
     render(createElement(CharacteristicsStep, { subState: 'review', send }));
 
-    fireEvent.click(screen.getByText('Continue'));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm Characteristics' }));
     expect(send).toHaveBeenCalledWith({ type: 'CONFIRM' });
   });
 

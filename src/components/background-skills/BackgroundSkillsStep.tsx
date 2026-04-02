@@ -13,13 +13,16 @@ import { useDragAssign } from '../../hooks/useDragAssign';
 import { SkillPool } from './SkillPool';
 import { SkillSlot } from './SkillSlot';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
 import type { BackgroundSkill } from '../../types/skills';
+import type { CreationEvent } from '../../machines/creation';
 
 interface BackgroundSkillsStepProps {
-  onContinue: () => void;
+  subState: string | undefined;
+  send: (event: CreationEvent) => void;
 }
 
-export function BackgroundSkillsStep({ onContinue }: BackgroundSkillsStepProps) {
+export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepProps) {
   const characteristics = useCharacterStore((s) => s.characteristics);
   const addSkill = useCharacterStore((s) => s.addSkill);
 
@@ -45,18 +48,25 @@ export function BackgroundSkillsStep({ onContinue }: BackgroundSkillsStepProps) 
     [assignments],
   );
 
-  // Find the currently dragged skill for the overlay
-  // We track this via the active drag item from dnd-kit
+  const assignedSkills = useMemo(
+    () => assignments.filter((a): a is BackgroundSkill => a !== null),
+    [assignments],
+  );
 
-  const handleContinue = useCallback(() => {
-    // Commit all assigned skills to store at level 0
+  // When all slots filled, transition to review sub-state
+  const handleSkillsSelected = useCallback(() => {
+    send({ type: 'SKILLS_SELECTED' });
+  }, [send]);
+
+  // Confirm: commit skills to store and advance machine
+  const handleConfirm = useCallback(() => {
     for (const skill of assignments) {
       if (skill) {
         addSkill(skill.name, 0);
       }
     }
-    onContinue();
-  }, [assignments, addSkill, onContinue]);
+    send({ type: 'CONFIRM' });
+  }, [assignments, addSkill, send]);
 
   // Zero slots edge case
   if (slotCount === 0) {
@@ -66,13 +76,44 @@ export function BackgroundSkillsStep({ onContinue }: BackgroundSkillsStepProps) 
         <p className="text-gray-400 text-sm">
           No background skills available (EDU too low)
         </p>
-        <Button variant="primary" onClick={onContinue}>
+        <Button variant="primary" onClick={() => send({ type: 'SKILLS_SELECTED' })}>
           Continue
         </Button>
       </div>
     );
   }
 
+  // Review sub-state: confirmation dialog with irreversibility warning
+  if (subState === 'review') {
+    return (
+      <div className="flex flex-col gap-6 max-w-lg mx-auto">
+        <h2 className="text-xl font-sans text-white">Confirm Background Skills</h2>
+
+        <Card className="border-l-4 border-l-modified">
+          <div className="space-y-2 mb-4">
+            {assignedSkills.map((skill) => (
+              <div key={skill.name} className="flex justify-between text-sm">
+                <span className="text-white font-mono">{skill.name}</span>
+                <span className="text-gray-500">Level 0</span>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-modified text-sm leading-relaxed">
+            Once you confirm your background skills and proceed to education, you cannot change them later.
+          </p>
+        </Card>
+
+        <div className="flex justify-center">
+          <Button variant="primary" onClick={handleConfirm}>
+            Confirm Skills
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Selecting sub-state (default): drag-and-drop skill picker
   const canContinue = isComplete;
 
   return (
@@ -121,7 +162,7 @@ export function BackgroundSkillsStep({ onContinue }: BackgroundSkillsStepProps) 
       <div className="flex justify-end">
         <Button
           variant="primary"
-          onClick={handleContinue}
+          onClick={handleSkillsSelected}
           disabled={!canContinue}
         >
           Continue
