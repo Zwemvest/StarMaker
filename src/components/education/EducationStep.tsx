@@ -68,6 +68,7 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
 
   // Build a "Skip" pseudo-path for display
   const universityPath = EDUCATION_PATHS.find((p) => p.type === 'university')!;
+  const academyPaths = EDUCATION_PATHS.filter((p) => p.type === 'academy');
 
   const handleChooseUniversity = useCallback(() => {
     setSelectedPath(universityPath);
@@ -140,6 +141,13 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
 
   const handleSkipEducation = useCallback(() => {
     send({ type: 'SKIP_EDUCATION' });
+  }, [send]);
+
+  const handleGoBack = useCallback(() => {
+    setSelectedPath(null);
+    setSelectedBranch(undefined);
+    setEntryRolled(false);
+    send({ type: 'GO_BACK' });
   }, [send]);
 
   const handleSkillsComplete = useCallback((skills: { name: string; level: number }[]) => {
@@ -249,21 +257,38 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
           </p>
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <EducationCard
-            path={universityPath}
-            onSelect={() => handleChooseUniversity()}
-            disabled={!canAttemptEducation(educationTermsUsed)}
-          />
-          <EducationCard
-            path={{ type: 'academy', label: 'Military Academy', description: '', entryCharacteristic: 'END', entryTarget: 8, socBonus: false }}
-            onSelect={(branch) => branch && handleChooseAcademy(branch)}
-            disabled={!canAttemptEducation(educationTermsUsed)}
-          />
-          <EducationCard
-            path={{ type: 'university', label: 'Skip to Career', description: '', entryCharacteristic: 'EDU', entryTarget: 0, socBonus: false }}
-            onSelect={handleSkipEducation}
-            disabled={false}
-          />
+          {(() => {
+            const uniDM = calculateEntryDM(educationTermsUsed, characteristics, universityPath);
+            const uniOdds = calculateOdds(universityPath.entryTarget, uniDM);
+            const branchOdds = academyPaths.reduce((acc, p) => {
+              if (p.branch) {
+                const dm = calculateEntryDM(educationTermsUsed, characteristics, p);
+                acc[p.branch] = calculateOdds(p.entryTarget, dm);
+              }
+              return acc;
+            }, {} as Record<AcademyBranch, number>);
+            return (
+              <>
+                <EducationCard
+                  path={universityPath}
+                  onSelect={() => handleChooseUniversity()}
+                  disabled={!canAttemptEducation(educationTermsUsed)}
+                  odds={uniOdds}
+                />
+                <EducationCard
+                  path={{ type: 'academy', label: 'Military Academy', description: '', entryCharacteristic: 'END', entryTarget: 8, socBonus: false }}
+                  onSelect={(branch) => branch && handleChooseAcademy(branch)}
+                  disabled={!canAttemptEducation(educationTermsUsed)}
+                  branchOdds={branchOdds}
+                />
+                <EducationCard
+                  path={{ type: 'university', label: 'Skip to Career', description: '', entryCharacteristic: 'EDU', entryTarget: 0, socBonus: false }}
+                  onSelect={handleSkipEducation}
+                  disabled={false}
+                />
+              </>
+            );
+          })()}
         </div>
       </div>
     );
@@ -307,12 +332,20 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
                 Odds of success: <span className={`font-mono font-bold ${odds >= 50 ? 'text-legitimate' : 'text-modified'}`}>{odds}%</span>
               </p>
             </div>
-            <button
-              className="px-4 py-2 bg-scanner-blue text-terminal-bg rounded-lg font-sans font-medium hover:bg-scanner-blue/80 transition-colors"
-              onClick={handleRollEntry}
-            >
-              Roll for Entry
-            </button>
+            <div className="flex gap-3">
+              <button
+                className="px-4 py-2 bg-scanner-blue text-terminal-bg rounded-lg font-sans font-medium hover:bg-scanner-blue/80 transition-colors"
+                onClick={handleRollEntry}
+              >
+                Roll for Entry
+              </button>
+              <button
+                className="px-4 py-2 border border-gray-600 text-gray-300 rounded-lg font-sans font-medium hover:bg-gray-800 transition-colors"
+                onClick={handleGoBack}
+              >
+                Go Back
+              </button>
+            </div>
           </div>
         </div>
       );

@@ -43,7 +43,8 @@ export type CreationEvent =
   | { type: 'FAILED_GRADUATION' }
   | { type: 'RETRY' }
   | { type: 'SKIP' }
-  | { type: 'CONTINUE' };
+  | { type: 'CONTINUE' }
+  | { type: 'GO_BACK' };
 
 /**
  * XState 5 creation workflow state machine.
@@ -136,6 +137,12 @@ export const creationMachine = setup({
           on: {
             ENTRY_SUCCESS: 'universityTerm',
             ENTRY_FAILURE: 'entryFailed',
+            GO_BACK: {
+              target: 'choosing',
+              actions: assign({
+                educationTermsUsed: ({ context }) => context.educationTermsUsed - 1,
+              }),
+            },
           },
         },
         academyEntry: {
@@ -145,6 +152,12 @@ export const creationMachine = setup({
           on: {
             ENTRY_SUCCESS: 'academyTerm',
             ENTRY_FAILURE: 'entryFailed',
+            GO_BACK: {
+              target: 'choosing',
+              actions: assign({
+                educationTermsUsed: ({ context }) => context.educationTermsUsed - 1,
+              }),
+            },
           },
         },
         entryFailed: {

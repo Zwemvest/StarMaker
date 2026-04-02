@@ -351,6 +351,32 @@ describe('Creation State Machine', () => {
       });
     });
 
+    describe('GO_BACK from entry states', () => {
+      it('GO_BACK from universityEntry returns to choosing and decrements educationTermsUsed', () => {
+        const actor = navigateToEducation();
+        expect(actor.getSnapshot().context.educationTermsUsed).toBe(0);
+
+        actor.send({ type: 'CHOOSE_UNIVERSITY' });
+        expect(actor.getSnapshot().context.educationTermsUsed).toBe(1);
+
+        actor.send({ type: 'GO_BACK' });
+        expect(actor.getSnapshot().value).toEqual({ education: 'choosing' });
+        expect(actor.getSnapshot().context.educationTermsUsed).toBe(0);
+        actor.stop();
+      });
+
+      it('GO_BACK from academyEntry returns to choosing and decrements educationTermsUsed', () => {
+        const actor = navigateToEducation();
+        actor.send({ type: 'CHOOSE_ACADEMY', branch: 'navy' });
+        expect(actor.getSnapshot().context.educationTermsUsed).toBe(1);
+
+        actor.send({ type: 'GO_BACK' });
+        expect(actor.getSnapshot().value).toEqual({ education: 'choosing' });
+        expect(actor.getSnapshot().context.educationTermsUsed).toBe(0);
+        actor.stop();
+      });
+    });
+
     describe('educationTermsUsed tracking', () => {
       it('increments on university entry', () => {
         const actor = navigateToEducation();
