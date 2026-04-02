@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { EducationCard } from './EducationCard';
 import { EntryRollResult } from './EntryRollResult';
 import { EducationSkillPicker } from './EducationSkillPicker';
@@ -42,7 +42,8 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
   const addSkill = useCharacterStore((s) => s.addSkill);
   const updateSkillLevel = useCharacterStore((s) => s.updateSkillLevel);
   const setCharacteristic = useCharacterStore((s) => s.setCharacteristic);
-  const existingSkillNames = useCharacterStore((s) => s.skills.map((sk) => sk.name));
+  const skills = useCharacterStore((s) => s.skills);
+  const existingSkillNames = useMemo(() => skills.map((sk) => sk.name), [skills]);
 
   // Local state for tracking current flow
   const [selectedPath, setSelectedPath] = useState<EducationPath | null>(null);

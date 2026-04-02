@@ -167,7 +167,7 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
           </div>
         </div>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={null}>
           {activeDragItem ? (
             <div className="px-3 py-1.5 rounded border-l-2 text-sm font-mono bg-scanner-blue/20 text-scanner-blue border-l-scanner-blue shadow-lg">
               {activeDragItem.name}

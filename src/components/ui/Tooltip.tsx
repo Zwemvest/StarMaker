@@ -12,7 +12,7 @@ export function Tooltip({ text, children }: TooltipProps) {
       <span
         className="
           pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2
-          whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-gray-200
+          whitespace-pre-line max-w-xs rounded bg-gray-800 px-2 py-1 text-xs text-gray-200
           opacity-0 transition-opacity duration-150 group-hover:opacity-100
           border border-gray-600 z-50
         "
