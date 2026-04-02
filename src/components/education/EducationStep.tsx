@@ -42,6 +42,7 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
   const addSkill = useCharacterStore((s) => s.addSkill);
   const updateSkillLevel = useCharacterStore((s) => s.updateSkillLevel);
   const setCharacteristic = useCharacterStore((s) => s.setCharacteristic);
+  const existingSkillNames = useCharacterStore((s) => s.skills.map((sk) => sk.name));
 
   // Local state for tracking current flow
   const [selectedPath, setSelectedPath] = useState<EducationPath | null>(null);
@@ -388,7 +389,7 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
           /* Show event card */
           <div className="space-y-3">
             <p className="text-xs text-gray-500 uppercase tracking-wide">Education Event</p>
-            <EventCard event={eventData} onResolve={handleEventResolve} />
+            <EventCard event={eventData} onResolve={handleEventResolve} existingSkills={existingSkillNames} />
           </div>
         ) : (
           /* Event resolved, proceed to graduation */

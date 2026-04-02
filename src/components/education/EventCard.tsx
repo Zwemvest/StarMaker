@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 interface EventCardProps {
   event: EducationEvent;
   onResolve: (choiceIndex?: number) => void;
+  existingSkills?: string[];
 }
 
 /**
@@ -15,7 +16,7 @@ interface EventCardProps {
  * button per option. Styled with a scanner-blue left border accent and
  * italic description text for a distinct narrative feel.
  */
-export function EventCard({ event, onResolve }: EventCardProps) {
+export function EventCard({ event, onResolve, existingSkills = [] }: EventCardProps) {
   // Extract choice effects (with options) and non-choice effects
   const choiceEffects = event.effects.filter((e) => e.type === 'choice');
   const nonChoiceEffects = event.effects.filter((e) => e.type !== 'choice');
@@ -52,16 +53,24 @@ export function EventCard({ event, onResolve }: EventCardProps) {
                 <div key={effect.detail} className="w-full space-y-2">
                   <p className="text-xs text-gray-400">{effect.detail}</p>
                   <div className="flex flex-wrap gap-2">
-                    {effect.options.map((option, optIdx) => (
-                      <Button
-                        key={optIdx}
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => onResolve(optIdx)}
-                      >
-                        {option}
-                      </Button>
-                    ))}
+                    {effect.options.map((option, optIdx) => {
+                      const match = option.match(/^(.+?)\s+(\d+)$/);
+                      const isOwned = match ? existingSkills.includes(match[1]) : false;
+                      return (
+                        <Button
+                          key={optIdx}
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => onResolve(optIdx)}
+                          className={isOwned ? 'opacity-50' : ''}
+                        >
+                          {option}
+                          {isOwned && (
+                            <span className="text-gray-500 text-xs ml-1">(already owned)</span>
+                          )}
+                        </Button>
+                      );
+                    })}
                   </div>
                 </div>
               ) : (

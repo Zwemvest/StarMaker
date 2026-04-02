@@ -74,7 +74,16 @@ export const useCharacterStore = create<CharacterStore>()(
 
       addSkill: (name, level) =>
         set((state) => {
-          state.skills.push({ name, level });
+          const existing = state.skills.find((s) => s.name === name);
+          if (existing) {
+            // Only upgrade if new level is higher
+            if (level > existing.level) {
+              existing.level = level;
+            }
+            // Otherwise skip — skill already owned at equal or higher level
+          } else {
+            state.skills.push({ name, level });
+          }
         }),
 
       updateSkillLevel: (name, level) =>

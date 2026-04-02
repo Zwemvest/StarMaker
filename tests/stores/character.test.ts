@@ -45,6 +45,31 @@ describe('Character Store', () => {
     expect(skills[0]).toEqual({ name: 'Pilot', level: 1 });
   });
 
+  it('addSkill is idempotent — duplicate calls do not create duplicates', () => {
+    useCharacterStore.getState().addSkill('Admin', 0);
+    useCharacterStore.getState().addSkill('Admin', 0);
+    useCharacterStore.getState().addSkill('Admin', 0);
+    const { skills } = useCharacterStore.getState();
+    expect(skills).toHaveLength(1);
+    expect(skills[0]).toEqual({ name: 'Admin', level: 0 });
+  });
+
+  it('addSkill upgrades level if new level is higher', () => {
+    useCharacterStore.getState().addSkill('Medic', 0);
+    useCharacterStore.getState().addSkill('Medic', 2);
+    const { skills } = useCharacterStore.getState();
+    expect(skills).toHaveLength(1);
+    expect(skills[0]).toEqual({ name: 'Medic', level: 2 });
+  });
+
+  it('addSkill does not downgrade existing higher level', () => {
+    useCharacterStore.getState().addSkill('Pilot', 3);
+    useCharacterStore.getState().addSkill('Pilot', 1);
+    const { skills } = useCharacterStore.getState();
+    expect(skills).toHaveLength(1);
+    expect(skills[0]).toEqual({ name: 'Pilot', level: 3 });
+  });
+
   it('updateSkillLevel modifies an existing skill', () => {
     useCharacterStore.getState().addSkill('Medic', 0);
     useCharacterStore.getState().updateSkillLevel('Medic', 2);
