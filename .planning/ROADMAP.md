@@ -59,7 +59,7 @@ Plans:
 - [x] 02-06-PLAN.md — Fix drag offset and add session persistence (gap closure)
 - [x] 02-07-PLAN.md — Confirmation dialogs with irreversibility warnings (gap closure)
 - [x] 02-08-PLAN.md — Education entry roll UX, event choices, roll log labels, relevance tooltips (gap closure)
-- [ ] 02-09-PLAN.md — Background skills drag overlay and tooltip overlap fix (gap closure)
+- [x] 02-09-PLAN.md — Background skills drag overlay and tooltip overlap fix (gap closure)
 - [ ] 02-10-PLAN.md — Duplicate skill prevention and education entry navigation (gap closure)
 
 ### Phase 3: Career Lifecycle
