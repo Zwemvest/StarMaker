@@ -57,15 +57,19 @@ function StepPlaceholder({ label, onContinue }: { label: string; onContinue?: ()
  * - Zone 3 (bottom): HashBar (fixed)
  */
 export function WizardShell() {
-  const { currentPhase, subState, send, state } = useCreationMachine();
+  const { currentPhase, subState, send, state, isRestored } = useCreationMachine();
   const currentStepIndex = PHASE_TO_INDEX[currentPhase];
   const prevIndexRef = useRef(currentStepIndex);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
 
-  // Send START_CREATION on mount to transition from idle -> characteristics
+  // Suppress slide animation on first render when restoring from persisted state
+  const suppressAnimationRef = useRef(isRestored);
   useEffect(() => {
-    send({ type: 'START_CREATION' });
-  }, [send]);
+    // After first render, allow animations again
+    if (suppressAnimationRef.current) {
+      suppressAnimationRef.current = false;
+    }
+  }, []);
 
   // Track direction for slide animation
   useEffect(() => {
@@ -111,6 +115,7 @@ export function WizardShell() {
           <StepContainer
             direction={direction}
             stepKey={STEPS[currentStepIndex].id}
+            suppressAnimation={suppressAnimationRef.current}
           >
             {currentPhase === 'characteristics' ? (
               <CharacteristicsStep subState={subState} send={send} />
