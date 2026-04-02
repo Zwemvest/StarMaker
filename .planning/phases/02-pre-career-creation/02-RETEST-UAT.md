@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 02-pre-career-creation
 source: [02-06-SUMMARY.md, 02-07-SUMMARY.md, 02-08-SUMMARY.md]
 started: 2026-04-02T12:40:00Z
@@ -68,9 +68,12 @@ blocked: 0
   reason: "User reported: On Background skills, there's no visual object being dragged, though dragging and dropping into the dropzones does work."
   severity: major
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "DragOverlay in BackgroundSkillsStep.tsx is empty — no onDragStart handler, no activeDragItem state, no rendered children inside DragOverlay. CharacteristicsStep has this pattern but BackgroundSkillsStep was not updated to match."
+  artifacts:
+    - path: "src/components/background-skills/BackgroundSkillsStep.tsx"
+      issue: "Lines 129, 156-159: Missing onDragStart handler and empty DragOverlay content"
+  missing:
+    - "Add activeDragItem state, onDragStart/onDragEnd handlers, render active skill inside DragOverlay"
   debug_session: ""
 
 - truth: "Education path selection page should show entry odds and allow opting out before rolling"
@@ -78,9 +81,16 @@ blocked: 0
   reason: "User reported: No option to opt out of the Entry Roll. Odds not visible on the overview (University, Military Academy or Career?) page itself"
   severity: minor
   test: 5
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "EducationCard doesn't receive characteristics or odds data. Pre-roll card has no back/cancel button and XState machine has no GO_BACK event on entry sub-states."
+  artifacts:
+    - path: "src/components/education/EducationCard.tsx"
+      issue: "No odds display on selection cards"
+    - path: "src/components/education/EducationStep.tsx"
+      issue: "Lines 272-317: pre-roll card has no back button"
+    - path: "src/machines/creation.ts"
+      issue: "No GO_BACK event on universityEntry/academyEntry sub-states"
+  missing:
+    - "Pass odds to EducationCard, add GO_BACK event and back button on pre-roll card"
   debug_session: ""
 
 - truth: "Skills should not be applied multiple times creating duplicates; redundant choices should be visually indicated"
@@ -88,9 +98,15 @@ blocked: 0
   reason: "User reported: University/event skills are applied multiple times creating duplicate entries. Needs visual indicator when a choice would not result in any benefit."
   severity: major
   test: 6
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "addSkill in character.ts (lines 75-78) does blind push with zero duplicate checking. Every call appends regardless of existing skills."
+  artifacts:
+    - path: "src/stores/character.ts"
+      issue: "Lines 75-78: addSkill lacks duplicate guard"
+    - path: "src/components/education/EventCard.tsx"
+      issue: "Choice buttons don't indicate already-owned skills"
+  missing:
+    - "Add duplicate check in addSkill (skip or upgrade level)"
+    - "Show visual indicator on choice buttons for already-owned skills"
   debug_session: ""
 
 - truth: "Relevance marker tooltip and skill description tooltip should not overlap"
@@ -98,7 +114,10 @@ blocked: 0
   reason: "User reported: Two tooltips (tooltip for skill itself and tooltip for the blue dot indicator) overlap."
   severity: minor
   test: 8
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Nested Tooltip components in SkillPool.tsx lines 53-76. Both use CSS group/group-hover which propagates through nesting, making both visible simultaneously."
+  artifacts:
+    - path: "src/components/background-skills/SkillPool.tsx"
+      issue: "Lines 53-76: Nested Tooltip wrappers with conflicting group-hover"
+  missing:
+    - "Use named Tailwind groups (group/outer, group/inner) or combine into single tooltip showing both description and relevance info"
   debug_session: ""
