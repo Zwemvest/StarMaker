@@ -49,8 +49,11 @@ export function SkillPool({ skills, assignedNames, disabled }: SkillPoolProps) {
             renderItem={(skill, isDragging) => {
               const isAssigned = assignedNames.has(skill.name);
               const isRelevant = RELEVANT_SKILLS.has(skill.name);
+              const tooltipText = isRelevant && !isAssigned
+                ? `${skill.description} | Commonly useful in careers and education paths`
+                : skill.description;
               return (
-                <Tooltip text={skill.description}>
+                <Tooltip text={tooltipText}>
                   <div
                     className={`
                       px-3 py-1.5 rounded border-l-2 text-sm font-mono
@@ -66,11 +69,9 @@ export function SkillPool({ skills, assignedNames, disabled }: SkillPoolProps) {
                   >
                     <span>{skill.name}</span>
                     {isRelevant && !isAssigned && (
-                      <Tooltip text="Commonly useful in careers and education paths">
-                        <span
-                          className="inline-block w-1.5 h-1.5 rounded-full bg-scanner-blue ml-1.5 align-middle"
-                        />
-                      </Tooltip>
+                      <span
+                        className="inline-block w-1.5 h-1.5 rounded-full bg-scanner-blue ml-1.5 align-middle"
+                      />
                     )}
                   </div>
                 </Tooltip>
