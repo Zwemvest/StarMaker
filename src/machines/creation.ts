@@ -1,4 +1,5 @@
-import { setup } from 'xstate';
+import { assign, setup } from 'xstate';
+import { canAttemptEducation } from '../engine/education';
 
 /** Phases of character creation that the machine tracks */
 export type CreationPhase =
@@ -15,6 +16,7 @@ interface CreationContext {
   currentPhase: CreationPhase;
   characterId: string;
   termsServed: number;
+  educationTermsUsed: number;
 }
 
 /** All events the creation machine responds to */
@@ -28,7 +30,19 @@ export type CreationEvent =
   | { type: 'EDUCATION_COMPLETE' }
   | { type: 'CAREER_TERM_COMPLETE' }
   | { type: 'MUSTER_OUT' }
-  | { type: 'MUSTERING_COMPLETE' };
+  | { type: 'MUSTERING_COMPLETE' }
+  | { type: 'CHOOSE_UNIVERSITY' }
+  | { type: 'CHOOSE_ACADEMY'; branch: 'army' | 'marines' | 'navy' }
+  | { type: 'SKIP_EDUCATION' }
+  | { type: 'ENTRY_SUCCESS' }
+  | { type: 'ENTRY_FAILURE' }
+  | { type: 'TERM_COMPLETE' }
+  | { type: 'GRADUATED' }
+  | { type: 'GRADUATED_HONOURS' }
+  | { type: 'FAILED_GRADUATION' }
+  | { type: 'RETRY' }
+  | { type: 'SKIP' }
+  | { type: 'CONTINUE' };
 
 /**
  * XState 5 creation workflow state machine.
@@ -48,6 +62,8 @@ export const creationMachine = setup({
     hasCharacteristics: () => true,
     hasBackgroundSkills: () => true,
     allCharacteristicsAssigned: () => true,
+    canRetryEducation: ({ context }) =>
+      canAttemptEducation(context.educationTermsUsed),
   },
 }).createMachine({
   id: 'creation',
@@ -56,6 +72,7 @@ export const creationMachine = setup({
     currentPhase: 'idle',
     characterId: '',
     termsServed: 0,
+    educationTermsUsed: 0,
   },
   states: {
     idle: {
@@ -95,8 +112,78 @@ export const creationMachine = setup({
       },
     },
     education: {
-      on: {
-        EDUCATION_COMPLETE: 'career',
+      initial: 'choosing',
+      states: {
+        choosing: {
+          on: {
+            CHOOSE_UNIVERSITY: 'universityEntry',
+            CHOOSE_ACADEMY: 'academyEntry',
+            SKIP_EDUCATION: '#creation.career',
+          },
+        },
+        universityEntry: {
+          entry: assign({
+            educationTermsUsed: ({ context }) => context.educationTermsUsed + 1,
+          }),
+          on: {
+            ENTRY_SUCCESS: 'universityTerm',
+            ENTRY_FAILURE: 'entryFailed',
+          },
+        },
+        academyEntry: {
+          entry: assign({
+            educationTermsUsed: ({ context }) => context.educationTermsUsed + 1,
+          }),
+          on: {
+            ENTRY_SUCCESS: 'academyTerm',
+            ENTRY_FAILURE: 'entryFailed',
+          },
+        },
+        entryFailed: {
+          on: {
+            RETRY: {
+              target: 'choosing',
+              guard: 'canRetryEducation',
+            },
+            SKIP: '#creation.career',
+          },
+        },
+        universityTerm: {
+          on: {
+            TERM_COMPLETE: 'graduation',
+          },
+        },
+        academyTerm: {
+          on: {
+            TERM_COMPLETE: 'graduation',
+          },
+        },
+        graduation: {
+          on: {
+            GRADUATED: 'graduated',
+            GRADUATED_HONOURS: 'graduatedHonours',
+            FAILED_GRADUATION: 'failedGraduation',
+          },
+        },
+        graduated: {
+          on: {
+            CONTINUE: '#creation.career',
+          },
+        },
+        graduatedHonours: {
+          on: {
+            CONTINUE: '#creation.career',
+          },
+        },
+        failedGraduation: {
+          on: {
+            RETRY: {
+              target: 'choosing',
+              guard: 'canRetryEducation',
+            },
+            CONTINUE: '#creation.career',
+          },
+        },
       },
     },
     career: {
