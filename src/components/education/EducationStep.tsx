@@ -68,29 +68,14 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
   // Build a "Skip" pseudo-path for display
   const universityPath = EDUCATION_PATHS.find((p) => p.type === 'university')!;
 
-  const handleChooseUniversity = useCallback(async () => {
+  const handleChooseUniversity = useCallback(() => {
     setSelectedPath(universityPath);
     setSelectedBranch(undefined);
     setEducationType('university');
     send({ type: 'CHOOSE_UNIVERSITY' });
+  }, [universityPath, send]);
 
-    // Roll entry
-    const dm = calculateEntryDM(educationTermsUsed, characteristics, universityPath);
-    const roll = await loggedRoll2D('education.entry.university', dm, universityPath.entryTarget);
-    const rollDiceTotal = roll.results.reduce((a, b) => a + b, 0);
-    setDiceTotal(rollDiceTotal);
-    const result = resolveEntryRoll(rollDiceTotal, dm, universityPath.entryTarget);
-    setEntryResult(result);
-    setEntryRolled(true);
-
-    if (result.success) {
-      send({ type: 'ENTRY_SUCCESS' });
-    } else {
-      send({ type: 'ENTRY_FAILURE' });
-    }
-  }, [educationTermsUsed, characteristics, universityPath, loggedRoll2D, send]);
-
-  const handleChooseAcademy = useCallback(async (branch: AcademyBranch) => {
+  const handleChooseAcademy = useCallback((branch: AcademyBranch) => {
     const academyPath = EDUCATION_PATHS.find(
       (p) => p.type === 'academy' && p.branch === branch,
     )!;
@@ -98,13 +83,34 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
     setSelectedBranch(branch);
     setEducationType('academy');
     send({ type: 'CHOOSE_ACADEMY', branch });
+  }, [send]);
 
-    // Roll entry
-    const dm = calculateEntryDM(educationTermsUsed, characteristics, academyPath);
-    const roll = await loggedRoll2D(`education.entry.academy.${branch}`, dm, academyPath.entryTarget);
+  /** Calculate odds of success for 2D >= target (accounting for DM) */
+  const calculateOdds = useCallback((target: number, dm: number): number => {
+    // Effective target after DM is applied
+    const effectiveTarget = target - dm;
+    if (effectiveTarget <= 2) return 100;
+    if (effectiveTarget > 12) return 0;
+    // Count 2D combinations that meet the effective target out of 36
+    let successes = 0;
+    for (let d1 = 1; d1 <= 6; d1++) {
+      for (let d2 = 1; d2 <= 6; d2++) {
+        if (d1 + d2 >= effectiveTarget) successes++;
+      }
+    }
+    return Math.round((successes / 36) * 100);
+  }, []);
+
+  const handleRollEntry = useCallback(async () => {
+    if (!selectedPath) return;
+    const dm = calculateEntryDM(educationTermsUsed, characteristics, selectedPath);
+    const context = selectedPath.type === 'university'
+      ? 'education.entry.university'
+      : `education.entry.academy.${selectedBranch}`;
+    const roll = await loggedRoll2D(context, dm, selectedPath.entryTarget);
     const rollDiceTotal = roll.results.reduce((a, b) => a + b, 0);
     setDiceTotal(rollDiceTotal);
-    const result = resolveEntryRoll(rollDiceTotal, dm, academyPath.entryTarget);
+    const result = resolveEntryRoll(rollDiceTotal, dm, selectedPath.entryTarget);
     setEntryResult(result);
     setEntryRolled(true);
 
@@ -113,7 +119,7 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
     } else {
       send({ type: 'ENTRY_FAILURE' });
     }
-  }, [educationTermsUsed, characteristics, loggedRoll2D, send]);
+  }, [selectedPath, selectedBranch, educationTermsUsed, characteristics, loggedRoll2D, send]);
 
   const handleRetry = useCallback(() => {
     setEntryResult(null);
@@ -166,9 +172,24 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
     }
   }, [loggedRoll2D]);
 
-  const handleEventResolve = useCallback((_choiceIndex?: number) => {
+  const handleEventResolve = useCallback((choiceIndex?: number) => {
+    // If a choice was made and the event has choice effects with options, apply the chosen skill
+    if (choiceIndex !== undefined && eventData) {
+      const choiceEffect = eventData.effects.find((e) => e.type === 'choice');
+      if (choiceEffect?.options && choiceEffect.options[choiceIndex]) {
+        const option = choiceEffect.options[choiceIndex];
+        // Parse skill name and level from option string (e.g., "Admin 0" -> name: "Admin", level: 0)
+        const match = option.match(/^(.+?)\s+(\d+)$/);
+        if (match) {
+          const skillName = match[1];
+          const skillLevel = parseInt(match[2], 10);
+          addSkill(skillName, skillLevel);
+        }
+        // Non-skill choices (like "Accept expulsion") don't parse — that's expected
+      }
+    }
     setEventResolved(true);
-  }, []);
+  }, [eventData, addSkill]);
 
   const handleTermComplete = useCallback(async () => {
     send({ type: 'TERM_COMPLETE' });
@@ -247,8 +268,55 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
     );
   }
 
-  // universityEntry / academyEntry / entryFailed: show entry roll result
+  // universityEntry / academyEntry / entryFailed: show pre-roll card or entry roll result
   if (subState === 'universityEntry' || subState === 'academyEntry' || subState === 'entryFailed') {
+    if (selectedPath && !entryRolled) {
+      // Pre-roll card: show target, DM, odds, and Roll button
+      const dm = calculateEntryDM(educationTermsUsed, characteristics, selectedPath);
+      const odds = calculateOdds(selectedPath.entryTarget, dm);
+      const dmParts: string[] = [];
+      if (educationTermsUsed > 0) {
+        dmParts.push(`Previous attempts: DM${-1 * educationTermsUsed}`);
+      }
+      if (selectedPath.socBonus && characteristics.SOC >= 9) {
+        dmParts.push('SOC 9+: DM+1');
+      }
+
+      return (
+        <div className="space-y-4">
+          <h2 className="text-2xl font-sans font-medium text-white">
+            {selectedPath.label} — Entry Roll
+          </h2>
+          <div className="bg-terminal-surface border border-gray-700 rounded-lg p-4 space-y-3">
+            <div className="space-y-1">
+              <p className="text-sm text-gray-300">
+                Entry target: <span className="text-scanner-blue font-mono font-bold">{selectedPath.entryTarget}+</span>
+              </p>
+              {dmParts.length > 0 && (
+                <div className="text-xs text-gray-400 space-y-0.5">
+                  {dmParts.map((part, i) => (
+                    <p key={i}>{part}</p>
+                  ))}
+                  <p className="text-gray-300">
+                    Total DM: <span className="font-mono">{dm >= 0 ? `+${dm}` : dm}</span>
+                  </p>
+                </div>
+              )}
+              <p className="text-sm text-gray-300">
+                Odds of success: <span className={`font-mono font-bold ${odds >= 50 ? 'text-legitimate' : 'text-modified'}`}>{odds}%</span>
+              </p>
+            </div>
+            <button
+              className="px-4 py-2 bg-scanner-blue text-terminal-bg rounded-lg font-sans font-medium hover:bg-scanner-blue/80 transition-colors"
+              onClick={handleRollEntry}
+            >
+              Roll for Entry
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     if (entryResult && selectedPath) {
       return (
         <div className="space-y-4">

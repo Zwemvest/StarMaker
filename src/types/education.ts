@@ -31,6 +31,7 @@ export type EducationEventEffectType =
 export interface EducationEventEffect {
   type: EducationEventEffectType;
   detail: string;
+  options?: string[];  // Individual selectable options for 'choice' type
 }
 
 /** An entry in the education events table (roll 2D) */

@@ -66,10 +66,11 @@ export function SkillPool({ skills, assignedNames, disabled }: SkillPoolProps) {
                   >
                     <span>{skill.name}</span>
                     {isRelevant && !isAssigned && (
-                      <span
-                        className="inline-block w-1.5 h-1.5 rounded-full bg-scanner-blue ml-1.5 align-middle"
-                        title="Commonly used in career/education"
-                      />
+                      <Tooltip text="Commonly useful in careers and education paths">
+                        <span
+                          className="inline-block w-1.5 h-1.5 rounded-full bg-scanner-blue ml-1.5 align-middle"
+                        />
+                      </Tooltip>
                     )}
                   </div>
                 </Tooltip>
@@ -78,6 +79,9 @@ export function SkillPool({ skills, assignedNames, disabled }: SkillPoolProps) {
           />
         </div>
       ))}
+      <p className="text-xs text-gray-500 mt-2">
+        Skills marked with a <span className="inline-block w-1.5 h-1.5 rounded-full bg-scanner-blue align-middle mx-0.5" /> blue dot are commonly useful during careers and education.
+      </p>
     </div>
   );
 }

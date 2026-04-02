@@ -11,11 +11,12 @@ interface EventCardProps {
  * Narrative education event card.
  *
  * Shows flavor text (description), mechanical effects, and choice buttons
- * when applicable. Styled with a scanner-blue left border accent and
+ * when applicable. For choice effects with an options array, renders one
+ * button per option. Styled with a scanner-blue left border accent and
  * italic description text for a distinct narrative feel.
  */
 export function EventCard({ event, onResolve }: EventCardProps) {
-  // Extract choice options from effects that have type 'choice'
+  // Extract choice effects (with options) and non-choice effects
   const choiceEffects = event.effects.filter((e) => e.type === 'choice');
   const nonChoiceEffects = event.effects.filter((e) => e.type !== 'choice');
 
@@ -45,16 +46,36 @@ export function EventCard({ event, onResolve }: EventCardProps) {
         {/* Choice buttons or Continue */}
         <div className="flex flex-wrap gap-2">
           {event.hasChoice && choiceEffects.length > 0 ? (
-            choiceEffects.map((effect, i) => (
-              <Button
-                key={i}
-                variant="secondary"
-                size="sm"
-                onClick={() => onResolve(i)}
-              >
-                {effect.detail}
-              </Button>
-            ))
+            choiceEffects.map((effect) =>
+              effect.options && effect.options.length > 0 ? (
+                // Render individual option buttons
+                <div key={effect.detail} className="w-full space-y-2">
+                  <p className="text-xs text-gray-400">{effect.detail}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {effect.options.map((option, optIdx) => (
+                      <Button
+                        key={optIdx}
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => onResolve(optIdx)}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                // Fallback for choice effects without options array
+                <Button
+                  key={effect.detail}
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => onResolve(0)}
+                >
+                  {effect.detail}
+                </Button>
+              ),
+            )
           ) : (
             <Button variant="primary" size="sm" onClick={() => onResolve()}>
               Continue

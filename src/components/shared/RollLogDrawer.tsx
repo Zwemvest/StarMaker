@@ -1,4 +1,5 @@
 import { useCharacterStore } from '../../stores/character';
+import { formatRollContext } from '../../engine/format-roll-context';
 import { DiceDisplay } from './DiceDisplay';
 
 interface RollLogDrawerProps {
@@ -43,7 +44,7 @@ export function RollLogDrawer({ isOpen, onToggle }: RollLogDrawerProps) {
                 className="px-4 py-2 flex items-center justify-between gap-4"
               >
                 <span className="text-xs text-gray-400 font-mono truncate max-w-48">
-                  {entry.context}
+                  {formatRollContext(entry.context)}
                 </span>
                 <div className="flex items-center gap-3">
                   <DiceDisplay

@@ -13,7 +13,7 @@ export const EDUCATION_EVENTS: EducationEvent[] = [
       'You are caught cheating on an important exam. You may be expelled or try to cover it up.',
     effectDescription: 'Risk of expulsion or gain a rival',
     effects: [
-      { type: 'choice', detail: 'Accept expulsion or make a Deception check to cover it up' },
+      { type: 'choice', detail: 'Accept expulsion or attempt to cover it up', options: ['Accept expulsion', 'Attempt Deception check to cover it up'] },
       { type: 'enemy', detail: 'Gain an enemy if you stay (the instructor who suspects you)' },
     ],
     hasChoice: true,
@@ -55,7 +55,7 @@ export const EDUCATION_EVENTS: EducationEvent[] = [
       'You take on a part-time job or extra duties to support yourself during your studies.',
     effectDescription: 'Gain a practical skill',
     effects: [
-      { type: 'choice', detail: 'Choose one: Admin 0, Profession 0, or Streetwise 0' },
+      { type: 'choice', detail: 'Choose one skill to gain at level 0', options: ['Admin 0', 'Profession 0', 'Streetwise 0'] },
     ],
     hasChoice: true,
   },
@@ -75,7 +75,7 @@ export const EDUCATION_EVENTS: EducationEvent[] = [
       'You get involved in student politics or military hierarchy, learning to navigate organisations.',
     effectDescription: 'Gain a social or leadership skill',
     effects: [
-      { type: 'choice', detail: 'Choose one: Admin 0, Advocate 0, or Carouse 0' },
+      { type: 'choice', detail: 'Choose one skill to gain at level 0', options: ['Admin 0', 'Advocate 0', 'Carouse 0'] },
     ],
     hasChoice: true,
   },
@@ -106,7 +106,7 @@ export const EDUCATION_EVENTS: EducationEvent[] = [
       'War or crisis breaks out, testing you in ways your education could not prepare you for.',
     effectDescription: 'Gain a military or survival skill',
     effects: [
-      { type: 'choice', detail: 'Choose one: Gun Combat 0, Survival 0, or Medic 0' },
+      { type: 'choice', detail: 'Choose one skill to gain at level 0', options: ['Gun Combat 0', 'Survival 0', 'Medic 0'] },
       { type: 'characteristic', detail: 'If you choose to serve, gain END +1' },
     ],
     hasChoice: true,
