@@ -14,18 +14,17 @@ Faithful implementation of the Mongoose Traveller 2E character creation rules �
 
 <!-- Shipped and confirmed valuable. -->
 
-(None yet — ship to validate)
+- [x] Characteristic generation (roll 2D for STR, DEX, END, INT, EDU, SOC with assignment) — Validated in Phase 2: Pre-Career Creation
+- [x] Characteristic modifier calculation (DM table from 0/-3 to 15+/+3) — Validated in Phase 2: Pre-Career Creation
+- [x] Background skills selection (EDU DM+3 skills from adolescence list) — Validated in Phase 2: Pre-Career Creation
+- [x] Pre-career education: University (entry, skills, graduation, honours, benefits) — Validated in Phase 2: Pre-Career Creation
+- [x] Pre-career education: Military Academy (Army/Marines/Navy, entry, skills, graduation, honours, benefits) — Validated in Phase 2: Pre-Career Creation
+- [x] Pre-career education events table — Validated in Phase 2: Pre-Career Creation
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Characteristic generation (roll 2D for STR, DEX, END, INT, EDU, SOC with assignment)
-- [ ] Characteristic modifier calculation (DM table from 0/-3 to 15+/+3)
-- [ ] Background skills selection (EDU DM+3 skills from adolescence list)
-- [ ] Pre-career education: University (entry, skills, graduation, honours, benefits)
-- [ ] Pre-career education: Military Academy (Army/Marines/Navy, entry, skills, graduation, honours, benefits)
-- [ ] Pre-career education events table
 - [ ] All 12 careers: Agent, Army, Citizen, Drifter, Entertainer, Marine, Merchant, Navy, Noble, Rogue, Scholar, Scout
 - [ ] Career qualification rolls with DM-1 per previous career
 - [ ] 3 assignments per career with specialist skill tables
@@ -103,4 +102,4 @@ Faithful implementation of the Mongoose Traveller 2E character creation rules �
 | Override mode as toggle, not default | Preserves the Traveller creation experience while allowing experimentation | — Pending |
 
 ---
-*Last updated: 2026-03-19 after initialization*
+*Last updated: 2026-04-02 after Phase 2 completion — Pre-Career Creation verified (16/16 requirements)*
