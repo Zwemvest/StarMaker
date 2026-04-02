@@ -5,6 +5,7 @@ import { HashBar } from './HashBar';
 import { CharacterPanel } from '../character-panel/CharacterPanel';
 import { CharacteristicsStep } from '../characteristics/CharacteristicsStep';
 import { BackgroundSkillsStep } from '../background-skills/BackgroundSkillsStep';
+import { EducationStep } from '../education/EducationStep';
 import { Button } from '../ui/Button';
 import { useCreationMachine } from '../../hooks/useCreationMachine';
 import type { CreationPhase } from '../../machines/creation';
@@ -56,7 +57,7 @@ function StepPlaceholder({ label, onContinue }: { label: string; onContinue?: ()
  * - Zone 3 (bottom): HashBar (fixed)
  */
 export function WizardShell() {
-  const { currentPhase, subState, send } = useCreationMachine();
+  const { currentPhase, subState, send, state } = useCreationMachine();
   const currentStepIndex = PHASE_TO_INDEX[currentPhase];
   const prevIndexRef = useRef(currentStepIndex);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
@@ -115,6 +116,12 @@ export function WizardShell() {
               <CharacteristicsStep subState={subState} send={send} />
             ) : currentPhase === 'backgroundSkills' ? (
               <BackgroundSkillsStep onContinue={handleContinue} />
+            ) : currentPhase === 'education' ? (
+              <EducationStep
+                subState={subState}
+                send={send}
+                educationTermsUsed={state.context.educationTermsUsed}
+              />
             ) : (
               <StepPlaceholder
                 label={stepLabels[currentStepIndex]}
