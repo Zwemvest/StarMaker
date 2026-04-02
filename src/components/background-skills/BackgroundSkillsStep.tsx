@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -6,6 +6,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
+import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { BACKGROUND_SKILLS } from '../../data/background-skills';
 import { characteristicModifier } from '../../types/common';
 import { useCharacterStore } from '../../stores/character';
@@ -32,6 +33,8 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
+  const [activeDragItem, setActiveDragItem] = useState<BackgroundSkill | null>(null);
+
   const {
     assignments,
     isComplete,
@@ -42,6 +45,17 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
     slotCount,
     getId: (s) => s.name,
   });
+
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const dragId = String(event.active.id);
+    const skill = BACKGROUND_SKILLS.find((s) => s.name === dragId) ?? null;
+    setActiveDragItem(skill);
+  }, []);
+
+  const handleDragEndWrapped = useCallback((event: DragEndEvent) => {
+    handleDragEnd(event);
+    setActiveDragItem(null);
+  }, [handleDragEnd]);
 
   const assignedNames = useMemo(
     () => new Set(assignments.filter((a): a is BackgroundSkill => a !== null).map((a) => a.name)),
@@ -126,7 +140,7 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
         </p>
       </div>
 
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEndWrapped}>
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Skill Pool */}
           <div className="flex-1">
@@ -154,8 +168,11 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
         </div>
 
         <DragOverlay>
-          {/* The overlay renders the currently-dragged element;
-              dnd-kit handles this via the active element snapshot */}
+          {activeDragItem ? (
+            <div className="px-3 py-1.5 rounded border-l-2 text-sm font-mono bg-scanner-blue/20 text-scanner-blue border-l-scanner-blue shadow-lg">
+              {activeDragItem.name}
+            </div>
+          ) : null}
         </DragOverlay>
       </DndContext>
 
