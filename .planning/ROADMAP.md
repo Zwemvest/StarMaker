@@ -61,7 +61,7 @@ Plans:
 - [x] 02-08-PLAN.md — Education entry roll UX, event choices, roll log labels, relevance tooltips (gap closure)
 - [x] 02-09-PLAN.md — Background skills drag overlay and tooltip overlap fix (gap closure)
 - [x] 02-10-PLAN.md — Duplicate skill prevention and education entry navigation (gap closure)
-- [ ] 02-11-PLAN.md — Already-owned skill indicators and tooltip sizing fix (gap closure)
+- [x] 02-11-PLAN.md — Already-owned skill indicators and tooltip sizing fix (gap closure)
 
 ### Phase 3: Career Lifecycle
 **Goal**: Users can pursue any of the 12 careers through multiple terms with full rules enforcement — qualification, basic training, survival, events, commission, advancement, rank skills, aging, and mustering out
