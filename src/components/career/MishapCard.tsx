@@ -1,109 +1,82 @@
-import { useCallback } from 'react';
+import type { Mishap } from '../../types/careers';
+import { useCharacterStore } from '../../stores/character';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { useCharacterStore } from '../../stores/character';
-import type { MishapEntry } from '../../types/careers';
 
 interface MishapCardProps {
-  mishap: MishapEntry;
+  mishap: Mishap;
   onResolved: () => void;
 }
 
 /**
- * Mishap display card.
- *
- * Shown when a survival roll fails. Displays the mishap description
- * and mechanical effects, then applies effects to the character store.
- * Mishap always forces career exit.
+ * Mishap display card — shown when survival roll fails.
+ * Applies mishap effects to the store and forces career exit via MISHAP_RESOLVED.
  */
 export function MishapCard({ mishap, onResolved }: MishapCardProps) {
   const addSkill = useCharacterStore((s) => s.addSkill);
-  const setCharacteristic = useCharacterStore((s) => s.setCharacteristic);
-  const characteristics = useCharacterStore((s) => s.characteristics);
+  const addContact = useCharacterStore((s) => s.addContact);
 
-  const handleContinue = useCallback(() => {
-    // Apply mishap effects to store
-    if (mishap.effects) {
-      for (const effect of mishap.effects) {
-        switch (effect.type) {
-          case 'skill':
-            if (effect.detail) {
-              const match = effect.detail.match(/^(.+?)\s+(\d+)$/);
-              if (match) {
-                addSkill(match[1], parseInt(match[2], 10));
-              }
-            }
-            break;
-          case 'characteristic': {
-            if (effect.detail) {
-              // Parse characteristic changes like "STR -1" or "END -2"
-              const charMatch = effect.detail.match(/^(STR|DEX|END|INT|EDU|SOC)\s*([+-]\d+)$/);
-              if (charMatch) {
-                const charId = charMatch[1] as keyof typeof characteristics;
-                const delta = parseInt(charMatch[2], 10);
-                setCharacteristic(charId, Math.max(0, characteristics[charId] + delta));
-              }
-            }
-            break;
-          }
-          case 'injury':
-            // Injury effects reduce physical characteristics
-            // The specific reduction is handled by the mishap description
-            break;
-          case 'contact':
-          case 'ally':
-          case 'rival':
-          case 'enemy':
-            // SOCL-01: Contact tracking is managed through the store
-            // These are noted in the mishap description for the player
-            break;
-          default:
-            break;
-        }
+  const handleContinue = () => {
+    // Apply mishap effects
+    for (const effect of mishap.effects) {
+      if (effect.type === 'skill') {
+        // Mishap effects use 'detail' field from the data structure
+        const detail = (effect as { detail?: string }).detail ?? '';
+        const match = detail.match(/^(.+?)\s+(\d+)$/);
+        if (match) addSkill(match[1], parseInt(match[2], 10));
+      }
+      if (effect.type === 'contact' || effect.type === 'ally') {
+        const detail = (effect as { detail?: string }).detail ?? '';
+        addContact({ name: 'Contact from mishap', type: 'contact', notes: detail });
+      }
+      if (effect.type === 'rival' || effect.type === 'enemy') {
+        const detail = (effect as { detail?: string }).detail ?? '';
+        addContact({ name: 'Enemy from mishap', type: 'enemy', notes: detail });
       }
     }
-
     onResolved();
-  }, [mishap, addSkill, setCharacteristic, characteristics, onResolved]);
+  };
 
   return (
-    <Card className="border-l-4 border-l-modified/60" glowColor="#ef4444">
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-sans font-bold text-modified">MISHAP</h3>
-          <p className="text-xs text-gray-500 uppercase tracking-wide mt-1">
-            Career Terminated
-          </p>
-        </div>
-
-        {/* Narrative description */}
-        <p className="text-sm text-gray-300 italic leading-relaxed">
-          {mishap.description}
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-sans font-medium text-red-400 mb-1">Mishap!</h2>
+        <p className="text-sm text-gray-400">
+          You have suffered a mishap. You are forced to leave this career.
         </p>
-
-        {/* Mechanical effects */}
-        <div className="border-t border-gray-700 pt-2">
-          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Effects</p>
-          <p className="text-sm text-modified">{mishap.effectDescription}</p>
-          {mishap.effects && mishap.effects.length > 0 && (
-            <ul className="mt-1 space-y-0.5">
-              {mishap.effects.map((effect, i) => (
-                <li key={i} className="text-xs text-gray-400">
-                  {effect.type}: {effect.detail}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <p className="text-xs text-gray-500 italic">
-          You must leave this career and proceed to mustering out.
-        </p>
-
-        <Button variant="primary" size="md" onClick={handleContinue} className="w-full">
-          Continue to Mustering Out
-        </Button>
       </div>
-    </Card>
+
+      <Card className="border-red-700/50 border-l-4 border-l-red-600">
+        <div className="space-y-3">
+          <p className="text-sm text-gray-200 italic leading-relaxed">
+            {mishap.description}
+          </p>
+
+          <div className="border-t border-gray-700 pt-2">
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Effects</p>
+            <p className="text-sm text-red-300">{mishap.effectDescription}</p>
+            {mishap.effects.length > 0 && (
+              <ul className="mt-1 space-y-0.5">
+                {mishap.effects.map((effect, i) => (
+                  <li key={i} className="text-xs text-gray-400">
+                    {(effect as { detail?: string }).detail ?? effect.type}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="border-t border-gray-700 pt-2">
+            <p className="text-xs text-amber-400">
+              You will proceed to mustering out with reduced benefit rolls.
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      <Button variant="secondary" onClick={handleContinue} className="w-full">
+        Continue to Mustering Out
+      </Button>
+    </div>
   );
 }

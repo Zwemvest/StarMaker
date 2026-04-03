@@ -1,212 +1,150 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useState, useCallback } from 'react';
+import type { CareerEvent } from '../../types/careers';
+import type { LifeEvent } from '../../data/life-events';
+import { LIFE_EVENTS } from '../../data/life-events';
+import { useCharacterStore } from '../../stores/character';
+import { useLoggedRoll } from '../../hooks/useLoggedRoll';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { useCharacterStore } from '../../stores/character';
-import { LIFE_EVENTS } from '../../data/life-events';
-import { rollDie } from '../../engine/dice';
-import type { CareerEventEntry } from '../../types/careers';
-
-/** Life event entry shape — matches data/life-events.ts */
-interface LifeEvent {
-  rollValue: number;
-  description: string;
-  effectDescription: string;
-  effects: Array<{ type: string; detail: string; options?: string[] }>;
-  hasChoice?: boolean;
-}
 
 interface CareerEventCardProps {
-  event: CareerEventEntry;
+  event: CareerEvent;
   onResolved: () => void;
 }
 
 /**
  * Career event display card (D-03).
- *
- * Follows the same scanner-blue border, italic flavor text pattern
- * as the education EventCard. For roll=7, redirects to the life
- * events table (CRER-09).
- *
- * Shows event description and mechanical effects. If the event
- * has choices, renders choice buttons. Applies effects to the
- * character store on resolution.
+ * Shows narrative text with mechanical effects.
+ * Rolls on LIFE_EVENTS for event roll 7 (CRER-09).
+ * Applies effects to store: skills, contacts, characteristics.
  */
 export function CareerEventCard({ event, onResolved }: CareerEventCardProps) {
+  const { loggedRoll2D } = useLoggedRoll();
   const addSkill = useCharacterStore((s) => s.addSkill);
-  const setCharacteristic = useCharacterStore((s) => s.setCharacteristic);
-  const characteristics = useCharacterStore((s) => s.characteristics);
-  const skills = useCharacterStore((s) => s.skills);
-  const existingSkillNames = useMemo(() => skills.map((s) => s.name), [skills]);
+  const addContact = useCharacterStore((s) => s.addContact);
 
-  // For roll=7 life event redirect (CRER-09)
-  const [lifeEvent, setLifeEvent] = useState<LifeEvent | null>(() => {
-    if (event.rollValue === 7) {
-      // Roll on life events table
-      const roll1 = rollDie(6);
-      const roll2 = rollDie(6);
-      const lifeEventRoll = roll1 * 10 + roll2; // D66
-      const found = LIFE_EVENTS.find((le: LifeEvent) => le.rollValue === lifeEventRoll);
-      return found || null;
-    }
-    return null;
-  });
+  const [lifeEvent, setLifeEvent] = useState<LifeEvent | null>(null);
+  const [lifeEventRolled, setLifeEventRolled] = useState(false);
+  const [choiceMade, setChoiceMade] = useState(false);
 
-  // If this is a life event redirect, display the life event instead
-  const displayEvent = lifeEvent
-    ? {
-        description: lifeEvent.description,
-        effectDescription: lifeEvent.effectDescription,
-        effects: lifeEvent.effects,
-        hasChoice: lifeEvent.hasChoice || false,
-      }
-    : event;
+  const isLifeEventRedirect = event.rollValue === 7;
 
-  const applyEffects = useCallback(
-    (choiceIndex?: number) => {
-      const effects = displayEvent.effects || [];
+  const handleRollLifeEvent = useCallback(async () => {
+    const roll = await loggedRoll2D('Life Events Table');
+    const total = roll.results.reduce((a, b) => a + b, 0);
+    const found = LIFE_EVENTS.find((le) => le.rollValue === total) ?? LIFE_EVENTS[5]; // fallback to roll 7 (New Contact)
+    setLifeEvent(found);
+    setLifeEventRolled(true);
+  }, [loggedRoll2D]);
 
-      for (const effect of effects) {
-        switch (effect.type) {
-          case 'skill':
-            if (effect.detail) {
-              const match = effect.detail.match(/^(.+?)\s+(\d+)$/);
-              if (match) {
-                addSkill(match[1], parseInt(match[2], 10));
-              }
-            }
-            break;
-          case 'characteristic': {
-            if (effect.detail) {
-              const charMatch = effect.detail.match(
-                /^(STR|DEX|END|INT|EDU|SOC)\s*([+-]\d+)$/,
-              );
-              if (charMatch) {
-                const charId = charMatch[1] as keyof typeof characteristics;
-                const delta = parseInt(charMatch[2], 10);
-                setCharacteristic(
-                  charId,
-                  Math.max(0, characteristics[charId] + delta),
-                );
-              }
-            }
-            break;
-          }
-          case 'choice': {
-            // Apply the chosen option if a choice was made
-            if (choiceIndex !== undefined && effect.options && effect.options[choiceIndex]) {
-              const option = effect.options[choiceIndex];
-              const match = option.match(/^(.+?)\s+(\d+)$/);
-              if (match) {
-                addSkill(match[1], parseInt(match[2], 10));
-              }
-            }
-            break;
-          }
-          case 'contact':
-          case 'ally':
-          case 'rival':
-          case 'enemy':
-            // SOCL-01: Tracked in character store contacts array
-            break;
-          case 'benefit':
-          case 'special':
-          case 'injury':
-            // These effects are noted in the description for the player
-            break;
-          default:
-            break;
+  const applyEffects = useCallback((choiceIndex?: number) => {
+    const effectSource = lifeEvent ?? event;
+    const effects = effectSource.effects;
+
+    for (const eff of effects) {
+      // Effects have either {target, value} (life-events) or {detail} (career events)
+      const anyEff = eff as { type: string; target?: string; value?: number; detail?: string; description?: string };
+      const notes = anyEff.detail ?? anyEff.description ?? '';
+
+      if (eff.type === 'skill') {
+        if (anyEff.target && anyEff.value !== undefined) {
+          addSkill(anyEff.target, anyEff.value);
         }
       }
+      if (eff.type === 'contact') {
+        addContact({ name: 'Career Contact', type: 'contact', notes });
+      }
+      if (eff.type === 'ally') {
+        addContact({ name: 'Career Ally', type: 'ally', notes });
+      }
+      if (eff.type === 'rival') {
+        addContact({ name: 'Career Rival', type: 'rival', notes });
+      }
+      if (eff.type === 'enemy') {
+        addContact({ name: 'Career Enemy', type: 'enemy', notes });
+      }
+    }
 
-      onResolved();
-    },
-    [displayEvent.effects, addSkill, setCharacteristic, characteristics, onResolved],
-  );
+    // Apply choice if made
+    if (choiceIndex !== undefined && event.hasChoice) {
+      const choiceEffect = event.effects.find((e) => e.type === 'choice');
+      if (choiceEffect?.options?.[choiceIndex]) {
+        const option = choiceEffect.options[choiceIndex];
+        const match = option.match(/^(.+?)\s+(\d+)$/);
+        if (match) {
+          addSkill(match[1], parseInt(match[2], 10));
+        }
+      }
+    }
+  }, [lifeEvent, event, addSkill, addContact]);
 
-  // Extract choice effects
-  const choiceEffects = (displayEvent.effects || []).filter((e) => e.type === 'choice');
-  const nonChoiceEffects = (displayEvent.effects || []).filter((e) => e.type !== 'choice');
+  const handleResolve = (choiceIndex?: number) => {
+    applyEffects(choiceIndex);
+    setChoiceMade(true);
+    onResolved();
+  };
+
+  const displayEvent = lifeEvent ?? event;
 
   return (
-    <Card className="border-l-4 border-l-scanner-blue/60">
-      <div className="space-y-3">
-        {/* Life event redirect indicator */}
-        {lifeEvent && (
-          <p className="text-xs text-scanner-blue uppercase tracking-wide">
-            Life Event
-          </p>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-sans font-medium text-white mb-1">Career Event</h2>
+        {isLifeEventRedirect && !lifeEventRolled && (
+          <p className="text-sm text-amber-400">Roll on the Life Events table for this result.</p>
         )}
+      </div>
 
-        {/* Narrative description */}
-        <p className="text-sm text-gray-300 italic leading-relaxed">
-          {displayEvent.description}
-        </p>
+      <Card className="border-l-4 border-l-scanner-blue/60">
+        <div className="space-y-3">
+          <p className="text-sm text-gray-300 italic leading-relaxed">
+            {displayEvent.description}
+          </p>
 
-        {/* Mechanical effects */}
-        <div className="border-t border-gray-700 pt-2">
-          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Effects</p>
-          <p className="text-sm text-scanner-blue">{displayEvent.effectDescription}</p>
-          {nonChoiceEffects.length > 0 && (
-            <ul className="mt-1 space-y-0.5">
-              {nonChoiceEffects.map((effect, i) => (
-                <li key={i} className="text-xs text-gray-400">
-                  {effect.detail}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          <div className="border-t border-gray-700 pt-2">
+            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Effects</p>
+            <p className="text-sm text-scanner-blue">{displayEvent.effectDescription}</p>
+          </div>
 
-        {/* Choice buttons or Continue */}
-        <div className="flex flex-wrap gap-2">
-          {displayEvent.hasChoice && choiceEffects.length > 0 ? (
-            choiceEffects.map((effect) =>
-              effect.options && effect.options.length > 0 ? (
-                <div key={effect.detail} className="w-full space-y-2">
-                  <p className="text-xs text-gray-400">{effect.detail}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {effect.options.map((option, optIdx) => {
-                      const match = option.match(/^(.+?)\s+(\d+)$/);
-                      const isOwned = match
-                        ? existingSkillNames.includes(match[1])
-                        : false;
-                      return (
-                        <Button
-                          key={optIdx}
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => applyEffects(optIdx)}
-                          className={isOwned ? 'opacity-50' : ''}
-                        >
-                          {option}
-                          {isOwned && (
-                            <span className="text-gray-500 text-xs ml-1">
-                              (already owned)
-                            </span>
-                          )}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <Button
-                  key={effect.detail}
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => applyEffects(0)}
-                >
-                  {effect.detail}
-                </Button>
-              ),
-            )
-          ) : (
-            <Button variant="primary" size="sm" onClick={() => applyEffects()}>
-              Continue
+          {/* Life event redirect */}
+          {isLifeEventRedirect && !lifeEventRolled && (
+            <Button variant="primary" size="sm" onClick={handleRollLifeEvent} className="w-full">
+              Roll on Life Events Table
             </Button>
           )}
+
+          {/* Choice buttons */}
+          {(!isLifeEventRedirect || lifeEventRolled) && !choiceMade && (
+            <div className="pt-1">
+              {event.hasChoice && event.effects.some((e) => e.type === 'choice') ? (
+                event.effects
+                  .filter((e) => e.type === 'choice')
+                  .map((choiceEffect) => (
+                    <div key={choiceEffect.detail} className="space-y-2">
+                      <p className="text-xs text-gray-400">{choiceEffect.detail}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {(choiceEffect.options ?? []).map((option, i) => (
+                          <Button
+                            key={i}
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleResolve(i)}
+                          >
+                            {option}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <Button variant="primary" size="sm" onClick={() => handleResolve()} className="w-full">
+                  Continue
+                </Button>
+              )}
+            </div>
+          )}
         </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   );
 }

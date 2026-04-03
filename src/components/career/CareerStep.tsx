@@ -1,250 +1,349 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
+import { useCreationMachine } from '../../hooks/useCreationMachine';
+import { useCharacterStore } from '../../stores/character';
+import { useLoggedRoll } from '../../hooks/useLoggedRoll';
+import { CAREERS, getCareer } from '../../data/careers/index';
+import { getDraftCareer, resolveQualificationRoll, calculateQualificationDM } from '../../engine/career';
+import { characteristicModifier } from '../../types/common';
 import { CareerGrid } from './CareerGrid';
 import { AssignmentCards } from './AssignmentCards';
 import { QualFailCard } from './QualFailCard';
 import { BasicTrainingCard } from './BasicTrainingCard';
+import { SurvivalRoll } from './SurvivalRoll';
+import { MishapCard } from './MishapCard';
+import { CareerEventCard } from './CareerEventCard';
+import { CommissionCard } from './CommissionCard';
+import { AdvancementCard } from './AdvancementCard';
+import { SkillTableTabs } from './SkillTableTabs';
+import { AgingCard } from './AgingCard';
+import { ContinueLeaveCard } from './ContinueLeaveCard';
+import { TermTimeline } from './TermTimeline';
+import { MusteringOutStep } from '../mustering-out/MusteringOutStep';
+import type { CareerName } from '../../types/careers';
+import type { CreationEvent } from '../../machines/creation';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { useLoggedRoll } from '../../hooks/useLoggedRoll';
-import { useCharacterStore } from '../../stores/character';
-import { CAREERS } from '../../data/careers/index';
-import {
-  calculateQualificationDM,
-  resolveQualificationRoll,
-  getDraftCareer,
-} from '../../engine/career';
-import { characteristicModifier } from '../../types/common';
-import type { CareerName, CareerData } from '../../types/careers';
-import type { CreationEvent } from '../../machines/creation';
-
-interface CareerStepProps {
-  subState: string | undefined;
-  send: (event: CreationEvent) => void;
-}
 
 /**
  * Career step orchestrator.
- *
- * Renders different UI based on the XState nested career sub-state:
- * choosingCareer, choosingAssignment, qualificationRoll,
- * qualificationFailed, basicTraining, termLoop.*, musteringOut.
+ * Routes to the correct component based on the XState career sub-state.
+ * Wires all term loop components (Plans 05, 06, 07) into a single orchestrated flow.
  */
-export function CareerStep({ subState, send }: CareerStepProps) {
-  const { loggedRoll2D } = useLoggedRoll();
+export function CareerStep() {
+  const { state, send, subState, currentPhase } = useCreationMachine();
   const characteristics = useCharacterStore((s) => s.characteristics);
+  const skills = useCharacterStore((s) => s.skills);
+  const careerHistory = useCharacterStore((s) => s.careerHistory);
   const previousCareers = useCharacterStore((s) => s.previousCareers);
   const drafted = useCharacterStore((s) => s.drafted);
+  const age = useCharacterStore((s) => s.age);
+  const addCareerTerm = useCharacterStore((s) => s.addCareerTerm);
+  const setAge = useCharacterStore((s) => s.setAge);
   const addPreviousCareer = useCharacterStore((s) => s.addPreviousCareer);
   const setLastCareer = useCharacterStore((s) => s.setLastCareer);
   const setDrafted = useCharacterStore((s) => s.setDrafted);
+  const { loggedRoll2D } = useLoggedRoll();
 
-  const [selectedCareer, setSelectedCareer] = useState<CareerName | null>(null);
-  const [selectedAssignment, setSelectedAssignment] = useState<string | null>(null);
-  const [qualResult, setQualResult] = useState<{
-    success: boolean;
-    total: number;
-    target: number;
-    dm: number;
-    diceTotal: number;
-  } | null>(null);
-  const [qualRolled, setQualRolled] = useState(false);
-
-  const careerData: CareerData | null = useMemo(
-    () => (selectedCareer ? CAREERS[selectedCareer] : null),
-    [selectedCareer],
+  // Track local career state
+  const [currentCareer, setCurrentCareer] = useState<CareerName | null>(
+    state.context.currentCareer,
   );
-
-  const assignmentIndex = useMemo(() => {
-    if (!careerData || !selectedAssignment) return 0;
-    const idx = careerData.assignments.findIndex((a) => a.name === selectedAssignment);
-    return idx >= 0 ? idx : 0;
-  }, [careerData, selectedAssignment]);
-
-  const isFirstCareer = previousCareers.length === 0;
-
-  /** Calculate odds of success for 2D >= target (with DM) */
-  const calculateOdds = useCallback((target: number, dm: number): number => {
-    const effectiveTarget = target - dm;
-    if (effectiveTarget <= 2) return 100;
-    if (effectiveTarget > 12) return 0;
-    let successes = 0;
-    for (let d1 = 1; d1 <= 6; d1++) {
-      for (let d2 = 1; d2 <= 6; d2++) {
-        if (d1 + d2 >= effectiveTarget) successes++;
-      }
-    }
-    return Math.round((successes / 36) * 100);
-  }, []);
-
-  // --- Handlers ---
-
-  const handleChooseCareer = useCallback(
-    (career: CareerName) => {
-      setSelectedCareer(career);
-      setQualResult(null);
-      setQualRolled(false);
-      send({ type: 'CHOOSE_CAREER', career });
-    },
-    [send],
+  const [currentAssignment, setCurrentAssignment] = useState<string | null>(
+    state.context.currentAssignment,
   );
+  const [currentRank, setCurrentRank] = useState(0);
+  const [officerRank, setOfficerRank] = useState(0);
+  const [isOfficer, setIsOfficer] = useState(false);
+  const [mishapRoll, setMishapRoll] = useState(1);
+  const [lastMishap, setLastMishap] = useState(false);
 
-  const handleChooseAssignment = useCallback(
-    (assignment: string) => {
-      setSelectedAssignment(assignment);
-      send({ type: 'CHOOSE_ASSIGNMENT', assignment });
-    },
-    [send],
-  );
+  // Qualification roll state
+  const [qualResult, setQualResult] = useState<{ rolled: boolean; success: boolean }>({
+    rolled: false,
+    success: false,
+  });
+  const [rolling, setRolling] = useState(false);
 
-  const handleRollQualification = useCallback(async () => {
-    if (!careerData || !careerData.qualification) return;
+  const careerData = currentCareer ? getCareer(currentCareer) : null;
+  const assignmentIndex = careerData
+    ? careerData.assignments.findIndex((a) => a.name === currentAssignment)
+    : 0;
+  const assignmentData = careerData?.assignments[Math.max(0, assignmentIndex)];
 
-    const qual = careerData.qualification;
-    const charValue = characteristics[qual.characteristic as keyof typeof characteristics];
-    const charDM = charValue !== undefined ? characteristicModifier(charValue) : 0;
-    const prevDM = calculateQualificationDM(previousCareers.length);
-    const totalDM = charDM + prevDM;
+  const { careerTermCount, totalTermsServed, forcedToLeave, forcedToStay, isCommissioned } =
+    state.context;
 
-    const roll = await loggedRoll2D('career.qualification', totalDM, qual.target);
-    const diceTotal = roll.results.reduce((a: number, b: number) => a + b, 0);
-    const result = resolveQualificationRoll(diceTotal, totalDM, qual.target);
+  // Determine current term number for display
+  const currentTermNumber = careerHistory.length + 1;
 
-    setQualResult({
-      success: result.success,
-      total: result.total,
-      target: qual.target,
-      dm: totalDM,
-      diceTotal,
-    });
-    setQualRolled(true);
+  // Calculate DMs for qualification
+  const qualDM = calculateQualificationDM(previousCareers.length);
 
-    if (result.success) {
+  const handleChooseCareer = (career: CareerName) => {
+    setCurrentCareer(career);
+    setCurrentRank(0);
+    setOfficerRank(0);
+    setIsOfficer(false);
+    setQualResult({ rolled: false, success: false });
+    send({ type: 'CHOOSE_CAREER', career });
+  };
+
+  const handleChooseAssignment = (assignment: string) => {
+    setCurrentAssignment(assignment);
+    send({ type: 'CHOOSE_ASSIGNMENT', assignment });
+  };
+
+  const handleQualificationRoll = useCallback(async () => {
+    if (!careerData || !careerData.qualification || rolling) return;
+    setRolling(true);
+    const { characteristic, target } = careerData.qualification;
+    const charValue = characteristics[characteristic as keyof typeof characteristics] ?? 0;
+    const charDM = characteristicModifier(charValue);
+    const totalDM = qualDM + charDM;
+    const roll = await loggedRoll2D('Career Qualification Roll', totalDM, target);
+    const diceTotal = roll.results.reduce((a, b) => a + b, 0);
+    const { success } = resolveQualificationRoll(diceTotal, totalDM, target);
+    setQualResult({ rolled: true, success });
+    setRolling(false);
+    if (success) {
       send({ type: 'QUALIFICATION_SUCCESS' });
     } else {
       send({ type: 'QUALIFICATION_FAILURE' });
     }
-  }, [careerData, characteristics, previousCareers.length, loggedRoll2D, send]);
+  }, [careerData, qualDM, characteristics, loggedRoll2D, send, rolling]);
 
   const handleDraft = useCallback(async () => {
-    // Roll 1D for draft table
-    const { rollDice } = await import('../../engine/dice');
-    const draftDice = rollDice(1, 6);
-    const draftRoll = draftDice[0];
-    const draftedCareer = getDraftCareer(draftRoll);
-
-    setSelectedCareer(draftedCareer);
+    const roll = await loggedRoll2D('Draft Table');
+    const diceTotal = roll.results.reduce((a, b) => a + b, 0);
+    const roll1D = Math.max(1, Math.min(6, roll.results[0] ?? 1));
+    const draftedCareer = getDraftCareer(roll1D);
     setDrafted();
+    setCurrentCareer(draftedCareer);
+    setCurrentRank(0);
+    setIsOfficer(false);
     send({ type: 'CHOOSE_DRAFT' });
-  }, [send, setDrafted]);
+  }, [loggedRoll2D, setDrafted, send]);
 
-  const handleDrifter = useCallback(() => {
-    setSelectedCareer('drifter');
+  const handleDrifter = () => {
+    setCurrentCareer('drifter');
+    setCurrentRank(0);
+    setIsOfficer(false);
     send({ type: 'CHOOSE_DRIFTER' });
-  }, [send]);
+  };
 
-  const handleBasicTrainingComplete = useCallback(() => {
-    if (selectedCareer) {
-      addPreviousCareer(selectedCareer);
-      setLastCareer(selectedCareer);
-    }
+  const handleBasicTrainingComplete = () => {
+    // Age advances 4 years per term
+    setAge(age + 4);
     send({ type: 'BASIC_TRAINING_COMPLETE' });
-  }, [send, selectedCareer, addPreviousCareer, setLastCareer]);
+  };
 
-  // --- RENDER based on subState ---
+  const handleSurvived = () => {
+    send({ type: 'SURVIVAL_SUCCESS' });
+  };
 
-  // choosingCareer: show career grid
+  const handleMishap = (rollValue: number) => {
+    setMishapRoll(rollValue);
+    setLastMishap(true);
+    send({ type: 'SURVIVAL_FAILURE' });
+  };
+
+  const handleMishapResolved = () => {
+    // Record current term to career history before leaving
+    if (currentCareer && currentAssignment) {
+      addCareerTerm({
+        career: currentCareer,
+        assignment: currentAssignment,
+        term: currentTermNumber,
+        rank: currentRank,
+        skills: [],
+        events: ['Mishap — forced career exit'],
+      });
+      addPreviousCareer(currentCareer);
+      setLastCareer(currentCareer);
+    }
+    send({ type: 'MISHAP_RESOLVED' });
+  };
+
+  const handleEventResolved = () => {
+    send({ type: 'EVENT_RESOLVED' });
+  };
+
+  const handleCommissionResult = (success: boolean) => {
+    if (success) {
+      setIsOfficer(true);
+      setOfficerRank(1);
+    }
+    send({ type: 'COMMISSION_RESULT', success });
+  };
+
+  const handleAdvancementResult = (result: {
+    advanced: boolean;
+    forcedToLeave: boolean;
+    forcedToStay: boolean;
+  }) => {
+    if (result.advanced) {
+      if (isOfficer) {
+        setOfficerRank((r) => r + 1);
+      } else {
+        setCurrentRank((r) => r + 1);
+      }
+    }
+    send({
+      type: 'ADVANCEMENT_RESULT',
+      advanced: result.advanced,
+      forcedToLeave: result.forcedToLeave,
+      forcedToStay: result.forcedToStay,
+    });
+  };
+
+  const handleSkillSelected = () => {
+    send({ type: 'SKILL_SELECTED' });
+  };
+
+  const handleAgingResolved = () => {
+    send({ type: 'AGING_RESOLVED' });
+  };
+
+  const handleContinueCareer = () => {
+    // Record term to history
+    if (currentCareer && currentAssignment) {
+      addCareerTerm({
+        career: currentCareer,
+        assignment: currentAssignment,
+        term: currentTermNumber,
+        rank: currentRank,
+        skills: [],
+        events: [],
+      });
+    }
+    setAge(age + 4);
+    send({ type: 'CONTINUE_CAREER' });
+  };
+
+  const handleChangeCareer = () => {
+    if (currentCareer) {
+      addPreviousCareer(currentCareer);
+      setLastCareer(currentCareer);
+    }
+    send({ type: 'CHANGE_CAREER' });
+  };
+
+  const handleMusterOut = () => {
+    if (currentCareer && currentAssignment) {
+      addCareerTerm({
+        career: currentCareer,
+        assignment: currentAssignment,
+        term: currentTermNumber,
+        rank: currentRank,
+        skills: [],
+        events: [],
+      });
+    }
+    if (currentCareer) {
+      addPreviousCareer(currentCareer);
+      setLastCareer(currentCareer);
+    }
+    send({ type: 'MUSTER_OUT' });
+  };
+
+  // Drifter has no qualification
+  const handleDrifterQualAuto = () => {
+    send({ type: 'QUALIFICATION_SUCCESS' });
+  };
+
+  // Get current rank title for display
+  const getRankTitle = (): string => {
+    if (!careerData) return `Rank ${currentRank}`;
+    const rankTable = isOfficer ? careerData.ranks.officer : careerData.ranks.enlisted;
+    const entry = rankTable?.find((r) => r.level === currentRank);
+    return entry?.title ?? `Rank ${currentRank}`;
+  };
+
+  // --- Mustering Out ---
+  if (subState === 'musteringOut' || currentPhase === 'musteringOut') {
+    const musterCareer = currentCareer ? getCareer(currentCareer) : CAREERS['drifter'];
+    const isMilitary = musterCareer.isMilitary;
+
+    return (
+      <MusteringOutStep
+        career={musterCareer}
+        termsInCareer={careerTermCount}
+        totalTermsServed={totalTermsServed}
+        mishapTerm={lastMishap}
+        enlistedRank={currentRank}
+        officerRank={officerRank}
+        isMilitary={isMilitary}
+        send={send}
+      />
+    );
+  }
+
+  // --- Career selection ---
   if (subState === 'choosingCareer') {
     return <CareerGrid onChoose={handleChooseCareer} />;
   }
 
-  // choosingAssignment: show assignment cards for selected career
-  if (subState === 'choosingAssignment' && careerData) {
+  if (subState === 'choosingAssignment') {
+    if (!careerData) return null;
     return <AssignmentCards career={careerData} onChoose={handleChooseAssignment} />;
   }
 
-  // qualificationRoll: show qualification roll card
-  if (subState === 'qualificationRoll' && careerData) {
-    const qual = careerData.qualification;
+  // --- Qualification roll ---
+  if (subState === 'qualificationRoll') {
+    if (!careerData) return null;
 
-    // Drifter has no qualification — auto-succeed
-    if (!qual) {
-      // This shouldn't normally happen since Drifter bypasses qualification,
-      // but handle gracefully
-      send({ type: 'QUALIFICATION_SUCCESS' });
-      return null;
-    }
-
-    if (!qualRolled) {
-      const charValue = characteristics[qual.characteristic as keyof typeof characteristics];
-      const charDM = charValue !== undefined ? characteristicModifier(charValue) : 0;
-      const prevDM = calculateQualificationDM(previousCareers.length);
-      const totalDM = charDM + prevDM;
-      const odds = calculateOdds(qual.target, totalDM);
-
+    // Drifter has no qualification requirement
+    if (!careerData.qualification) {
       return (
         <div className="space-y-4">
-          <h2 className="text-2xl font-sans font-medium text-white">
-            {careerData.name} — Qualification Roll
-          </h2>
-          <Card>
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <p className="text-sm text-gray-300">
-                  Qualification target:{' '}
-                  <span className="text-scanner-blue font-mono font-bold">
-                    {qual.characteristic} {qual.target}+
-                  </span>
-                </p>
-                {charDM !== 0 && (
-                  <p className="text-xs text-gray-400">
-                    {qual.characteristic} DM: <span className="font-mono">{charDM >= 0 ? `+${charDM}` : charDM}</span>
-                  </p>
-                )}
-                {prevDM !== 0 && (
-                  <p className="text-xs text-gray-400">
-                    Previous careers penalty: <span className="font-mono">{prevDM}</span>
-                  </p>
-                )}
-                <p className="text-xs text-gray-400">
-                  Total DM: <span className="font-mono">{totalDM >= 0 ? `+${totalDM}` : totalDM}</span>
-                </p>
-                <p className="text-sm text-gray-300">
-                  Odds of success:{' '}
-                  <span className={`font-mono font-bold ${odds >= 50 ? 'text-legitimate' : 'text-modified'}`}>
-                    {odds}%
-                  </span>
+          <h2 className="text-2xl font-sans font-medium text-white">Qualification</h2>
+          <p className="text-sm text-gray-300">
+            <span className="capitalize">{currentCareer}</span> requires no qualification roll.
+          </p>
+          <Button variant="primary" onClick={handleDrifterQualAuto}>
+            Enter Career
+          </Button>
+        </div>
+      );
+    }
+
+    const { characteristic, target } = careerData.qualification;
+    const charValue = characteristics[characteristic as keyof typeof characteristics] ?? 0;
+    const charDM = characteristicModifier(charValue);
+    const totalDM = qualDM + charDM;
+
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-sans font-medium text-white mb-1">Qualification Roll</h2>
+        <Card>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Target</p>
+                <p className="font-mono text-white font-bold text-xl">{characteristic} {target}+</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Your DM</p>
+                <p className={`font-mono font-bold text-xl ${totalDM >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {totalDM >= 0 ? `+${totalDM}` : totalDM}
                 </p>
               </div>
-              <Button variant="primary" onClick={handleRollQualification}>
-                Roll for Qualification
-              </Button>
             </div>
-          </Card>
-        </div>
-      );
-    }
-
-    // Show result (brief flash before state transitions)
-    if (qualResult) {
-      return (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-sans font-medium text-white">
-            {careerData.name} — Qualification
-          </h2>
-          <Card>
-            <p className={`text-lg font-sans font-medium ${qualResult.success ? 'text-legitimate' : 'text-modified'}`}>
-              {qualResult.success ? 'Qualified!' : 'Failed'}
-            </p>
-            <p className="text-sm text-gray-400 mt-1">
-              Rolled {qualResult.diceTotal} + DM {qualResult.dm} = {qualResult.total} (needed {qualResult.target}+)
-            </p>
-          </Card>
-        </div>
-      );
-    }
+            {qualDM < 0 && (
+              <p className="text-xs text-amber-400">Includes DM{qualDM} for previous career(s)</p>
+            )}
+            {!qualResult.rolled && (
+              <Button variant="primary" className="w-full" onClick={handleQualificationRoll} disabled={rolling}>
+                {rolling ? 'Rolling...' : 'Roll for Qualification'}
+              </Button>
+            )}
+          </div>
+        </Card>
+      </div>
+    );
   }
 
-  // qualificationFailed: show draft/drifter choice
+  // --- Qualification failed ---
   if (subState === 'qualificationFailed') {
     return (
       <QualFailCard
@@ -255,53 +354,208 @@ export function CareerStep({ subState, send }: CareerStepProps) {
     );
   }
 
-  // basicTraining: show basic training skills
-  if (subState === 'basicTraining' && careerData) {
+  // --- Basic training ---
+  if (subState === 'basicTraining') {
+    if (!careerData) return null;
+    const isFirstCareer = previousCareers.length === 0;
     return (
       <BasicTrainingCard
         career={careerData}
-        assignmentIndex={assignmentIndex}
+        assignmentIndex={Math.max(0, assignmentIndex)}
         isFirstCareer={isFirstCareer}
         onComplete={handleBasicTrainingComplete}
       />
     );
   }
 
-  // termLoop sub-states — placeholder for Plan 06
-  if (subState && subState.startsWith('termLoop')) {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-sans font-medium text-white">Career Term</h2>
-        <Card>
-          <p className="text-gray-400 text-sm">
-            Term loop content will be implemented in Plan 06.
-          </p>
-          <p className="text-xs text-gray-500 mt-2">
-            Current sub-state: {subState}
-          </p>
-        </Card>
-      </div>
+  // --- Term loop sub-states ---
+  // The subState for nested states will be the innermost state value
+  // We need to detect termLoop.* substates
+  const termLoopState = (() => {
+    const value = state.value;
+    if (typeof value === 'object' && value !== null) {
+      const careerState = (value as Record<string, unknown>)['career'];
+      if (typeof careerState === 'object' && careerState !== null) {
+        const termLoop = (careerState as Record<string, unknown>)['termLoop'];
+        if (typeof termLoop === 'string') return termLoop;
+        if (typeof termLoop === 'object' && termLoop !== null) {
+          return Object.keys(termLoop)[0];
+        }
+      }
+    }
+    return null;
+  })();
+
+  // Career timeline wrapper for term loop states
+  const withTimeline = (content: React.ReactNode) => (
+    <div className="space-y-6">
+      <TermTimeline
+        careerHistory={careerHistory}
+        currentTerm={
+          currentCareer && currentAssignment
+            ? {
+                career: currentCareer,
+                assignment: currentAssignment,
+                rank: currentRank,
+                termNumber: currentTermNumber,
+              }
+            : undefined
+        }
+      />
+      {content}
+    </div>
+  );
+
+  if (termLoopState === 'survivalRoll' || subState === 'survivalRoll') {
+    if (!assignmentData) return null;
+    const charKey = assignmentData.survival.characteristic as keyof typeof characteristics;
+    return withTimeline(
+      <SurvivalRoll
+        assignment={assignmentData}
+        characteristicValue={characteristics[charKey] ?? 0}
+        onSurvived={handleSurvived}
+        onMishap={handleMishap}
+      />,
     );
   }
 
-  // musteringOut — placeholder for Plan 07
-  if (subState === 'musteringOut') {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-sans font-medium text-white">Mustering Out</h2>
-        <Card>
-          <p className="text-gray-400 text-sm">
-            Mustering out content will be implemented in Plan 07.
-          </p>
-        </Card>
-      </div>
+  if (termLoopState === 'mishap' || subState === 'mishap') {
+    if (!careerData) return null;
+    const mishapEntry = careerData.mishaps.find((m) => m.rollValue === mishapRoll)
+      ?? careerData.mishaps[0];
+    return withTimeline(
+      <MishapCard mishap={mishapEntry} onResolved={handleMishapResolved} />,
+    );
+  }
+
+  if (termLoopState === 'event' || subState === 'event') {
+    if (!careerData) return null;
+    // Roll for event inline — show a "Roll for Event" button if no event yet
+    return withTimeline(<EventRoller career={careerData} onResolved={handleEventResolved} />);
+  }
+
+  if (termLoopState === 'commission' || subState === 'commission') {
+    if (!careerData || !careerData.commission || isCommissioned) {
+      // Already commissioned — skip by sending COMMISSION_RESULT with success: false (stays in advancement)
+      // This should be handled by machine guard, but belt-and-suspenders
+      send({ type: 'COMMISSION_RESULT', success: false });
+      return null;
+    }
+    const charKey = careerData.commission.characteristic as keyof typeof characteristics;
+    return withTimeline(
+      <CommissionCard
+        career={careerData}
+        commissionTarget={careerData.commission}
+        characteristicValue={characteristics[charKey] ?? 0}
+        termsInCareer={careerTermCount}
+        onResult={handleCommissionResult}
+      />,
+    );
+  }
+
+  if (termLoopState === 'advancement' || subState === 'advancement') {
+    if (!careerData || !assignmentData) return null;
+    const charKey = assignmentData.advancement.characteristic as keyof typeof characteristics;
+    return withTimeline(
+      <AdvancementCard
+        career={careerData}
+        advancementTarget={assignmentData.advancement}
+        characteristicValue={characteristics[charKey] ?? 0}
+        termsServed={totalTermsServed}
+        currentRank={currentRank}
+        isOfficer={isOfficer}
+        onResult={handleAdvancementResult}
+      />,
+    );
+  }
+
+  if (termLoopState === 'skillSelection' || subState === 'skillSelection') {
+    if (!careerData) return null;
+    return withTimeline(
+      <SkillTableTabs
+        career={careerData}
+        assignmentIndex={Math.max(0, assignmentIndex)}
+        isCommissioned={isCommissioned}
+        edu={characteristics.EDU}
+        skills={skills}
+        int={characteristics.INT}
+        onSkillSelected={handleSkillSelected}
+      />,
+    );
+  }
+
+  if (termLoopState === 'aging' || subState === 'aging') {
+    return withTimeline(
+      <AgingCard
+        age={age}
+        characteristics={characteristics}
+        onResolved={handleAgingResolved}
+      />,
+    );
+  }
+
+  if (termLoopState === 'continueOrLeave' || subState === 'continueOrLeave') {
+    return withTimeline(
+      <ContinueLeaveCard
+        currentRank={getRankTitle()}
+        termsInCareer={careerTermCount}
+        totalTerms={totalTermsServed}
+        age={age}
+        forcedToLeave={forcedToLeave}
+        forcedToStay={forcedToStay}
+        onContinue={handleContinueCareer}
+        onChangeCareer={handleChangeCareer}
+        onMusterOut={handleMusterOut}
+      />,
     );
   }
 
   // Fallback
   return (
-    <div className="text-gray-400">
-      <p>Career state: {subState || 'unknown'}</p>
+    <div className="text-gray-400 text-sm">
+      <p>Career state: {subState ?? termLoopState ?? 'unknown'}</p>
+      <p className="text-xs text-gray-600 mt-1">{JSON.stringify(state.value)}</p>
     </div>
   );
+}
+
+/**
+ * Helper component to handle the event roll within the CareerStep orchestrator.
+ * Rolls 2D on mount, looks up the career event, and shows CareerEventCard.
+ */
+function EventRoller({
+  career,
+  onResolved,
+}: {
+  career: ReturnType<typeof getCareer>;
+  onResolved: () => void;
+}) {
+  const { loggedRoll2D } = useLoggedRoll();
+  const [event, setEvent] = useState<(typeof career.events)[0] | null>(null);
+  const [rolling, setRolling] = useState(false);
+
+  const handleRoll = useCallback(async () => {
+    setRolling(true);
+    const roll = await loggedRoll2D('Career Event');
+    const total = roll.results.reduce((a, b) => a + b, 0);
+    // D66-style events: roll 2D, match to rollValue 2-12
+    const found = career.events.find((e) => e.rollValue === total)
+      ?? career.events[Math.floor(career.events.length / 2)]; // fallback to middle
+    setEvent(found);
+    setRolling(false);
+  }, [loggedRoll2D, career.events]);
+
+  if (!event) {
+    return (
+      <div className="space-y-4">
+        <h2 className="text-2xl font-sans font-medium text-white mb-1">Career Event</h2>
+        <p className="text-sm text-gray-400">Roll to determine your career event for this term.</p>
+        <Button variant="primary" onClick={handleRoll} disabled={rolling} className="w-full">
+          {rolling ? 'Rolling...' : 'Roll for Event'}
+        </Button>
+      </div>
+    );
+  }
+
+  return <CareerEventCard event={event} onResolved={onResolved} />;
 }

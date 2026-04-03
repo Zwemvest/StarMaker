@@ -8,56 +8,49 @@ interface QualFailCardProps {
 }
 
 /**
- * Qualification failure card (D-12 pattern).
- *
- * Shows two options when a character fails qualification:
- * 1. Submit to Draft — onDraft handler rolls 1D and sends CHOOSE_DRAFT (CRER-20)
- * 2. Become a Drifter — onDrifter handler sends CHOOSE_DRIFTER
+ * Qualification failure choice card (D-12).
+ * Shows Draft or Drifter options when qualification fails (CRER-20).
  */
 export function QualFailCard({ onDraft, onDrifter, alreadyDrafted }: QualFailCardProps) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-sans font-medium text-modified">Qualification Failed</h2>
-      <p className="text-sm text-gray-400">
-        You did not meet the qualification requirements. Choose how to proceed:
-      </p>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-sans font-medium text-white mb-1 text-red-400">
+          Qualification Failed
+        </h2>
+        <p className="text-sm text-gray-400">
+          You did not qualify for this career. Choose one of the following options.
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Draft option */}
-        <Card className={alreadyDrafted ? 'opacity-40' : 'hover:border-scanner-blue transition-colors'}>
-          <h3 className="text-white font-sans font-medium mb-2">Submit to Draft</h3>
-          <p className="text-xs text-gray-400 mb-3">
-            The military assigns you to a random career. Roll 1D on the draft table
-            to determine your service branch.
+        <Card className="space-y-3">
+          <h3 className="text-base font-medium text-white">Submit to Draft</h3>
+          <p className="text-xs text-gray-400">
+            The draft board assigns you to a random military or government career.
+            Roll 1D: 1=Navy, 2=Army, 3=Marine, 4=Merchant, 5=Scout, 6=Agent.
           </p>
-          <p className="text-xs text-gray-500 mb-3 italic">
-            You may be assigned to any of: Navy, Army, Marines, Merchants, Scouts, or Agents.
-          </p>
+          {alreadyDrafted && (
+            <p className="text-xs text-amber-400">(Already drafted — you may only be drafted once)</p>
+          )}
           <Button
             variant="secondary"
             size="sm"
-            onClick={onDraft}
+            className="w-full"
             disabled={alreadyDrafted}
+            onClick={onDraft}
           >
-            {alreadyDrafted ? '(Already drafted)' : 'Submit to Draft'}
+            {alreadyDrafted ? 'Already Drafted' : 'Submit to Draft'}
           </Button>
         </Card>
 
-        {/* Drifter option */}
-        <Card className="hover:border-scanner-blue transition-colors">
-          <h3 className="text-white font-sans font-medium mb-2">Become a Drifter</h3>
-          <p className="text-xs text-gray-400 mb-3">
-            Live on the fringes of society. No qualification required.
-            Drifter careers use specialist skills for basic training instead of service skills.
+        <Card className="space-y-3">
+          <h3 className="text-base font-medium text-white">Become a Drifter</h3>
+          <p className="text-xs text-gray-400">
+            No career qualification needed. Enter the Drifter career automatically
+            and take any assignment.
           </p>
-          <p className="text-xs text-gray-500 mb-3 italic">
-            Assignments: Barbarian, Wanderer, or Scavenger.
-          </p>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={onDrifter}
-          >
+          <Button variant="primary" size="sm" className="w-full" onClick={onDrifter}>
             Become a Drifter
           </Button>
         </Card>

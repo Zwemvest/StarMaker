@@ -128,8 +128,8 @@ export function WizardShell() {
                 send={send}
                 educationTermsUsed={state.context.educationTermsUsed}
               />
-            ) : currentPhase === 'career' ? (
-              <CareerStep subState={subState} send={send} />
+            ) : currentPhase === 'career' || currentPhase === 'musteringOut' ? (
+              <CareerStep />
             ) : (
               <StepPlaceholder
                 label={stepLabels[currentStepIndex]}

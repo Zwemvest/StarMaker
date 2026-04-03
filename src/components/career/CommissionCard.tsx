@@ -1,159 +1,121 @@
 import { useState, useCallback } from 'react';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { useLoggedRoll } from '../../hooks/useLoggedRoll';
+import type { CharacteristicCheck } from '../../types/careers';
 import { resolveCommissionRoll, applyRankSkill } from '../../engine/career';
+import { useLoggedRoll } from '../../hooks/useLoggedRoll';
 import { characteristicModifier } from '../../types/common';
 import { useCharacterStore } from '../../stores/character';
-import type { CheckTarget, CareerData } from '../../types/careers';
+import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
+import type { CareerData } from '../../types/careers';
 
 interface CommissionCardProps {
-  commissionTarget: CheckTarget;
+  career: CareerData;
+  commissionTarget: CharacteristicCheck;
   characteristicValue: number;
   termsInCareer: number;
-  career: CareerData;
   onResult: (success: boolean) => void;
 }
 
-type RollState = 'pending' | 'success' | 'failure';
-
 /**
- * Commission roll card (D-06).
- *
- * Only shown for military careers when not yet commissioned.
+ * Commission roll card for military careers (D-06).
  * Applies DM-1 per term after the first (CRER-11).
- * On success, grants officer rank 1 and applies bonus skill.
+ * On success, grants rank 1 officer bonus skill (CRER-15).
  */
 export function CommissionCard({
+  career,
   commissionTarget,
   characteristicValue,
   termsInCareer,
-  career,
   onResult,
 }: CommissionCardProps) {
   const { loggedRoll2D } = useLoggedRoll();
   const addSkill = useCharacterStore((s) => s.addSkill);
-  const [rollState, setRollState] = useState<RollState>('pending');
-  const [rollTotal, setRollTotal] = useState(0);
 
-  const characteristicDM = characteristicModifier(characteristicValue);
-  // DM-1 per term after first (CRER-11)
-  const termPenalty = termsInCareer > 1 ? -(termsInCareer - 1) : 0;
-  const totalDM = characteristicDM + termPenalty;
+  const [rolled, setRolled] = useState(false);
+  const [rolling, setRolling] = useState(false);
+  const [result, setResult] = useState<{ success: boolean; total: number; diceTotal: number } | null>(null);
+
+  const charDM = characteristicModifier(characteristicValue);
+  const termPenalty = -Math.max(0, termsInCareer - 1);
+  const totalDM = charDM + termPenalty;
 
   const handleRoll = useCallback(async () => {
-    const roll = await loggedRoll2D(
-      `career.commission.${career.name}`,
-      totalDM,
-      commissionTarget.target,
-    );
+    setRolling(true);
+    const entry = await loggedRoll2D('Commission Roll', charDM, commissionTarget.target);
+    const diceTotal = entry.results.reduce((a, b) => a + b, 0);
+    const res = resolveCommissionRoll(diceTotal, charDM, commissionTarget.target, termsInCareer);
 
-    const diceTotal = roll.results.reduce((a, b) => a + b, 0);
-    setRollTotal(roll.total);
-
-    const result = resolveCommissionRoll(
-      diceTotal,
-      totalDM,
-      commissionTarget.target,
-      termsInCareer,
-    );
-
-    if (result.success) {
-      setRollState('success');
-
-      // Apply officer rank 1 bonus skill
-      const rankSkill = applyRankSkill(career, 1, true);
-      if (rankSkill) {
-        addSkill(rankSkill.skill, rankSkill.level);
+    if (res.success) {
+      // Apply rank 1 officer bonus skill
+      const bonus = applyRankSkill(career, 1, true);
+      if (bonus) {
+        addSkill(bonus.skill, bonus.level);
       }
-
-      setTimeout(() => onResult(true), 1500);
-    } else {
-      setRollState('failure');
-      setTimeout(() => onResult(false), 1000);
     }
-  }, [loggedRoll2D, career, totalDM, commissionTarget.target, termsInCareer, addSkill, onResult]);
+
+    setResult({ success: res.success, total: res.total, diceTotal });
+    setRolled(true);
+    setRolling(false);
+  }, [loggedRoll2D, charDM, commissionTarget, termsInCareer, career, addSkill]);
 
   return (
-    <Card
-      className={`transition-all duration-500 ${
-        rollState === 'success'
-          ? 'border-legitimate/60'
-          : rollState === 'failure'
-            ? 'border-gray-600'
-            : 'border-gray-700'
-      }`}
-      glowColor={rollState === 'success' ? '#22c55e' : undefined}
-    >
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-sans font-medium text-white">Commission Roll</h3>
-          <p className="text-sm text-gray-400 mt-1">
-            Apply for an officer commission in the {career.name}.
-          </p>
-        </div>
-
-        {/* Roll info */}
-        <div className="space-y-1">
-          <p className="text-sm text-gray-300">
-            Target:{' '}
-            <span className="text-scanner-blue font-mono font-bold">
-              {commissionTarget.characteristic} {commissionTarget.target}+
-            </span>
-          </p>
-          <p className="text-sm text-gray-300">
-            {commissionTarget.characteristic} DM:{' '}
-            <span className="font-mono">
-              {characteristicDM >= 0 ? `+${characteristicDM}` : characteristicDM}
-            </span>
-          </p>
-          {termPenalty < 0 && (
-            <p className="text-sm text-modified">
-              Term penalty:{' '}
-              <span className="font-mono">{termPenalty}</span>
-              <span className="text-xs text-gray-500 ml-1">
-                (-1 per term after first)
-              </span>
-            </p>
-          )}
-          <p className="text-sm text-gray-300">
-            Total DM:{' '}
-            <span className="font-mono font-bold">
-              {totalDM >= 0 ? `+${totalDM}` : totalDM}
-            </span>
-          </p>
-        </div>
-
-        {/* Pending state */}
-        {rollState === 'pending' && (
-          <Button variant="primary" size="md" onClick={handleRoll} className="w-full">
-            Roll for Commission
-          </Button>
-        )}
-
-        {/* Success state */}
-        {rollState === 'success' && (
-          <div className="text-center space-y-2">
-            <p className="text-3xl font-mono font-bold text-legitimate">{rollTotal}</p>
-            <p className="text-lg font-sans font-medium text-legitimate">
-              Commissioned!
-            </p>
-            <p className="text-sm text-gray-400">
-              You have been granted an officer commission.
-            </p>
-          </div>
-        )}
-
-        {/* Failure state */}
-        {rollState === 'failure' && (
-          <div className="text-center space-y-2">
-            <p className="text-3xl font-mono font-bold text-gray-500">{rollTotal}</p>
-            <p className="text-lg font-sans font-medium text-gray-400">
-              Not Commissioned
-            </p>
-          </div>
-        )}
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-sans font-medium text-white mb-1">Commission Roll</h2>
+        <p className="text-sm text-gray-400">Roll 2D — success means you become an Officer.</p>
       </div>
-    </Card>
+
+      <Card>
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Target</p>
+              <p className="font-mono text-white font-bold">
+                {commissionTarget.characteristic} {commissionTarget.target}+
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Char DM</p>
+              <p className={`font-mono font-bold ${charDM >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {charDM >= 0 ? `+${charDM}` : charDM}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Term Penalty</p>
+              <p className={`font-mono font-bold ${termPenalty < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                {termPenalty === 0 ? '0' : termPenalty}
+              </p>
+            </div>
+          </div>
+
+          {!rolled && (
+            <Button
+              variant="primary"
+              className="w-full"
+              onClick={handleRoll}
+              disabled={rolling}
+            >
+              {rolling ? 'Rolling...' : 'Roll for Commission'}
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      {result && (
+        <Card className={result.success ? 'border-green-700/50' : 'border-gray-600'}>
+          <div className="space-y-2">
+            <p className="text-xs text-gray-500">
+              Rolled {result.diceTotal} + ({totalDM >= 0 ? `+${totalDM}` : totalDM}) = {result.total}
+            </p>
+            <p className={`text-xl font-bold ${result.success ? 'text-green-400' : 'text-gray-400'}`}>
+              {result.success ? 'Commissioned! You are now an Officer.' : 'Not Commissioned.'}
+            </p>
+            <Button variant={result.success ? 'primary' : 'secondary'} className="w-full" onClick={() => onResult(result.success)}>
+              Continue
+            </Button>
+          </div>
+        </Card>
+      )}
+    </div>
   );
 }

@@ -1,11 +1,10 @@
 import { useState, useCallback } from 'react';
+import type { AssignmentData } from '../../types/careers';
+import { resolveSurvivalRoll } from '../../engine/career';
+import { useLoggedRoll } from '../../hooks/useLoggedRoll';
+import { characteristicModifier } from '../../types/common';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { useLoggedRoll } from '../../hooks/useLoggedRoll';
-import { resolveSurvivalRoll } from '../../engine/career';
-import { characteristicModifier } from '../../types/common';
-import { rollDie } from '../../engine/dice';
-import type { AssignmentData } from '../../types/careers';
 
 interface SurvivalRollProps {
   assignment: AssignmentData;
@@ -14,151 +13,134 @@ interface SurvivalRollProps {
   onMishap: (rollValue: number) => void;
 }
 
-type RollState = 'pending' | 'survived' | 'mishap';
-
 /**
  * Dramatic survival roll card (D-05).
- *
- * Shows the survival target, DM, and a high-stakes "Roll for Survival" button.
- * Pass: green relief glow. Fail: red flash + "MISHAP!" text.
- * Natural 2 always fails regardless of DM (CRER-07).
+ * Handles natural 2 always-fail (CRER-07) with special messaging.
  */
-export function SurvivalRoll({
-  assignment,
-  characteristicValue,
-  onSurvived,
-  onMishap,
-}: SurvivalRollProps) {
+export function SurvivalRoll({ assignment, characteristicValue, onSurvived, onMishap }: SurvivalRollProps) {
   const { loggedRoll2D } = useLoggedRoll();
-  const [rollState, setRollState] = useState<RollState>('pending');
-  const [rollTotal, setRollTotal] = useState(0);
-  const [naturalTwo, setNaturalTwo] = useState(false);
-  const [dm, setDm] = useState(0);
+  const [rolled, setRolled] = useState(false);
+  const [result, setResult] = useState<{
+    diceTotal: number;
+    dm: number;
+    survived: boolean;
+    naturalTwo: boolean;
+    mishapRoll: number;
+  } | null>(null);
+  const [rolling, setRolling] = useState(false);
 
-  const survivalTarget = assignment.survival;
-  const characteristicDM = characteristicModifier(characteristicValue);
+  const dm = characteristicModifier(characteristicValue);
+  const { characteristic, target } = assignment.survival;
 
   const handleRoll = useCallback(async () => {
-    const currentDM = characteristicDM;
-    setDm(currentDM);
+    setRolling(true);
+    const entry = await loggedRoll2D('Career Survival Roll', dm, target);
+    const diceTotal = entry.results.reduce((a, b) => a + b, 0);
+    const resolution = resolveSurvivalRoll(diceTotal, dm, target);
 
-    const roll = await loggedRoll2D(
-      `career.survival.${assignment.name}`,
-      currentDM,
-      survivalTarget.target,
-    );
-
-    const diceTotal = roll.results.reduce((a, b) => a + b, 0);
-    setRollTotal(roll.total);
-
-    const result = resolveSurvivalRoll(diceTotal, currentDM, survivalTarget.target);
-    setNaturalTwo(result.naturalTwo);
-
-    if (result.survived) {
-      setRollState('survived');
-      // Brief pause for dramatic effect then continue
-      setTimeout(() => onSurvived(), 1500);
-    } else {
-      setRollState('mishap');
-      // Roll 1D for mishap table index
-      const mishapRoll = rollDie(6);
-      setTimeout(() => onMishap(mishapRoll), 2000);
+    let mishapRoll = 0;
+    if (!resolution.survived) {
+      // Roll 1D for mishap table (done synchronously for display)
+      mishapRoll = Math.ceil(Math.random() * 6);
     }
-  }, [
-    assignment.name,
-    characteristicDM,
-    loggedRoll2D,
-    onMishap,
-    onSurvived,
-    survivalTarget.target,
-  ]);
+
+    setResult({
+      diceTotal,
+      dm,
+      survived: resolution.survived,
+      naturalTwo: resolution.naturalTwo,
+      mishapRoll,
+    });
+    setRolled(true);
+    setRolling(false);
+  }, [loggedRoll2D, dm, target]);
+
+  const handleContinue = useCallback(() => {
+    if (!result) return;
+    if (result.survived) {
+      onSurvived();
+    } else {
+      onMishap(result.mishapRoll);
+    }
+  }, [result, onSurvived, onMishap]);
 
   return (
-    <Card
-      className={`transition-all duration-500 ${
-        rollState === 'survived'
-          ? 'border-legitimate/60'
-          : rollState === 'mishap'
-            ? 'border-modified/60'
-            : 'border-gray-700'
-      }`}
-      glowColor={
-        rollState === 'survived'
-          ? '#22c55e'
-          : rollState === 'mishap'
-            ? '#ef4444'
-            : undefined
-      }
-    >
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-sans font-medium text-white">Survival Roll</h3>
-          <p className="text-sm text-gray-400 mt-1">
-            Your Traveller must survive the dangers of this term.
-          </p>
-        </div>
-
-        {/* Roll info */}
-        <div className="space-y-1">
-          <p className="text-sm text-gray-300">
-            Target:{' '}
-            <span className="text-scanner-blue font-mono font-bold">
-              {survivalTarget.characteristic} {survivalTarget.target}+
-            </span>
-          </p>
-          <p className="text-sm text-gray-300">
-            {survivalTarget.characteristic} DM:{' '}
-            <span className="font-mono">
-              {characteristicDM >= 0 ? `+${characteristicDM}` : characteristicDM}
-            </span>
-          </p>
-        </div>
-
-        {/* Pending state: roll button */}
-        {rollState === 'pending' && (
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={handleRoll}
-            className="w-full bg-red-600 hover:bg-red-700 border-red-600 text-white font-bold tracking-wide"
-          >
-            Roll for Survival
-          </Button>
-        )}
-
-        {/* Survived state */}
-        {rollState === 'survived' && (
-          <div className="text-center space-y-2">
-            <p className="text-3xl font-mono font-bold text-legitimate">
-              {rollTotal}
-            </p>
-            <p className="text-lg font-sans font-medium text-legitimate">
-              SURVIVED
-            </p>
-          </div>
-        )}
-
-        {/* Mishap state */}
-        {rollState === 'mishap' && (
-          <div className="text-center space-y-2">
-            <p className="text-3xl font-mono font-bold text-modified">
-              {rollTotal}
-            </p>
-            {naturalTwo ? (
-              <p className="text-lg font-sans font-bold text-modified animate-pulse">
-                Natural 2 — Automatic Failure!
-              </p>
-            ) : (
-              <p className="text-lg font-sans font-bold text-modified animate-pulse">
-                MISHAP!
-              </p>
-            )}
-            <p className="text-sm text-gray-400">
-              Your career has ended badly...
-            </p>
-          </div>
-        )}
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-sans font-medium text-white mb-1">Survival Roll</h2>
+        <p className="text-sm text-gray-400">
+          Roll 2D against your survival target. Failure means a mishap — forced career exit.
+        </p>
       </div>
-    </Card>
+
+      <Card>
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Survival Target</p>
+              <p className="text-2xl font-mono font-bold text-white">
+                {characteristic} {target}+
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Your DM</p>
+              <p className={`text-2xl font-mono font-bold ${dm >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {dm >= 0 ? `+${dm}` : dm}
+              </p>
+            </div>
+          </div>
+
+          {!rolled && (
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full mt-2 font-bold tracking-wide"
+              onClick={handleRoll}
+              disabled={rolling}
+            >
+              {rolling ? 'Rolling...' : 'Roll for Survival'}
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      {result && (
+        <Card className={result.survived ? 'border-green-700/50 bg-green-900/10' : 'border-red-700/50 bg-red-900/10'}>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Result</p>
+                <p className={`text-3xl font-mono font-bold ${result.survived ? 'text-green-400' : 'text-red-400'}`}>
+                  {result.diceTotal} + ({dm >= 0 ? `+${dm}` : dm}) = {result.diceTotal + dm}
+                </p>
+              </div>
+              <div className="text-right">
+                {result.survived ? (
+                  <p className="text-2xl font-bold text-green-400">SURVIVED</p>
+                ) : (
+                  <p className="text-2xl font-bold text-red-400">MISHAP!</p>
+                )}
+              </div>
+            </div>
+
+            {result.naturalTwo && (
+              <div className="px-3 py-2 bg-red-900/30 border border-red-700 rounded">
+                <p className="text-red-300 font-bold text-center">
+                  Natural 2 — Automatic Failure! (CRER-07)
+                </p>
+              </div>
+            )}
+
+            <Button
+              variant={result.survived ? 'primary' : 'secondary'}
+              className="w-full"
+              onClick={handleContinue}
+            >
+              {result.survived ? 'Continue to Event' : 'See Mishap'}
+            </Button>
+          </div>
+        </Card>
+      )}
+    </div>
   );
 }

@@ -1,83 +1,69 @@
+import type { CareerData } from '../../types/careers';
 import { Card } from '../ui/Card';
-import type { CareerData, SkillEntry } from '../../types/careers';
+import { Button } from '../ui/Button';
 
 interface AssignmentCardsProps {
   career: CareerData;
   onChoose: (assignment: string) => void;
 }
 
-/** Render a skill entry (string or object with specialty) as display text */
-function skillEntryLabel(entry: SkillEntry): string {
-  if (typeof entry === 'string') return entry;
-  return entry.specialty ? `${entry.name} (${entry.specialty})` : entry.name;
-}
-
 /**
- * 3-assignment selection cards (D-11 pattern).
- *
- * Displays each assignment with survival/advancement targets
- * and specialist skills preview. Consistent card styling with
- * scanner-blue border on hover.
+ * Assignment selection cards (D-11).
+ * Displays 3 assignment cards with survival/advancement targets and specialist skills.
  */
 export function AssignmentCards({ career, onChoose }: AssignmentCardsProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-2xl font-sans font-medium text-white mb-1">
+        <h2 className="text-2xl font-sans font-medium text-white mb-1 capitalize">
           {career.name} — Choose Assignment
         </h2>
-        <p className="text-sm text-gray-400">
-          Select your specialisation within the {career.name} career.
-        </p>
+        <p className="text-sm text-gray-400">Select your specialisation within this career.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {career.assignments.map((assignment) => (
-          <button
+          <Card
             key={assignment.name}
-            onClick={() => onChoose(assignment.name)}
-            className="text-left focus:outline-none focus:ring-2 focus:ring-scanner-blue/50 rounded-lg"
+            className="hover:border-scanner-blue/60 transition-colors cursor-pointer"
           >
-            <Card className="h-full hover:border-scanner-blue cursor-pointer transition-colors duration-150">
-              <h3 className="text-white font-sans font-medium mb-1">
-                {assignment.name}
-              </h3>
-              <p className="text-xs text-gray-400 mb-3 line-clamp-2">
-                {assignment.description}
-              </p>
+            <div className="space-y-3">
+              <div>
+                <h3 className="text-base font-medium text-white">{assignment.name}</h3>
+                <p className="text-xs text-gray-400 mt-1">{assignment.description}</p>
+              </div>
 
-              <div className="space-y-1 mb-3">
-                <p className="text-xs text-gray-300">
-                  Survival:{' '}
-                  <span className="font-mono text-scanner-blue">
+              <div className="space-y-1 text-xs">
+                <p className="text-gray-400">
+                  <span className="text-gray-500">Survival:</span>{' '}
+                  <span className="text-scanner-blue font-mono">
                     {assignment.survival.characteristic} {assignment.survival.target}+
                   </span>
                 </p>
-                <p className="text-xs text-gray-300">
-                  Advancement:{' '}
-                  <span className="font-mono text-scanner-blue">
+                <p className="text-gray-400">
+                  <span className="text-gray-500">Advancement:</span>{' '}
+                  <span className="text-scanner-blue font-mono">
                     {assignment.advancement.characteristic} {assignment.advancement.target}+
                   </span>
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                  Specialist Skills
-                </p>
-                <div className="flex flex-wrap gap-1">
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Specialist Skills</p>
+                <div className="space-y-0.5">
                   {assignment.specialistSkills.map((skill, i) => (
-                    <span
-                      key={i}
-                      className="px-1.5 py-0.5 bg-scanner-blue/10 border border-scanner-blue/20 rounded text-xs text-scanner-blue/80 font-mono"
-                    >
-                      {skillEntryLabel(skill)}
-                    </span>
+                    <p key={i} className="text-xs text-gray-400">
+                      {typeof skill === 'string' ? skill : skill.name}
+                    </p>
                   ))}
                 </div>
               </div>
-            </Card>
-          </button>
+
+              <Button variant="primary" size="sm" className="w-full" onClick={() => onChoose(assignment.name)}>
+                Choose {assignment.name}
+              </Button>
+            </div>
+          </Card>
         ))}
       </div>
     </div>

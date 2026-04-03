@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
+import type { CareerData } from '../../types/careers';
 import { getBasicTrainingSkills } from '../../engine/career';
 import { useCharacterStore } from '../../stores/character';
-import type { CareerData, SkillEntry } from '../../types/careers';
+import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
 
 interface BasicTrainingCardProps {
   career: CareerData;
@@ -12,149 +12,98 @@ interface BasicTrainingCardProps {
   onComplete: () => void;
 }
 
-/** Convert a SkillEntry to a display string */
-function skillLabel(entry: SkillEntry): string {
-  if (typeof entry === 'string') return entry;
-  return entry.specialty ? `${entry.name} (${entry.specialty})` : entry.name;
-}
-
-/** Extract plain skill name from a SkillEntry */
-function skillName(entry: SkillEntry): string {
-  if (typeof entry === 'string') return entry;
-  return entry.specialty ? `${entry.name} (${entry.specialty})` : entry.name;
-}
-
 /**
- * Basic training skill display and selection.
- *
- * For first career (CRER-04): Shows all service skills granted at level 0.
- * For subsequent careers: Shows service skills as buttons; pick one at level 0.
- * For Citizen/Drifter exception (CRER-05): Uses assignment specialist skills
- * instead of service skills.
+ * Basic training skill display.
+ * First career: all service skills at level 0 (CRER-04).
+ * Subsequent careers: pick one service skill at level 0.
+ * Citizen/Drifter: uses assignment specialist skills (CRER-05).
  */
-export function BasicTrainingCard({ career, assignmentIndex, isFirstCareer, onComplete }: BasicTrainingCardProps) {
+export function BasicTrainingCard({
+  career,
+  assignmentIndex,
+  isFirstCareer,
+  onComplete,
+}: BasicTrainingCardProps) {
   const addSkill = useCharacterStore((s) => s.addSkill);
-  const skills = useCharacterStore((s) => s.skills);
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
-  const [committed, setCommitted] = useState(false);
+  const [granted, setGranted] = useState(false);
 
-  const trainingSkills = getBasicTrainingSkills(career, isFirstCareer, assignmentIndex);
+  const skills = getBasicTrainingSkills(career, isFirstCareer, assignmentIndex);
 
-  // Determine if this is a "pick one" scenario (subsequent careers)
-  const isPickOne = !isFirstCareer;
-
-  // For first career: get service skills to display (or specialist for exception)
-  const displaySkills = isFirstCareer
-    ? trainingSkills
-    : (career.basicTrainingException
-        ? career.assignments[assignmentIndex].specialistSkills
-        : career.skillTables.serviceSkills);
+  const getSkillName = (skill: string | { name: string; specialty?: string }): string => {
+    if (typeof skill === 'string') return skill;
+    return skill.specialty ? `${skill.name} (${skill.specialty})` : skill.name;
+  };
 
   const handleGrantAll = () => {
-    // First career: grant all training skills at level 0
-    for (const entry of trainingSkills) {
-      addSkill(skillName(entry), 0);
+    for (const skill of skills) {
+      addSkill(getSkillName(skill), 0);
     }
-    setCommitted(true);
+    setGranted(true);
     onComplete();
   };
 
-  const handlePickOne = () => {
-    if (!selectedSkill) return;
-    addSkill(selectedSkill, 0);
-    setCommitted(true);
+  const handleSelectSkill = (skillName: string) => {
+    setSelectedSkill(skillName);
+    addSkill(skillName, 0);
+    setGranted(true);
     onComplete();
   };
-
-  const isException = career.basicTrainingException;
-  const skillSource = isException ? 'specialist' : 'service';
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-sans font-medium text-white">Basic Training</h2>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-sans font-medium text-white mb-1">Basic Training</h2>
+        <p className="text-sm text-gray-400 capitalize">
+          {career.name} — {career.assignments[assignmentIndex]?.name}
+        </p>
+      </div>
 
       <Card>
         {isFirstCareer ? (
-          <>
-            <p className="text-sm text-gray-300 mb-3">
-              You receive all {skillSource} skills at level 0:
-              {isException && (
-                <span className="text-xs text-gray-500 ml-1">
-                  ({career.name} uses assignment specialist skills)
-                </span>
-              )}
+          <div className="space-y-3">
+            <p className="text-sm text-gray-300">
+              You receive all service skills at level 0:
             </p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {displaySkills.map((entry, i) => {
-                const name = skillName(entry);
-                const alreadyOwned = skills.some((s) => s.name === name);
-                return (
-                  <span
-                    key={i}
-                    className={`px-2 py-1 rounded text-xs font-mono border ${
-                      alreadyOwned
-                        ? 'bg-gray-800 border-gray-600 text-gray-500'
-                        : 'bg-scanner-blue/10 border-scanner-blue/30 text-scanner-blue'
-                    }`}
-                  >
-                    {skillLabel(entry)} 0
-                    {alreadyOwned && <span className="ml-1 text-gray-600">(owned)</span>}
-                  </span>
-                );
-              })}
+            <div className="flex flex-wrap gap-2">
+              {skills.map((skill, i) => (
+                <span
+                  key={i}
+                  className="px-2 py-1 bg-scanner-blue/10 border border-scanner-blue/30 rounded text-sm text-scanner-blue font-mono"
+                >
+                  {getSkillName(skill)} 0
+                </span>
+              ))}
             </div>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleGrantAll}
-              disabled={committed}
-            >
-              {committed ? 'Skills Granted' : 'Accept Basic Training'}
+            <Button variant="primary" onClick={handleGrantAll} className="w-full mt-2">
+              Accept Basic Training
             </Button>
-          </>
+          </div>
         ) : (
-          <>
-            <p className="text-sm text-gray-300 mb-3">
-              Choose one {skillSource} skill at level 0:
-              {isException && (
-                <span className="text-xs text-gray-500 ml-1">
-                  ({career.name} uses assignment specialist skills)
-                </span>
-              )}
+          <div className="space-y-3">
+            <p className="text-sm text-gray-300">
+              Choose one service skill at level 0:
             </p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {displaySkills.map((entry, i) => {
-                const name = skillName(entry);
-                const isSelected = selectedSkill === name;
-                const alreadyOwned = skills.some((s) => s.name === name);
+            <div className="grid grid-cols-2 gap-2">
+              {skills.map((skill, i) => {
+                const name = getSkillName(skill);
                 return (
                   <button
                     key={i}
-                    onClick={() => !committed && setSelectedSkill(name)}
-                    disabled={committed}
-                    className={`px-2 py-1 rounded text-xs font-mono border transition-colors ${
-                      isSelected
-                        ? 'bg-scanner-blue/20 border-scanner-blue text-scanner-blue'
-                        : alreadyOwned
-                          ? 'bg-gray-800 border-gray-600 text-gray-500 cursor-pointer'
-                          : 'bg-terminal-surface border-gray-600 text-gray-300 hover:border-scanner-blue/50 cursor-pointer'
-                    } disabled:cursor-not-allowed`}
+                    onClick={() => !granted && handleSelectSkill(name)}
+                    disabled={granted}
+                    className={`px-3 py-2 rounded border text-sm text-left transition-colors ${
+                      selectedSkill === name
+                        ? 'border-scanner-blue bg-scanner-blue/20 text-scanner-blue'
+                        : 'border-gray-700 bg-terminal-surface/30 text-gray-300 hover:border-gray-600'
+                    } disabled:opacity-40 disabled:cursor-not-allowed`}
                   >
-                    {skillLabel(entry)} 0
-                    {alreadyOwned && <span className="ml-1 text-gray-600">(owned)</span>}
+                    {name} 0
                   </button>
                 );
               })}
             </div>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handlePickOne}
-              disabled={committed || !selectedSkill}
-            >
-              {committed ? 'Skill Granted' : 'Accept Skill'}
-            </Button>
-          </>
+          </div>
         )}
       </Card>
     </div>
