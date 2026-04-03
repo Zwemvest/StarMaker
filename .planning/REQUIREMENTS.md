@@ -46,28 +46,28 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **CRER-01**: All 12 careers implemented: Agent, Army, Citizen, Drifter, Entertainer, Marine, Merchant, Navy, Noble, Rogue, Scholar, Scout
 - [ ] **CRER-02**: Each career has 3 assignments with correct specialist skill tables
-- [ ] **CRER-03**: Qualification rolls with DM-1 per previous career enforced
-- [ ] **CRER-04**: Basic training: first career = all service skills at level 0; subsequent = pick one
-- [ ] **CRER-05**: Citizen and Drifter basic training exception: use assignment skill tables, not service skills
-- [ ] **CRER-06**: Survival rolls per assignment with mishap tables (6 entries each) on failure
-- [ ] **CRER-07**: Natural 2 on survival is always a failure regardless of modifiers
+- [x] **CRER-03**: Qualification rolls with DM-1 per previous career enforced
+- [x] **CRER-04**: Basic training: first career = all service skills at level 0; subsequent = pick one
+- [x] **CRER-05**: Citizen and Drifter basic training exception: use assignment skill tables, not service skills
+- [x] **CRER-06**: Survival rolls per assignment with mishap tables (6 entries each) on failure
+- [x] **CRER-07**: Natural 2 on survival is always a failure regardless of modifiers
 - [ ] **CRER-08**: Event tables (2D, 12 entries per career) fully implemented with all effects
 - [ ] **CRER-09**: Life Events table (shared across careers) fully implemented
-- [ ] **CRER-10**: Commission system for Army, Navy, Marines with SOC 9+ extended eligibility
-- [ ] **CRER-11**: Commission DM-1 per term after first; events that grant advancement DMs apply to commission
-- [ ] **CRER-12**: Cannot advance in the same term as gaining commission
-- [ ] **CRER-13**: Advancement rolls with forced-leave mechanic (roll ≤ terms served = must leave)
-- [ ] **CRER-14**: Natural 12 on advancement = forced to stay (no choice)
-- [ ] **CRER-15**: Rank tables with bonus skills granted immediately upon reaching rank
+- [x] **CRER-10**: Commission system for Army, Navy, Marines with SOC 9+ extended eligibility
+- [x] **CRER-11**: Commission DM-1 per term after first; events that grant advancement DMs apply to commission
+- [x] **CRER-12**: Cannot advance in the same term as gaining commission
+- [x] **CRER-13**: Advancement rolls with forced-leave mechanic (roll ≤ terms served = must leave)
+- [x] **CRER-14**: Natural 12 on advancement = forced to stay (no choice)
+- [x] **CRER-15**: Rank tables with bonus skills granted immediately upon reaching rank
 - [ ] **CRER-16**: Skills and training tables (Personal Development, Service Skills, Specialist, Officer, Advanced Education)
-- [ ] **CRER-17**: Advanced Education and Officer tables restricted by EDU 8+ or rank requirement
-- [ ] **CRER-18**: Skill level 4 cap during creation enforced
-- [ ] **CRER-19**: Total skill levels ≤ 3 × (INT + EDU) enforced
-- [ ] **CRER-20**: Draft table (1D → career assignment), draft limited to once per lifetime
-- [ ] **CRER-21**: Failed qualification → choose Draft or Drifter
-- [ ] **CRER-22**: Changing careers requires new qualification roll with cumulative DM penalty
-- [ ] **CRER-23**: Changing assignments varies by career type (same-career vs new-career rules)
-- [ ] **CRER-24**: Cannot return to a career in the term immediately after leaving it
+- [x] **CRER-17**: Advanced Education and Officer tables restricted by EDU 8+ or rank requirement
+- [x] **CRER-18**: Skill level 4 cap during creation enforced
+- [x] **CRER-19**: Total skill levels ≤ 3 × (INT + EDU) enforced
+- [x] **CRER-20**: Draft table (1D → career assignment), draft limited to once per lifetime
+- [x] **CRER-21**: Failed qualification → choose Draft or Drifter
+- [x] **CRER-22**: Changing careers requires new qualification roll with cumulative DM penalty
+- [x] **CRER-23**: Changing assignments varies by career type (same-career vs new-career rules)
+- [x] **CRER-24**: Cannot return to a career in the term immediately after leaving it
 
 ### Aging
 
@@ -201,28 +201,28 @@ Deferred to future release. Tracked but not in current roadmap.
 | EDUC-10 | Phase 2 | Complete |
 | CRER-01 | Phase 3 | Pending |
 | CRER-02 | Phase 3 | Pending |
-| CRER-03 | Phase 3 | Pending |
-| CRER-04 | Phase 3 | Pending |
-| CRER-05 | Phase 3 | Pending |
-| CRER-06 | Phase 3 | Pending |
-| CRER-07 | Phase 3 | Pending |
+| CRER-03 | Phase 3 | Complete |
+| CRER-04 | Phase 3 | Complete |
+| CRER-05 | Phase 3 | Complete |
+| CRER-06 | Phase 3 | Complete |
+| CRER-07 | Phase 3 | Complete |
 | CRER-08 | Phase 3 | Pending |
 | CRER-09 | Phase 3 | Pending |
-| CRER-10 | Phase 3 | Pending |
-| CRER-11 | Phase 3 | Pending |
-| CRER-12 | Phase 3 | Pending |
-| CRER-13 | Phase 3 | Pending |
-| CRER-14 | Phase 3 | Pending |
-| CRER-15 | Phase 3 | Pending |
+| CRER-10 | Phase 3 | Complete |
+| CRER-11 | Phase 3 | Complete |
+| CRER-12 | Phase 3 | Complete |
+| CRER-13 | Phase 3 | Complete |
+| CRER-14 | Phase 3 | Complete |
+| CRER-15 | Phase 3 | Complete |
 | CRER-16 | Phase 3 | Pending |
-| CRER-17 | Phase 3 | Pending |
-| CRER-18 | Phase 3 | Pending |
-| CRER-19 | Phase 3 | Pending |
-| CRER-20 | Phase 3 | Pending |
-| CRER-21 | Phase 3 | Pending |
-| CRER-22 | Phase 3 | Pending |
-| CRER-23 | Phase 3 | Pending |
-| CRER-24 | Phase 3 | Pending |
+| CRER-17 | Phase 3 | Complete |
+| CRER-18 | Phase 3 | Complete |
+| CRER-19 | Phase 3 | Complete |
+| CRER-20 | Phase 3 | Complete |
+| CRER-21 | Phase 3 | Complete |
+| CRER-22 | Phase 3 | Complete |
+| CRER-23 | Phase 3 | Complete |
+| CRER-24 | Phase 3 | Complete |
 | AGNG-01 | Phase 3 | Pending |
 | AGNG-02 | Phase 3 | Pending |
 | AGNG-03 | Phase 3 | Pending |
