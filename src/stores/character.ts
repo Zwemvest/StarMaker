@@ -2,9 +2,10 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { CharacteristicId } from '../types/common';
-import type { Characteristics, Skill } from '../types/character';
+import type { Characteristics, Contact, Skill } from '../types/character';
 import type { RollLogEntry } from '../types/dice';
 import type { PoolItem } from '../components/characteristics/DicePool';
+import type { CareerName, CareerTerm } from '../types/careers';
 
 /** Initial characteristics — all six stats at 0 */
 function initialCharacteristics(): Characteristics {
@@ -26,6 +27,16 @@ interface CharacterState {
   legitimacyHash: string;
   isModified: boolean;
   dicePool: PoolItem[];
+  careerHistory: CareerTerm[];
+  contacts: Contact[];
+  age: number;
+  cashRollsUsed: number;
+  credits: number;
+  pension: number;
+  benefits: string[];
+  drafted: boolean;
+  previousCareers: CareerName[];
+  lastCareer: CareerName | null;
 }
 
 /** Character store actions */
@@ -38,6 +49,17 @@ interface CharacterActions {
   setModified: () => void;
   setDicePool: (pool: PoolItem[]) => void;
   resetCharacter: () => void;
+  addCareerTerm: (term: CareerTerm) => void;
+  addContact: (contact: Contact) => void;
+  setAge: (age: number) => void;
+  addCredits: (amount: number) => void;
+  setPension: (amount: number) => void;
+  addBenefit: (benefit: string) => void;
+  incrementCashRolls: () => void;
+  setDrafted: () => void;
+  addPreviousCareer: (career: CareerName) => void;
+  setLastCareer: (career: CareerName | null) => void;
+  reduceCharacteristic: (id: CharacteristicId, amount: number) => void;
 }
 
 /** Combined store type */
@@ -51,6 +73,16 @@ const initialState: CharacterState = {
   legitimacyHash: '',
   isModified: false,
   dicePool: [],
+  careerHistory: [],
+  contacts: [],
+  age: 18,
+  cashRollsUsed: 0,
+  credits: 0,
+  pension: 0,
+  benefits: [],
+  drafted: false,
+  previousCareers: [],
+  lastCareer: null,
 };
 
 /**
@@ -114,6 +146,61 @@ export const useCharacterStore = create<CharacterStore>()(
           state.dicePool = pool;
         }),
 
+      addCareerTerm: (term) =>
+        set((state) => {
+          state.careerHistory.push(term);
+        }),
+
+      addContact: (contact) =>
+        set((state) => {
+          state.contacts.push(contact);
+        }),
+
+      setAge: (age) =>
+        set((state) => {
+          state.age = age;
+        }),
+
+      addCredits: (amount) =>
+        set((state) => {
+          state.credits += amount;
+        }),
+
+      setPension: (amount) =>
+        set((state) => {
+          state.pension = amount;
+        }),
+
+      addBenefit: (benefit) =>
+        set((state) => {
+          state.benefits.push(benefit);
+        }),
+
+      incrementCashRolls: () =>
+        set((state) => {
+          state.cashRollsUsed += 1;
+        }),
+
+      setDrafted: () =>
+        set((state) => {
+          state.drafted = true;
+        }),
+
+      addPreviousCareer: (career) =>
+        set((state) => {
+          state.previousCareers.push(career);
+        }),
+
+      setLastCareer: (career) =>
+        set((state) => {
+          state.lastCareer = career;
+        }),
+
+      reduceCharacteristic: (id, amount) =>
+        set((state) => {
+          state.characteristics[id] = Math.max(0, state.characteristics[id] - amount);
+        }),
+
       resetCharacter: () =>
         set(() => ({
           ...initialState,
@@ -121,6 +208,10 @@ export const useCharacterStore = create<CharacterStore>()(
           skills: [],
           rollLog: [],
           dicePool: [],
+          careerHistory: [],
+          contacts: [],
+          benefits: [],
+          previousCareers: [],
         })),
     })),
     {

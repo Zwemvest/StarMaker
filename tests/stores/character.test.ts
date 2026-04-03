@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useCharacterStore } from '../../src/stores/character';
 import type { RollLogEntry } from '../../src/types/dice';
+import type { CareerTerm } from '../../src/types/careers';
+import type { Contact } from '../../src/types/character';
 
 describe('Character Store', () => {
   beforeEach(() => {
@@ -141,5 +143,151 @@ describe('Character Store', () => {
 
     useCharacterStore.getState().setCharacteristic('END', 15);
     expect(useCharacterStore.getState().characteristics.END).toBe(15);
+  });
+
+  describe('Career state and actions', () => {
+    const sampleTerm: CareerTerm = {
+      career: 'army',
+      assignment: 'Infantry',
+      term: 1,
+      rank: 0,
+      skills: [{ name: 'Gun Combat', level: 1 }],
+      events: ['Assigned to a peacekeeping role'],
+    };
+
+    const sampleContact: Contact = {
+      type: 'ally',
+      name: 'Captain Vance',
+      notes: 'Met during first tour',
+    };
+
+    it('has correct initial career state', () => {
+      const state = useCharacterStore.getState();
+      expect(state.careerHistory).toEqual([]);
+      expect(state.contacts).toEqual([]);
+      expect(state.age).toBe(18);
+      expect(state.cashRollsUsed).toBe(0);
+      expect(state.credits).toBe(0);
+      expect(state.pension).toBe(0);
+      expect(state.benefits).toEqual([]);
+      expect(state.drafted).toBe(false);
+      expect(state.previousCareers).toEqual([]);
+      expect(state.lastCareer).toBeNull();
+    });
+
+    it('addCareerTerm adds to careerHistory', () => {
+      useCharacterStore.getState().addCareerTerm(sampleTerm);
+      const { careerHistory } = useCharacterStore.getState();
+      expect(careerHistory).toHaveLength(1);
+      expect(careerHistory[0]).toEqual(sampleTerm);
+    });
+
+    it('addContact pushes contact with correct type', () => {
+      useCharacterStore.getState().addContact(sampleContact);
+      const { contacts } = useCharacterStore.getState();
+      expect(contacts).toHaveLength(1);
+      expect(contacts[0].type).toBe('ally');
+      expect(contacts[0].name).toBe('Captain Vance');
+    });
+
+    it('addContact tracks all contact types (SOCL-01)', () => {
+      useCharacterStore.getState().addContact({ type: 'contact', name: 'A', notes: '' });
+      useCharacterStore.getState().addContact({ type: 'ally', name: 'B', notes: '' });
+      useCharacterStore.getState().addContact({ type: 'rival', name: 'C', notes: '' });
+      useCharacterStore.getState().addContact({ type: 'enemy', name: 'D', notes: '' });
+      const { contacts } = useCharacterStore.getState();
+      expect(contacts).toHaveLength(4);
+      expect(contacts.map((c) => c.type)).toEqual(['contact', 'ally', 'rival', 'enemy']);
+    });
+
+    it('setAge updates age', () => {
+      useCharacterStore.getState().setAge(22);
+      expect(useCharacterStore.getState().age).toBe(22);
+    });
+
+    it('addCredits adds to existing credits total', () => {
+      useCharacterStore.getState().addCredits(10000);
+      useCharacterStore.getState().addCredits(5000);
+      expect(useCharacterStore.getState().credits).toBe(15000);
+    });
+
+    it('setPension sets pension amount', () => {
+      useCharacterStore.getState().setPension(10000);
+      expect(useCharacterStore.getState().pension).toBe(10000);
+    });
+
+    it('addBenefit pushes benefit to array', () => {
+      useCharacterStore.getState().addBenefit('Weapon');
+      useCharacterStore.getState().addBenefit('Ship Share');
+      expect(useCharacterStore.getState().benefits).toEqual(['Weapon', 'Ship Share']);
+    });
+
+    it('incrementCashRolls increments correctly', () => {
+      useCharacterStore.getState().incrementCashRolls();
+      expect(useCharacterStore.getState().cashRollsUsed).toBe(1);
+      useCharacterStore.getState().incrementCashRolls();
+      expect(useCharacterStore.getState().cashRollsUsed).toBe(2);
+      useCharacterStore.getState().incrementCashRolls();
+      expect(useCharacterStore.getState().cashRollsUsed).toBe(3);
+    });
+
+    it('setDrafted sets drafted to true', () => {
+      useCharacterStore.getState().setDrafted();
+      expect(useCharacterStore.getState().drafted).toBe(true);
+    });
+
+    it('addPreviousCareer tracks previous careers', () => {
+      useCharacterStore.getState().addPreviousCareer('army');
+      useCharacterStore.getState().addPreviousCareer('scout');
+      expect(useCharacterStore.getState().previousCareers).toEqual(['army', 'scout']);
+    });
+
+    it('setLastCareer updates last career', () => {
+      useCharacterStore.getState().setLastCareer('navy');
+      expect(useCharacterStore.getState().lastCareer).toBe('navy');
+      useCharacterStore.getState().setLastCareer(null);
+      expect(useCharacterStore.getState().lastCareer).toBeNull();
+    });
+
+    it('reduceCharacteristic reduces by amount', () => {
+      useCharacterStore.getState().setCharacteristic('STR', 8);
+      useCharacterStore.getState().reduceCharacteristic('STR', 3);
+      expect(useCharacterStore.getState().characteristics.STR).toBe(5);
+    });
+
+    it('reduceCharacteristic clamps to 0 (never goes negative)', () => {
+      useCharacterStore.getState().setCharacteristic('END', 2);
+      useCharacterStore.getState().reduceCharacteristic('END', 5);
+      expect(useCharacterStore.getState().characteristics.END).toBe(0);
+    });
+
+    it('resetCharacter resets all career fields to defaults', () => {
+      // Set some career state
+      useCharacterStore.getState().addCareerTerm(sampleTerm);
+      useCharacterStore.getState().addContact(sampleContact);
+      useCharacterStore.getState().setAge(34);
+      useCharacterStore.getState().addCredits(50000);
+      useCharacterStore.getState().setPension(10000);
+      useCharacterStore.getState().addBenefit('Weapon');
+      useCharacterStore.getState().incrementCashRolls();
+      useCharacterStore.getState().setDrafted();
+      useCharacterStore.getState().addPreviousCareer('army');
+      useCharacterStore.getState().setLastCareer('army');
+
+      // Reset
+      useCharacterStore.getState().resetCharacter();
+
+      const state = useCharacterStore.getState();
+      expect(state.careerHistory).toEqual([]);
+      expect(state.contacts).toEqual([]);
+      expect(state.age).toBe(18);
+      expect(state.cashRollsUsed).toBe(0);
+      expect(state.credits).toBe(0);
+      expect(state.pension).toBe(0);
+      expect(state.benefits).toEqual([]);
+      expect(state.drafted).toBe(false);
+      expect(state.previousCareers).toEqual([]);
+      expect(state.lastCareer).toBeNull();
+    });
   });
 });
