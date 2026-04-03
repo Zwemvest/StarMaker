@@ -1,0 +1,168 @@
+{
+  "name": "Rogue",
+  "description": "Criminals, con artists, and pirates who operate outside the law.",
+  "qualification": { "characteristic": "DEX", "target": 6 },
+  "isMilitary": false,
+  "commission": null,
+  "basicTrainingException": false,
+  "assignments": [
+    {
+      "name": "Thief",
+      "description": "You steal from the rich and give to... well, yourself mostly.",
+      "survival": { "characteristic": "INT", "target": 6 },
+      "advancement": { "characteristic": "DEX", "target": 6 },
+      "specialistSkills": ["Stealth", "Electronics", "Recon", "Streetwise", "Deception", "Athletics"]
+    },
+    {
+      "name": "Enforcer",
+      "description": "You are a leg-breaker, thug, or bodyguard for a criminal organisation.",
+      "survival": { "characteristic": "END", "target": 6 },
+      "advancement": { "characteristic": "STR", "target": 6 },
+      "specialistSkills": ["Gun Combat", "Melee", "Streetwise", "Persuade", "Athletics", "Drive"]
+    },
+    {
+      "name": "Pirate",
+      "description": "You are a space pirate, raiding ships and settlements.",
+      "survival": { "characteristic": "DEX", "target": 6 },
+      "advancement": { "characteristic": "INT", "target": 6 },
+      "specialistSkills": ["Pilot", "Astrogation", "Gunner", "Engineer", "Vacc Suit", "Melee"]
+    }
+  ],
+  "ranks": {
+    "enlisted": [
+      { "level": 0, "title": "", "bonusSkill": null },
+      { "level": 1, "title": "", "bonusSkill": "Deception", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "", "bonusSkill": null },
+      { "level": 3, "title": "", "bonusSkill": "Streetwise", "bonusSkillLevel": 1 },
+      { "level": 4, "title": "", "bonusSkill": null },
+      { "level": 5, "title": "", "bonusSkill": null },
+      { "level": 6, "title": "", "bonusSkill": null }
+    ]
+  },
+  "skillTables": {
+    "personalDevelopment": ["Carouse", "DEX", "END", "Gambler", "Gun Combat", "Jack-of-all-Trades"],
+    "serviceSkills": ["Deception", "Recon", "Athletics", "Gun Combat", "Stealth", "Streetwise"],
+    "advancedEducation": ["Electronics", "Navigation", "Medic", "Investigate", "Broker", "Advocate"]
+  },
+  "events": [
+    {
+      "rollValue": 2,
+      "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
+      "effectDescription": "Roll on the Mishap table but remain in career.",
+      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 3,
+      "description": "You are arrested and charged.",
+      "effectDescription": "You can choose to pay Cr1000 x 2D to avoid a prison term (roll twice on the Injury table) or serve time. If you serve time, lose one Benefit roll.",
+      "effects": [{ "type": "choice", "detail": "Pay fine or serve time (lose Benefit)", "options": ["Pay fine", "Serve time"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 4,
+      "description": "You are involved in the planning of an attack on a rival criminal enterprise.",
+      "effectDescription": "Gain one of Electronics 1, Mechanic 1, Deception 1, or Streetwise 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Electronics 1, Mechanic 1, Deception 1 or Streetwise 1", "options": ["Electronics", "Mechanic", "Deception", "Streetwise"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 5,
+      "description": "A job goes well.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 6,
+      "description": "You are given advanced training in a specialist field.",
+      "effectDescription": "Roll EDU 8+ to gain any skill.",
+      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 7,
+      "description": "Life Event. Roll on the Life Events table.",
+      "effectDescription": "Roll on the Life Events table.",
+      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 8,
+      "description": "You have the opportunity to backstab a fellow rogue for personal gain.",
+      "effectDescription": "If you do, gain DM+4 to your next advancement roll. If not, gain them as an Ally.",
+      "effects": [{ "type": "choice", "detail": "Backstab (DM+4 advancement) or don't (Ally)", "options": ["Backstab", "Spare them"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 9,
+      "description": "You are involved in a feud with a rival criminal organisation.",
+      "effectDescription": "Roll Stealth or Gun Combat 8+. Succeed: gain an extra Benefit roll. Fail: roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Stealth/Gun Combat 8+ for Benefit or Injury", "options": ["Stealth 8+", "Gun Combat 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 10,
+      "description": "You are part of a gang and you are involved in a turf war.",
+      "effectDescription": "Gain DM+2 to your next advancement roll and gain an extra Benefit roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }, { "type": "benefit", "detail": "Extra Benefit roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 11,
+      "description": "A crime lord offers you a position in their organisation.",
+      "effectDescription": "Gain DM+4 to your next advancement roll and gain an Ally.",
+      "effects": [{ "type": "benefit", "detail": "DM+4 to next advancement roll" }, { "type": "ally", "detail": "Gain an Ally" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 12,
+      "description": "You commit a legendary crime.",
+      "effectDescription": "You are automatically promoted.",
+      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "hasChoice": false
+    }
+  ],
+  "mishaps": [
+    {
+      "rollValue": 1,
+      "description": "Severely injured.",
+      "effectDescription": "Roll twice on the Injury table and take the lower result.",
+      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+    },
+    {
+      "rollValue": 2,
+      "description": "Arrested. You must spend the next term in prison.",
+      "effectDescription": "Lose one Benefit roll.",
+      "effects": [{ "type": "special", "detail": "Prison, lose one Benefit roll" }]
+    },
+    {
+      "rollValue": 3,
+      "description": "Betrayed by a partner in crime. Gain an Enemy.",
+      "effectDescription": "Gain an Enemy.",
+      "effects": [{ "type": "enemy", "detail": "Gain an Enemy" }]
+    },
+    {
+      "rollValue": 4,
+      "description": "A job goes wrong, forcing you to flee off-planet. Gain one of Deception 1, Pilot (Small Craft) 1, Athletics (Dexterity) 1 or Gunner 1.",
+      "effectDescription": "Gain Deception 1, Pilot (Small Craft) 1, Athletics (Dexterity) 1 or Gunner 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Deception 1, Pilot 1, Athletics 1 or Gunner 1", "options": ["Deception", "Pilot (Small Craft)", "Athletics (Dexterity)", "Gunner"] }]
+    },
+    {
+      "rollValue": 5,
+      "description": "A police detective or rival criminal forces you to flee. Gain a Rival.",
+      "effectDescription": "Gain a Rival.",
+      "effects": [{ "type": "rival", "detail": "Gain a Rival" }]
+    },
+    {
+      "rollValue": 6,
+      "description": "Injured. Roll on the Injury table.",
+      "effectDescription": "Roll on the Injury table.",
+      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+    }
+  ],
+  "musteringOut": {
+    "cash": [0, 0, 10000, 10000, 50000, 100000, 100000],
+    "benefits": ["Ship Share", "Weapon", "INT +1", "Gun", "Armour", "Ally", "Ship Shares x2"]
+  }
+}

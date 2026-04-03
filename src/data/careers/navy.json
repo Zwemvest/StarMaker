@@ -1,0 +1,178 @@
+{
+  "name": "Navy",
+  "description": "Members of the interstellar navy which patrols space between the stars. The navy fights pirates, smugglers, and foreign powers.",
+  "qualification": { "characteristic": "INT", "target": 6 },
+  "isMilitary": true,
+  "commission": { "characteristic": "SOC", "target": 8 },
+  "basicTrainingException": false,
+  "assignments": [
+    {
+      "name": "Line/Crew",
+      "description": "You serve as a general crewmember or officer on a ship of the line.",
+      "survival": { "characteristic": "INT", "target": 5 },
+      "advancement": { "characteristic": "EDU", "target": 7 },
+      "specialistSkills": ["Electronics", "Mechanic", "Gun Combat", "Flyer", "Melee", "Vacc Suit"]
+    },
+    {
+      "name": "Engineer/Gunner",
+      "description": "You serve as an engineer or gunner on a starship.",
+      "survival": { "characteristic": "INT", "target": 6 },
+      "advancement": { "characteristic": "EDU", "target": 6 },
+      "specialistSkills": ["Engineer", "Mechanic", "Electronics", "Engineer", "Gunner", "Flyer"]
+    },
+    {
+      "name": "Flight",
+      "description": "You are a pilot of a shuttle, fighter, or other vessel.",
+      "survival": { "characteristic": "DEX", "target": 7 },
+      "advancement": { "characteristic": "EDU", "target": 5 },
+      "specialistSkills": ["Pilot", "Flyer", "Gunner", "Pilot (Small Craft)", "Astrogation", "Electronics (Sensors)"]
+    }
+  ],
+  "ranks": {
+    "enlisted": [
+      { "level": 0, "title": "Crewman", "bonusSkill": null },
+      { "level": 1, "title": "Able Spacehand", "bonusSkill": "Mechanic", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "Petty Officer 3rd Class", "bonusSkill": "Vacc Suit", "bonusSkillLevel": 1 },
+      { "level": 3, "title": "Petty Officer 2nd Class", "bonusSkill": null },
+      { "level": 4, "title": "Petty Officer 1st Class", "bonusSkill": null },
+      { "level": 5, "title": "Chief Petty Officer", "bonusSkill": null },
+      { "level": 6, "title": "Master Chief", "bonusSkill": null }
+    ],
+    "officer": [
+      { "level": 0, "title": "", "bonusSkill": null },
+      { "level": 1, "title": "Ensign", "bonusSkill": "Melee (Blade)", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "Sublieutenant", "bonusSkill": "Leadership", "bonusSkillLevel": 1 },
+      { "level": 3, "title": "Lieutenant", "bonusSkill": null },
+      { "level": 4, "title": "Commander", "bonusSkill": "Tactics (Naval)", "bonusSkillLevel": 1 },
+      { "level": 5, "title": "Captain", "bonusSkill": "SOC +1", "bonusSkillLevel": 1 },
+      { "level": 6, "title": "Admiral", "bonusSkill": "SOC +1", "bonusSkillLevel": 1 }
+    ]
+  },
+  "skillTables": {
+    "personalDevelopment": ["STR", "DEX", "END", "INT", "EDU", "SOC"],
+    "serviceSkills": ["Pilot", "Vacc Suit", "Athletics", "Gunner", "Mechanic", "Gun Combat"],
+    "advancedEducation": ["Electronics", "Astrogation", "Engineer", "Drive", "Navigation", "Admin"],
+    "officer": ["Leadership", "Electronics", "Pilot", "Melee (Blade)", "Admin", "Tactics (Naval)"]
+  },
+  "events": [
+    {
+      "rollValue": 2,
+      "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
+      "effectDescription": "Roll on the Mishap table but remain in career.",
+      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 3,
+      "description": "You join a gambling circle on board.",
+      "effectDescription": "Roll Gambler 8+. Succeed: gain an extra Benefit roll. Fail: lose a Benefit roll.",
+      "effects": [{ "type": "choice", "detail": "Gambler 8+ for extra Benefit or lose Benefit" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 4,
+      "description": "You are given a special assignment or duty.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 5,
+      "description": "You are assigned to the bridge of your vessel.",
+      "effectDescription": "Gain one of Electronics (Sensors) 1, Pilot 1, or Astrogation 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Electronics (Sensors) 1, Pilot 1 or Astrogation 1", "options": ["Electronics (Sensors)", "Pilot", "Astrogation"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 6,
+      "description": "You are given advanced training in a specialist field.",
+      "effectDescription": "Roll EDU 8+ to gain any skill.",
+      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 7,
+      "description": "Life Event. Roll on the Life Events table.",
+      "effectDescription": "Roll on the Life Events table.",
+      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 8,
+      "description": "Your vessel participates in a notable military engagement.",
+      "effectDescription": "Gain one of Electronics 1, Engineer 1, Gunner 1 or Pilot 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Electronics 1, Engineer 1, Gunner 1 or Pilot 1", "options": ["Electronics", "Engineer", "Gunner", "Pilot"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 9,
+      "description": "You foil an attempted crime on board, such as piracy, smuggling, or sabotage.",
+      "effectDescription": "Gain DM+2 to your next advancement roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 10,
+      "description": "You serve on an older vessel and gain an appreciation for its quirks.",
+      "effectDescription": "Gain one of Mechanic 1, Vacc Suit 1, or Engineer 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Mechanic 1, Vacc Suit 1 or Engineer 1", "options": ["Mechanic", "Vacc Suit", "Engineer"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 11,
+      "description": "Your commanding officer takes an interest in your career.",
+      "effectDescription": "Either gain Tactics (Naval) 1 or DM+4 to your next advancement roll (choose one).",
+      "effects": [{ "type": "choice", "detail": "Tactics (Naval) 1 or DM+4 to next advancement", "options": ["Tactics (Naval) 1", "DM+4 advancement"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 12,
+      "description": "You display heroism in battle, saving the entire ship.",
+      "effectDescription": "You may gain a promotion or a commission automatically.",
+      "effects": [{ "type": "special", "detail": "Automatic promotion or commission" }],
+      "hasChoice": true
+    }
+  ],
+  "mishaps": [
+    {
+      "rollValue": 1,
+      "description": "Severely injured in action.",
+      "effectDescription": "Roll twice on the Injury table and take the lower result.",
+      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+    },
+    {
+      "rollValue": 2,
+      "description": "Your ship is destroyed in a naval battle. Gain a Contact in a different branch of the military and Vacc Suit 1 or Athletics (Dexterity) 1.",
+      "effectDescription": "Gain a Contact. Gain Vacc Suit 1 or Athletics (Dexterity) 1.",
+      "effects": [{ "type": "contact", "detail": "Gain a Contact" }, { "type": "skill", "detail": "Gain Vacc Suit 1 or Athletics (Dexterity) 1", "options": ["Vacc Suit", "Athletics (Dexterity)"] }]
+    },
+    {
+      "rollValue": 3,
+      "description": "During a battle, defeat or other emergency, you are forced to abandon your ship. Gain Survival 1 or Pilot 1.",
+      "effectDescription": "Gain Survival 1 or Pilot 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Survival 1 or Pilot 1", "options": ["Survival", "Pilot"] }]
+    },
+    {
+      "rollValue": 4,
+      "description": "You are placed in the frozen watch — Loss of a term. You are not ejected from the career.",
+      "effectDescription": "Lose a term but remain in career.",
+      "effects": [{ "type": "special", "detail": "Frozen watch — lose term, stay in career" }]
+    },
+    {
+      "rollValue": 5,
+      "description": "You are tormented by or quarrel with an officer or fellow crewman. Gain that individual as a Rival as they drive you out of the service.",
+      "effectDescription": "Gain a Rival.",
+      "effects": [{ "type": "rival", "detail": "Gain a Rival" }]
+    },
+    {
+      "rollValue": 6,
+      "description": "Injured. Roll on the Injury table.",
+      "effectDescription": "Roll on the Injury table.",
+      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+    }
+  ],
+  "musteringOut": {
+    "cash": [1000, 5000, 5000, 10000, 20000, 50000, 50000],
+    "benefits": ["Personal Vehicle or Ship Share", "INT +1", "EDU +1 or Two Ship Shares", "Weapon", "TAS Membership", "Ship's Boat or Two Ship Shares", "SOC +2"]
+  }
+}
