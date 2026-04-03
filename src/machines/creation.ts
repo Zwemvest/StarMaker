@@ -1,5 +1,6 @@
 import { assign, setup } from 'xstate';
 import { canAttemptEducation } from '../engine/education';
+import type { CareerName } from '../types/careers';
 
 /** Phases of character creation that the machine tracks */
 export type CreationPhase =
@@ -17,6 +18,14 @@ interface CreationContext {
   characterId: string;
   termsServed: number;
   educationTermsUsed: number;
+  currentCareer: CareerName | null;
+  currentAssignment: string | null;
+  careerTermCount: number;
+  totalTermsServed: number;
+  isCommissioned: boolean;
+  justCommissioned: boolean;
+  forcedToLeave: boolean;
+  forcedToStay: boolean;
 }
 
 /** All events the creation machine responds to */
@@ -44,7 +53,25 @@ export type CreationEvent =
   | { type: 'RETRY' }
   | { type: 'SKIP' }
   | { type: 'CONTINUE' }
-  | { type: 'GO_BACK' };
+  | { type: 'GO_BACK' }
+  | { type: 'CHOOSE_CAREER'; career: CareerName }
+  | { type: 'CHOOSE_ASSIGNMENT'; assignment: string }
+  | { type: 'QUALIFICATION_SUCCESS' }
+  | { type: 'QUALIFICATION_FAILURE' }
+  | { type: 'CHOOSE_DRAFT' }
+  | { type: 'CHOOSE_DRIFTER' }
+  | { type: 'BASIC_TRAINING_COMPLETE' }
+  | { type: 'SURVIVAL_SUCCESS' }
+  | { type: 'SURVIVAL_FAILURE' }
+  | { type: 'MISHAP_RESOLVED' }
+  | { type: 'EVENT_RESOLVED' }
+  | { type: 'COMMISSION_RESULT'; success: boolean }
+  | { type: 'ADVANCEMENT_RESULT'; advanced: boolean; forcedToLeave: boolean; forcedToStay: boolean }
+  | { type: 'SKILL_SELECTED' }
+  | { type: 'AGING_RESOLVED' }
+  | { type: 'CONTINUE_CAREER' }
+  | { type: 'CHANGE_CAREER' }
+  | { type: 'BENEFIT_ROLLED' };
 
 /**
  * XState 5 creation workflow state machine.
@@ -66,6 +93,20 @@ export const creationMachine = setup({
     allCharacteristicsAssigned: () => true,
     canRetryEducation: ({ context }) =>
       canAttemptEducation(context.educationTermsUsed),
+    isMilitary: ({ context }) => {
+      const militaryCareers: CareerName[] = ['army', 'marine', 'navy'];
+      return context.currentCareer !== null && militaryCareers.includes(context.currentCareer);
+    },
+    isCommissioned: ({ context }) => context.isCommissioned,
+    notJustCommissioned: ({ context }) => !context.justCommissioned,
+    needsAging: ({ context }) => {
+      // Age starts at 18, +4 per term. Aging effects start at 34+ (AGNG-01)
+      // totalTermsServed already incremented for this term
+      const age = 18 + context.totalTermsServed * 4;
+      return age >= 34;
+    },
+    canContinue: ({ context }) => !context.forcedToLeave,
+    mustContinue: ({ context }) => context.forcedToStay,
   },
 }).createMachine({
   id: 'creation',
@@ -75,6 +116,14 @@ export const creationMachine = setup({
     characterId: '',
     termsServed: 0,
     educationTermsUsed: 0,
+    currentCareer: null,
+    currentAssignment: null,
+    careerTermCount: 0,
+    totalTermsServed: 0,
+    isCommissioned: false,
+    justCommissioned: false,
+    forcedToLeave: false,
+    forcedToStay: false,
   },
   states: {
     idle: {
@@ -208,14 +257,169 @@ export const creationMachine = setup({
       },
     },
     career: {
-      on: {
-        CAREER_TERM_COMPLETE: 'career',
-        MUSTER_OUT: 'musteringOut',
-      },
-    },
-    musteringOut: {
-      on: {
-        MUSTERING_COMPLETE: 'complete',
+      id: 'career',
+      initial: 'choosingCareer',
+      states: {
+        choosingCareer: {
+          on: {
+            CHOOSE_CAREER: {
+              target: 'choosingAssignment',
+              actions: assign({
+                currentCareer: ({ event }) => event.career,
+                careerTermCount: 0,
+                isCommissioned: false,
+                justCommissioned: false,
+                forcedToLeave: false,
+                forcedToStay: false,
+              }),
+            },
+          },
+        },
+        choosingAssignment: {
+          on: {
+            CHOOSE_ASSIGNMENT: {
+              target: 'qualificationRoll',
+              actions: assign({
+                currentAssignment: ({ event }) => event.assignment,
+              }),
+            },
+          },
+        },
+        qualificationRoll: {
+          on: {
+            QUALIFICATION_SUCCESS: 'basicTraining',
+            QUALIFICATION_FAILURE: 'qualificationFailed',
+          },
+        },
+        qualificationFailed: {
+          on: {
+            CHOOSE_DRAFT: {
+              target: 'basicTraining',
+            },
+            CHOOSE_DRIFTER: {
+              target: 'basicTraining',
+              actions: assign({
+                currentCareer: 'drifter' as CareerName,
+                currentAssignment: null,
+              }),
+            },
+          },
+        },
+        basicTraining: {
+          on: {
+            BASIC_TRAINING_COMPLETE: {
+              target: 'termLoop',
+              actions: assign({
+                careerTermCount: ({ context }) => context.careerTermCount + 1,
+                totalTermsServed: ({ context }) => context.totalTermsServed + 1,
+                justCommissioned: false,
+                forcedToLeave: false,
+                forcedToStay: false,
+              }),
+            },
+          },
+        },
+        termLoop: {
+          initial: 'survivalRoll',
+          states: {
+            survivalRoll: {
+              on: {
+                SURVIVAL_SUCCESS: 'event',
+                SURVIVAL_FAILURE: 'mishap',
+              },
+            },
+            mishap: {
+              on: {
+                MISHAP_RESOLVED: '#career.musteringOut',
+              },
+            },
+            event: {
+              on: {
+                EVENT_RESOLVED: [
+                  {
+                    // Military + not yet commissioned -> commission roll
+                    target: 'commission',
+                    guard: { type: 'isMilitary' },
+                  },
+                  {
+                    // Civilian careers -> straight to advancement
+                    target: 'advancement',
+                  },
+                ],
+              },
+            },
+            commission: {
+              on: {
+                COMMISSION_RESULT: [
+                  {
+                    // Already commissioned — skip commission, go to advancement
+                    target: 'advancement',
+                    guard: { type: 'isCommissioned' },
+                  },
+                  {
+                    // Just earned commission — skip advancement this term (CRER-12)
+                    target: 'skillSelection',
+                    actions: assign({
+                      isCommissioned: ({ event }) => event.success,
+                      justCommissioned: ({ event }) => event.success,
+                    }),
+                  },
+                ],
+              },
+            },
+            advancement: {
+              on: {
+                ADVANCEMENT_RESULT: {
+                  target: 'skillSelection',
+                  actions: assign({
+                    forcedToLeave: ({ event }) => event.forcedToLeave,
+                    forcedToStay: ({ event }) => event.forcedToStay,
+                  }),
+                },
+              },
+            },
+            skillSelection: {
+              on: {
+                SKILL_SELECTED: [
+                  {
+                    target: 'aging',
+                    guard: { type: 'needsAging' },
+                  },
+                  {
+                    target: 'continueOrLeave',
+                  },
+                ],
+              },
+            },
+            aging: {
+              on: {
+                AGING_RESOLVED: 'continueOrLeave',
+              },
+            },
+            continueOrLeave: {
+              on: {
+                CONTINUE_CAREER: {
+                  target: 'survivalRoll',
+                  actions: assign({
+                    careerTermCount: ({ context }) => context.careerTermCount + 1,
+                    totalTermsServed: ({ context }) => context.totalTermsServed + 1,
+                    justCommissioned: false,
+                    forcedToLeave: false,
+                    forcedToStay: false,
+                  }),
+                },
+                CHANGE_CAREER: '#career.choosingCareer',
+                MUSTER_OUT: '#career.musteringOut',
+              },
+            },
+          },
+        },
+        musteringOut: {
+          on: {
+            BENEFIT_ROLLED: 'musteringOut',
+            MUSTERING_COMPLETE: '#creation.complete',
+          },
+        },
       },
     },
     complete: {

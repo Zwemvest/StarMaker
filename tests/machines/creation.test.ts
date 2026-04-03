@@ -15,6 +15,13 @@ function navigateToEducation() {
   return actor;
 }
 
+/** Helper: navigate from idle to the career.choosingCareer state */
+function navigateToCareer() {
+  const actor = navigateToEducation();
+  actor.send({ type: 'SKIP_EDUCATION' });
+  return actor;
+}
+
 describe('Creation State Machine', () => {
   it('starts in idle state', () => {
     const actor = createActor(creationMachine);
@@ -49,13 +56,7 @@ describe('Creation State Machine', () => {
     expect(actor.getSnapshot().value).toEqual({ education: 'graduated' });
 
     actor.send({ type: 'CONTINUE' });
-    expect(actor.getSnapshot().value).toBe('career');
-
-    actor.send({ type: 'MUSTER_OUT' });
-    expect(actor.getSnapshot().value).toBe('musteringOut');
-
-    actor.send({ type: 'MUSTERING_COMPLETE' });
-    expect(actor.getSnapshot().value).toBe('complete');
+    expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
 
     actor.stop();
   });
@@ -69,8 +70,16 @@ describe('Creation State Machine', () => {
   });
 
   it('complete is a final state (no transitions out)', () => {
-    const actor = navigateToEducation();
-    actor.send({ type: 'SKIP_EDUCATION' });
+    const actor = navigateToCareer();
+    // Do a full career flow to reach complete
+    actor.send({ type: 'CHOOSE_CAREER', career: 'merchant' });
+    actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Free Trader' });
+    actor.send({ type: 'QUALIFICATION_SUCCESS' });
+    actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+    actor.send({ type: 'SURVIVAL_SUCCESS' });
+    actor.send({ type: 'EVENT_RESOLVED' });
+    actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+    actor.send({ type: 'SKILL_SELECTED' });
     actor.send({ type: 'MUSTER_OUT' });
     actor.send({ type: 'MUSTERING_COMPLETE' });
     expect(actor.getSnapshot().value).toBe('complete');
@@ -86,26 +95,42 @@ describe('Creation State Machine', () => {
     expect(ctx.characterId).toBe('');
     expect(ctx.termsServed).toBe(0);
     expect(ctx.educationTermsUsed).toBe(0);
+    expect(ctx.currentCareer).toBeNull();
+    expect(ctx.currentAssignment).toBeNull();
+    expect(ctx.careerTermCount).toBe(0);
+    expect(ctx.totalTermsServed).toBe(0);
+    expect(ctx.isCommissioned).toBe(false);
+    expect(ctx.justCommissioned).toBe(false);
+    expect(ctx.forcedToLeave).toBe(false);
+    expect(ctx.forcedToStay).toBe(false);
     actor.stop();
   });
 
-  it('allows career term looping (CAREER_TERM_COMPLETE stays in career)', () => {
-    const actor = navigateToEducation();
-    actor.send({ type: 'SKIP_EDUCATION' });
+  it('allows career term looping via CONTINUE_CAREER', () => {
+    const actor = navigateToCareer();
 
-    // Do multiple career terms
-    actor.send({ type: 'CAREER_TERM_COMPLETE' });
-    expect(actor.getSnapshot().value).toBe('career');
+    // Choose career and complete a term
+    actor.send({ type: 'CHOOSE_CAREER', career: 'merchant' });
+    actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Free Trader' });
+    actor.send({ type: 'QUALIFICATION_SUCCESS' });
+    actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+    actor.send({ type: 'SURVIVAL_SUCCESS' });
+    actor.send({ type: 'EVENT_RESOLVED' });
+    actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+    actor.send({ type: 'SKILL_SELECTED' });
+    // Continue for another term
+    actor.send({ type: 'CONTINUE_CAREER' });
+    expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'survivalRoll' } });
 
-    actor.send({ type: 'CAREER_TERM_COMPLETE' });
-    expect(actor.getSnapshot().value).toBe('career');
+    // Do another term
+    actor.send({ type: 'SURVIVAL_SUCCESS' });
+    actor.send({ type: 'EVENT_RESOLVED' });
+    actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+    actor.send({ type: 'SKILL_SELECTED' });
 
-    actor.send({ type: 'CAREER_TERM_COMPLETE' });
-    expect(actor.getSnapshot().value).toBe('career');
-
-    // Then muster out
+    // Muster out
     actor.send({ type: 'MUSTER_OUT' });
-    expect(actor.getSnapshot().value).toBe('musteringOut');
+    expect(actor.getSnapshot().value).toEqual({ career: 'musteringOut' });
 
     actor.stop();
   });
@@ -244,10 +269,10 @@ describe('Creation State Machine', () => {
       actor.stop();
     });
 
-    it('transitions choosing -> career on SKIP_EDUCATION', () => {
+    it('transitions choosing -> career.choosingCareer on SKIP_EDUCATION', () => {
       const actor = navigateToEducation();
       actor.send({ type: 'SKIP_EDUCATION' });
-      expect(actor.getSnapshot().value).toBe('career');
+      expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
       actor.stop();
     });
 
@@ -265,7 +290,7 @@ describe('Creation State Machine', () => {
         expect(actor.getSnapshot().value).toEqual({ education: 'graduated' });
 
         actor.send({ type: 'CONTINUE' });
-        expect(actor.getSnapshot().value).toBe('career');
+        expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
         actor.stop();
       });
     });
@@ -284,7 +309,7 @@ describe('Creation State Machine', () => {
         expect(actor.getSnapshot().value).toEqual({ education: 'graduatedHonours' });
 
         actor.send({ type: 'CONTINUE' });
-        expect(actor.getSnapshot().value).toBe('career');
+        expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
         actor.stop();
       });
     });
@@ -312,7 +337,7 @@ describe('Creation State Machine', () => {
         actor.send({ type: 'CHOOSE_UNIVERSITY' });
         actor.send({ type: 'ENTRY_FAILURE' });
         actor.send({ type: 'SKIP' });
-        expect(actor.getSnapshot().value).toBe('career');
+        expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
         actor.stop();
       });
     });
@@ -346,7 +371,7 @@ describe('Creation State Machine', () => {
         actor.send({ type: 'TERM_COMPLETE' });
         actor.send({ type: 'FAILED_GRADUATION' });
         actor.send({ type: 'CONTINUE' });
-        expect(actor.getSnapshot().value).toBe('career');
+        expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
         actor.stop();
       });
     });
@@ -439,7 +464,7 @@ describe('Creation State Machine', () => {
 
         // But SKIP still works
         actor.send({ type: 'SKIP' });
-        expect(actor.getSnapshot().value).toBe('career');
+        expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
         actor.stop();
       });
 
@@ -470,9 +495,227 @@ describe('Creation State Machine', () => {
 
         // CONTINUE still works
         actor.send({ type: 'CONTINUE' });
-        expect(actor.getSnapshot().value).toBe('career');
+        expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
         actor.stop();
       });
+    });
+  });
+
+  describe('Career nested states', () => {
+    it('transitions from education SKIP_EDUCATION to career.choosingCareer', () => {
+      const actor = navigateToCareer();
+      expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
+      actor.stop();
+    });
+
+    it('completes full civilian career flow: choose -> qualify -> basic -> survival -> event -> advancement -> skill -> continue', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'merchant' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'choosingAssignment' });
+      expect(actor.getSnapshot().context.currentCareer).toBe('merchant');
+
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Free Trader' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'qualificationRoll' });
+
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'basicTraining' });
+
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'survivalRoll' } });
+
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'event' } });
+
+      actor.send({ type: 'EVENT_RESOLVED' });
+      // Civilian -> straight to advancement (no commission)
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'advancement' } });
+
+      actor.send({ type: 'ADVANCEMENT_RESULT', advanced: true, forcedToLeave: false, forcedToStay: false });
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'skillSelection' } });
+
+      actor.send({ type: 'SKILL_SELECTED' });
+      // Age < 34 (18 + 1*4 = 22), no aging needed
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'continueOrLeave' } });
+
+      actor.stop();
+    });
+
+    it('military career includes commission step', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'army' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Infantry' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      // Military -> goes to commission
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'commission' } });
+
+      actor.stop();
+    });
+
+    it('mishap sends to musteringOut', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'scout' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Courier' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_FAILURE' });
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'mishap' } });
+
+      actor.send({ type: 'MISHAP_RESOLVED' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'musteringOut' });
+
+      actor.stop();
+    });
+
+    it('CRER-12: justCommissioned skips advancement', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'army' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Infantry' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      // At commission — not yet commissioned
+      expect(actor.getSnapshot().context.isCommissioned).toBe(false);
+
+      // Commission succeeds -> sets justCommissioned, skips advancement
+      actor.send({ type: 'COMMISSION_RESULT', success: true });
+      expect(actor.getSnapshot().context.isCommissioned).toBe(true);
+      expect(actor.getSnapshot().context.justCommissioned).toBe(true);
+      // Went directly to skillSelection (skipping advancement)
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'skillSelection' } });
+
+      actor.stop();
+    });
+
+    it('already commissioned goes to advancement from commission', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'navy' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Line/Crew' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+
+      // First term: get commissioned
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      actor.send({ type: 'COMMISSION_RESULT', success: true });
+      actor.send({ type: 'SKILL_SELECTED' });
+
+      // Continue for second term
+      actor.send({ type: 'CONTINUE_CAREER' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      // Now already commissioned -> goes to advancement
+      expect(actor.getSnapshot().context.isCommissioned).toBe(true);
+      actor.send({ type: 'COMMISSION_RESULT', success: false });
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'advancement' } });
+
+      actor.stop();
+    });
+
+    it('qualification failure offers draft or drifter', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'noble' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Administrator' });
+      actor.send({ type: 'QUALIFICATION_FAILURE' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'qualificationFailed' });
+
+      actor.send({ type: 'CHOOSE_DRIFTER' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'basicTraining' });
+      expect(actor.getSnapshot().context.currentCareer).toBe('drifter');
+
+      actor.stop();
+    });
+
+    it('CHANGE_CAREER returns to choosingCareer', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'merchant' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Free Trader' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+      actor.send({ type: 'SKILL_SELECTED' });
+      actor.send({ type: 'CHANGE_CAREER' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'choosingCareer' });
+
+      actor.stop();
+    });
+
+    it('musteringOut loops with BENEFIT_ROLLED and exits on MUSTERING_COMPLETE', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'merchant' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Free Trader' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+      actor.send({ type: 'SKILL_SELECTED' });
+      actor.send({ type: 'MUSTER_OUT' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'musteringOut' });
+
+      // Roll benefits multiple times
+      actor.send({ type: 'BENEFIT_ROLLED' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'musteringOut' });
+      actor.send({ type: 'BENEFIT_ROLLED' });
+      expect(actor.getSnapshot().value).toEqual({ career: 'musteringOut' });
+
+      actor.send({ type: 'MUSTERING_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('complete');
+
+      actor.stop();
+    });
+
+    it('tracks term counts in context', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'scholar' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Scientist' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+
+      expect(actor.getSnapshot().context.careerTermCount).toBe(1);
+      expect(actor.getSnapshot().context.totalTermsServed).toBe(1);
+
+      // Complete term and continue
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+      actor.send({ type: 'SKILL_SELECTED' });
+      actor.send({ type: 'CONTINUE_CAREER' });
+
+      expect(actor.getSnapshot().context.careerTermCount).toBe(2);
+      expect(actor.getSnapshot().context.totalTermsServed).toBe(2);
+
+      actor.stop();
+    });
+
+    it('tracks forcedToLeave from advancement', () => {
+      const actor = navigateToCareer();
+
+      actor.send({ type: 'CHOOSE_CAREER', career: 'citizen' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Worker' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' });
+      actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: true, forcedToStay: false });
+
+      expect(actor.getSnapshot().context.forcedToLeave).toBe(true);
+
+      actor.stop();
     });
   });
 });
