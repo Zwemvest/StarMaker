@@ -1,0 +1,168 @@
+{
+  "name": "Drifter",
+  "description": "Wanderers, barbarians, and scavengers who live on the fringes of society.",
+  "qualification": null,
+  "isMilitary": false,
+  "commission": null,
+  "basicTrainingException": true,
+  "assignments": [
+    {
+      "name": "Barbarian",
+      "description": "You live on a primitive world without advanced technology.",
+      "survival": { "characteristic": "END", "target": 7 },
+      "advancement": { "characteristic": "STR", "target": 7 },
+      "specialistSkills": ["Animals", "Carouse", "Melee (Blade)", "Stealth", "Seafarer", "Survival"]
+    },
+    {
+      "name": "Wanderer",
+      "description": "You are a hitchhiker, hobo, or traveller who wanders from place to place.",
+      "survival": { "characteristic": "END", "target": 7 },
+      "advancement": { "characteristic": "INT", "target": 7 },
+      "specialistSkills": ["Drive", "Deception", "Recon", "Stealth", "Streetwise", "Survival"]
+    },
+    {
+      "name": "Scavenger",
+      "description": "You make a living by picking through the remains of civilisation.",
+      "survival": { "characteristic": "DEX", "target": 7 },
+      "advancement": { "characteristic": "END", "target": 7 },
+      "specialistSkills": ["Pilot (Small Craft)", "Mechanic", "Astrogation", "Vacc Suit", "Profession", "Gun Combat"]
+    }
+  ],
+  "ranks": {
+    "enlisted": [
+      { "level": 0, "title": "", "bonusSkill": null },
+      { "level": 1, "title": "", "bonusSkill": "Survival", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "", "bonusSkill": null },
+      { "level": 3, "title": "", "bonusSkill": "Streetwise", "bonusSkillLevel": 1 },
+      { "level": 4, "title": "", "bonusSkill": null },
+      { "level": 5, "title": "", "bonusSkill": null },
+      { "level": 6, "title": "", "bonusSkill": null }
+    ]
+  },
+  "skillTables": {
+    "personalDevelopment": ["STR", "END", "DEX", "Jack-of-all-Trades", "EDU", "Melee"],
+    "serviceSkills": ["Athletics", "Melee (Unarmed)", "Recon", "Streetwise", "Stealth", "Survival"],
+    "advancedEducation": ["Navigation", "Mechanic", "Medic", "Electronics (Computers)", "Engineer", "Jack-of-all-Trades"]
+  },
+  "events": [
+    {
+      "rollValue": 2,
+      "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
+      "effectDescription": "Roll on the Mishap table but remain in career.",
+      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 3,
+      "description": "A patron offers you a chance at a job.",
+      "effectDescription": "If you accept, gain DM+4 to your next qualification roll but gain a Rival. If you refuse, gain an Ally.",
+      "effects": [{ "type": "choice", "detail": "Accept: DM+4 qualification + Rival. Refuse: Ally.", "options": ["Accept", "Refuse"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 4,
+      "description": "You pick up a few useful skills here and there.",
+      "effectDescription": "Gain one of Jack-of-all-Trades 1, Survival 1, Streetwise 1 or Melee 1.",
+      "effects": [{ "type": "skill", "detail": "Gain JoaT 1, Survival 1, Streetwise 1 or Melee 1", "options": ["Jack-of-all-Trades", "Survival", "Streetwise", "Melee"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 5,
+      "description": "You manage to scavenge something of use.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 6,
+      "description": "You encounter something unusual.",
+      "effectDescription": "Roll Survival 8+ or Recon 8+. Succeed: gain a Contact and an extra Benefit roll. Fail: roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Survival/Recon 8+ for Contact + Benefit or Injury", "options": ["Survival 8+", "Recon 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 7,
+      "description": "Life Event. Roll on the Life Events table.",
+      "effectDescription": "Roll on the Life Events table.",
+      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 8,
+      "description": "You are attacked by enemies.",
+      "effectDescription": "Roll Melee 8+ or Gun Combat 8+. If you succeed, gain one level in a combat skill. If you fail, roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Melee/Gun Combat 8+ for combat skill or Injury", "options": ["Melee 8+", "Gun Combat 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 9,
+      "description": "You are offered a chance to take part in a risky but potentially rewarding venture.",
+      "effectDescription": "If you accept, roll Deception 8+ or Persuade 8+. Succeed: gain an extra Benefit roll. Fail: roll on the Mishap table.",
+      "effects": [{ "type": "choice", "detail": "Deception/Persuade 8+ for Benefit or Mishap" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 10,
+      "description": "Life on the edge hones your abilities.",
+      "effectDescription": "Gain any one skill.",
+      "effects": [{ "type": "skill", "detail": "Gain any one skill" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 11,
+      "description": "You are forcibly drafted.",
+      "effectDescription": "Roll for the Draft next term.",
+      "effects": [{ "type": "special", "detail": "Drafted next term" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 12,
+      "description": "You thrive on adversity.",
+      "effectDescription": "You are automatically promoted.",
+      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "hasChoice": false
+    }
+  ],
+  "mishaps": [
+    {
+      "rollValue": 1,
+      "description": "Severely injured.",
+      "effectDescription": "Roll twice on the Injury table and take the lower result.",
+      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+    },
+    {
+      "rollValue": 2,
+      "description": "Injured. Roll on the Injury table.",
+      "effectDescription": "Roll on the Injury table.",
+      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+    },
+    {
+      "rollValue": 3,
+      "description": "You run afoul of a criminal gang, corrupt bureaucrat or other criminal. Gain an Enemy.",
+      "effectDescription": "Gain an Enemy.",
+      "effects": [{ "type": "enemy", "detail": "Gain an Enemy" }]
+    },
+    {
+      "rollValue": 4,
+      "description": "You suffer from a life-threatening illness.",
+      "effectDescription": "Lose 1 from END, STR or DEX.",
+      "effects": [{ "type": "characteristic", "detail": "Lose 1 from END, STR or DEX" }]
+    },
+    {
+      "rollValue": 5,
+      "description": "Betrayed by a friend. One of your Contacts or Allies betrays you, ending your career. That Contact or Ally becomes a Rival or Enemy.",
+      "effectDescription": "A Contact or Ally becomes a Rival or Enemy.",
+      "effects": [{ "type": "rival", "detail": "Contact/Ally becomes Rival or Enemy" }]
+    },
+    {
+      "rollValue": 6,
+      "description": "You do not know what happened to you. There is a gap in your memory.",
+      "effectDescription": "No additional effect.",
+      "effects": [{ "type": "special", "detail": "Gap in memory, no additional effect" }]
+    }
+  ],
+  "musteringOut": {
+    "cash": [0, 0, 1000, 2000, 3000, 4000, 8000],
+    "benefits": ["Contact", "Weapon", "Ally", "Weapon", "EDU +1", "Ship Share", "Ship Shares x2"]
+  }
+}

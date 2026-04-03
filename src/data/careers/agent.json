@@ -1,0 +1,168 @@
+{
+  "name": "Agent",
+  "description": "Law enforcement agencies, corporate operatives, spies, and investigators.",
+  "qualification": { "characteristic": "INT", "target": 6 },
+  "isMilitary": false,
+  "commission": null,
+  "basicTrainingException": false,
+  "assignments": [
+    {
+      "name": "Law Enforcement",
+      "description": "You are a police officer or detective.",
+      "survival": { "characteristic": "END", "target": 6 },
+      "advancement": { "characteristic": "INT", "target": 6 },
+      "specialistSkills": ["Investigate", "Recon", "Streetwise", "Stealth", "Melee", "Advocate"]
+    },
+    {
+      "name": "Intelligence",
+      "description": "You work as a spy or saboteur.",
+      "survival": { "characteristic": "INT", "target": 7 },
+      "advancement": { "characteristic": "INT", "target": 5 },
+      "specialistSkills": ["Investigate", "Recon", "Electronics (Comms)", "Stealth", "Persuade", "Deception"]
+    },
+    {
+      "name": "Corporate",
+      "description": "You work for a corporation, spying on rival firms.",
+      "survival": { "characteristic": "INT", "target": 5 },
+      "advancement": { "characteristic": "INT", "target": 7 },
+      "specialistSkills": ["Investigate", "Electronics (Computers)", "Stealth", "Gun Combat", "Deception", "Streetwise"]
+    }
+  ],
+  "ranks": {
+    "enlisted": [
+      { "level": 0, "title": "", "bonusSkill": null },
+      { "level": 1, "title": "Agent", "bonusSkill": "Deception", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "Field Agent", "bonusSkill": "Investigate", "bonusSkillLevel": 1 },
+      { "level": 3, "title": "", "bonusSkill": null },
+      { "level": 4, "title": "Special Agent", "bonusSkill": "Gun Combat", "bonusSkillLevel": 1 },
+      { "level": 5, "title": "Assistant Director", "bonusSkill": null },
+      { "level": 6, "title": "Director", "bonusSkill": null }
+    ]
+  },
+  "skillTables": {
+    "personalDevelopment": ["Gun Combat", "DEX", "END", "Melee", "INT", "Athletics"],
+    "serviceSkills": ["Streetwise", "Drive", "Investigate", "Electronics (Computers)", "Recon", "Gun Combat"],
+    "advancedEducation": ["Advocate", "Language", "Explosives", "Medic", "Vacc Suit", "Electronics"]
+  },
+  "events": [
+    {
+      "rollValue": 2,
+      "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
+      "effectDescription": "Roll on the Mishap table but remain in career.",
+      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 3,
+      "description": "An investigation takes on a dangerous turn.",
+      "effectDescription": "Roll Investigate 8+ or Streetwise 8+. If you succeed, gain an extra Benefit roll. If you fail, you are injured — roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Investigate 8+ or Streetwise 8+ for extra Benefit or Injury", "options": ["Investigate 8+", "Streetwise 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 4,
+      "description": "You complete a mission for your superiors and are commended.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll and gain an Ally.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }, { "type": "ally", "detail": "Gain an Ally" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 5,
+      "description": "You establish a network of contacts.",
+      "effectDescription": "Gain D3 Contacts.",
+      "effects": [{ "type": "contact", "detail": "Gain D3 Contacts" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 6,
+      "description": "You are given advanced training in a specialist field.",
+      "effectDescription": "Roll EDU 8+ to gain any skill.",
+      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 7,
+      "description": "Life Event. Roll on the Life Events table.",
+      "effectDescription": "Roll on the Life Events table.",
+      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 8,
+      "description": "You go undercover to investigate an enemy.",
+      "effectDescription": "Roll Deception 8+. If you succeed, gain an extra Benefit roll. If you fail, roll on the Mishap table.",
+      "effects": [{ "type": "choice", "detail": "Deception 8+ for extra Benefit or Mishap" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 9,
+      "description": "You go above and beyond the call of duty.",
+      "effectDescription": "Gain DM+2 to your next advancement roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 10,
+      "description": "You are given specialist training in vehicles.",
+      "effectDescription": "Gain one of Drive 1, Flyer 1, Pilot 1 or Gunner 1.",
+      "effects": [{ "type": "skill", "detail": "Gain one of Drive 1, Flyer 1, Pilot 1 or Gunner 1", "options": ["Drive", "Flyer", "Pilot", "Gunner"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 11,
+      "description": "You are befriended by a senior agent.",
+      "effectDescription": "Either gain Investigate 1 or DM+4 to your next advancement roll (choose one).",
+      "effects": [{ "type": "choice", "detail": "Investigate 1 or DM+4 to next advancement", "options": ["Investigate 1", "DM+4 advancement"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 12,
+      "description": "Your efforts uncover a major conspiracy against your employers.",
+      "effectDescription": "You are automatically promoted.",
+      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "hasChoice": false
+    }
+  ],
+  "mishaps": [
+    {
+      "rollValue": 1,
+      "description": "Severely injured in action.",
+      "effectDescription": "Roll twice on the Injury table and take the lower result.",
+      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+    },
+    {
+      "rollValue": 2,
+      "description": "A criminal or other figure under investigation offers you a deal. Accept it and you leave this career without further penalty (although you lose the Benefit roll as normal). Refuse and you must roll twice on the Injury table and take the lower result. Gain an Enemy and one level in any skill.",
+      "effectDescription": "Accept deal: leave without penalty. Refuse: Injury, gain Enemy and a skill.",
+      "effects": [{ "type": "choice", "detail": "Accept deal or refuse (Injury + Enemy + skill)", "options": ["Accept deal", "Refuse"] }]
+    },
+    {
+      "rollValue": 3,
+      "description": "An investigation goes critically wrong or leads to the wrong suspect. What do you do?",
+      "effectDescription": "Lose one level of Investigate. Gain a Rival.",
+      "effects": [{ "type": "skill", "detail": "Lose Investigate 1" }, { "type": "rival", "detail": "Gain a Rival" }]
+    },
+    {
+      "rollValue": 4,
+      "description": "You learn something you should not know and people want to kill you for it. Gain an Enemy and Deception 1.",
+      "effectDescription": "Gain an Enemy and Deception 1.",
+      "effects": [{ "type": "enemy", "detail": "Gain an Enemy" }, { "type": "skill", "detail": "Gain Deception 1" }]
+    },
+    {
+      "rollValue": 5,
+      "description": "Your work ends up coming home with you and someone close to you is hurt. Choose one of your Contacts, Allies or family members and roll twice on the Injury table for them, taking the lower result.",
+      "effectDescription": "A Contact, Ally or family member is injured.",
+      "effects": [{ "type": "special", "detail": "Contact/Ally/family injured" }]
+    },
+    {
+      "rollValue": 6,
+      "description": "Injured. Roll on the Injury table.",
+      "effectDescription": "Roll on the Injury table.",
+      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+    }
+  ],
+  "musteringOut": {
+    "cash": [1000, 2000, 5000, 7500, 10000, 25000, 50000],
+    "benefits": ["Scientific Equipment", "INT +1", "Ship Share", "Weapon", "Combat Implant", "SOC +1 or Combat Implant", "TAS Membership"]
+  }
+}

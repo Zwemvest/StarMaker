@@ -1,0 +1,178 @@
+{
+  "name": "Marine",
+  "description": "Members of the armed fighting forces carried aboard starships. Marines deal with boarding actions, piracy, and ground battles.",
+  "qualification": { "characteristic": "END", "target": 6 },
+  "isMilitary": true,
+  "commission": { "characteristic": "SOC", "target": 8 },
+  "basicTrainingException": false,
+  "assignments": [
+    {
+      "name": "Support",
+      "description": "You are a support specialist, engineer, or logistics operative for the Marines.",
+      "survival": { "characteristic": "END", "target": 5 },
+      "advancement": { "characteristic": "EDU", "target": 7 },
+      "specialistSkills": ["Electronics (Comms)", "Mechanic", "Drive", "Medic", "Heavy Weapons", "Gun Combat"]
+    },
+    {
+      "name": "Star Marine",
+      "description": "You are trained for boarding actions and zero-gravity combat.",
+      "survival": { "characteristic": "END", "target": 6 },
+      "advancement": { "characteristic": "EDU", "target": 6 },
+      "specialistSkills": ["Vacc Suit", "Athletics", "Gunner", "Melee (Blade)", "Electronics (Sensors)", "Gun Combat"]
+    },
+    {
+      "name": "Ground Assault",
+      "description": "You are trained for planetary surface operations and ground combat.",
+      "survival": { "characteristic": "END", "target": 7 },
+      "advancement": { "characteristic": "EDU", "target": 5 },
+      "specialistSkills": ["Heavy Weapons", "Recon", "Melee (Blade)", "Survival", "Gun Combat", "Athletics"]
+    }
+  ],
+  "ranks": {
+    "enlisted": [
+      { "level": 0, "title": "Marine", "bonusSkill": "Gun Combat", "bonusSkillLevel": 1 },
+      { "level": 1, "title": "Lance Corporal", "bonusSkill": "Gun Combat", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "Corporal", "bonusSkill": null },
+      { "level": 3, "title": "Lance Sergeant", "bonusSkill": "Leadership", "bonusSkillLevel": 1 },
+      { "level": 4, "title": "Sergeant", "bonusSkill": null },
+      { "level": 5, "title": "Gunnery Sergeant", "bonusSkill": "END +1", "bonusSkillLevel": 1 },
+      { "level": 6, "title": "Sergeant Major", "bonusSkill": null }
+    ],
+    "officer": [
+      { "level": 0, "title": "", "bonusSkill": null },
+      { "level": 1, "title": "Lieutenant", "bonusSkill": "Leadership", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "Captain", "bonusSkill": "Tactics (Military)", "bonusSkillLevel": 1 },
+      { "level": 3, "title": "Force Commander", "bonusSkill": null },
+      { "level": 4, "title": "Lieutenant Colonel", "bonusSkill": null },
+      { "level": 5, "title": "Colonel", "bonusSkill": "SOC +1", "bonusSkillLevel": 1 },
+      { "level": 6, "title": "Brigadier", "bonusSkill": null }
+    ]
+  },
+  "skillTables": {
+    "personalDevelopment": ["STR", "DEX", "END", "Gambler", "Melee (Unarmed)", "Melee (Blade)"],
+    "serviceSkills": ["Athletics", "Vacc Suit", "Tactics (Military)", "Heavy Weapons", "Gun Combat", "Stealth"],
+    "advancedEducation": ["Medic", "Survival", "Explosives", "Engineer", "Pilot", "Navigation"],
+    "officer": ["Electronics", "Tactics (Military)", "Admin", "Advocate", "Vacc Suit", "Leadership"]
+  },
+  "events": [
+    {
+      "rollValue": 2,
+      "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
+      "effectDescription": "Roll on the Mishap table but remain in career.",
+      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 3,
+      "description": "You are on the front lines of a planetary assault and occupation.",
+      "effectDescription": "Gain one of Recon 1, Gun Combat 1, Leadership 1 or Electronics (Comms) 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Recon 1, Gun Combat 1, Leadership 1 or Electronics (Comms) 1", "options": ["Recon", "Gun Combat", "Leadership", "Electronics (Comms)"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 4,
+      "description": "You are assigned to the security forces of a space station.",
+      "effectDescription": "Gain one of Vacc Suit 1 or Athletics (Dexterity) 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Vacc Suit 1 or Athletics (Dexterity) 1", "options": ["Vacc Suit", "Athletics (Dexterity)"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 5,
+      "description": "You are given a special assignment or duty.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 6,
+      "description": "You are thrown into a brutal ground war.",
+      "effectDescription": "Roll Gun Combat or Melee 8+. Succeed: gain Leadership or Tactics (Military). Fail: roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Gun Combat/Melee 8+ for Leadership/Tactics or Injury", "options": ["Gun Combat 8+", "Melee 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 7,
+      "description": "Life Event. Roll on the Life Events table.",
+      "effectDescription": "Roll on the Life Events table.",
+      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 8,
+      "description": "You are given advanced training in a specialist field.",
+      "effectDescription": "Roll EDU 8+ to gain any skill.",
+      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 9,
+      "description": "A mission goes wrong and you have to rescue a fellow Marine.",
+      "effectDescription": "Roll either Melee or Athletics 8+. Succeed: gain an Ally. Fail: roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Melee/Athletics 8+ for Ally or Injury", "options": ["Melee 8+", "Athletics 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 10,
+      "description": "You are assigned to a black ops mission.",
+      "effectDescription": "Gain DM+2 to your next advancement roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 11,
+      "description": "Your commanding officer takes an interest in your career.",
+      "effectDescription": "Either gain Tactics (Military) 1 or DM+4 to your next advancement roll (choose one).",
+      "effects": [{ "type": "choice", "detail": "Tactics (Military) 1 or DM+4 to next advancement", "options": ["Tactics (Military) 1", "DM+4 advancement"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 12,
+      "description": "You display heroism in battle.",
+      "effectDescription": "You may gain a promotion or a commission automatically.",
+      "effects": [{ "type": "special", "detail": "Automatic promotion or commission" }],
+      "hasChoice": true
+    }
+  ],
+  "mishaps": [
+    {
+      "rollValue": 1,
+      "description": "Severely injured in action.",
+      "effectDescription": "Roll twice on the Injury table and take the lower result.",
+      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+    },
+    {
+      "rollValue": 2,
+      "description": "A mission goes wrong; you and several others are captured and held as prisoners of war. Gain your jailer as a Contact and gain one of Persuade 1, Medic 1, Streetwise 1 or Deception 1.",
+      "effectDescription": "Gain a Contact (jailer). Gain Persuade 1, Medic 1, Streetwise 1 or Deception 1.",
+      "effects": [{ "type": "contact", "detail": "Gain jailer as Contact" }, { "type": "skill", "detail": "Gain Persuade 1, Medic 1, Streetwise 1 or Deception 1", "options": ["Persuade", "Medic", "Streetwise", "Deception"] }]
+    },
+    {
+      "rollValue": 3,
+      "description": "A mission goes wrong and you are stranded behind enemy lines. Gain Survival 1 or Stealth 1.",
+      "effectDescription": "Gain Survival 1 or Stealth 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Survival 1 or Stealth 1", "options": ["Survival", "Stealth"] }]
+    },
+    {
+      "rollValue": 4,
+      "description": "You are ordered to take part in a black ops mission that goes against your conscience. If you refuse, you are ejected from the career. Accept and gain one of Tactics (Military) 1 or Gun Combat 1 but also gain the commanding officer as an Enemy.",
+      "effectDescription": "Refuse: ejected. Accept: gain Tactics/Gun Combat and commander as Enemy.",
+      "effects": [{ "type": "choice", "detail": "Refuse (ejected) or accept (skill + Enemy)", "options": ["Refuse", "Accept"] }]
+    },
+    {
+      "rollValue": 5,
+      "description": "You are tormented by or quarrel with an officer or fellow Marine. Gain that individual as a Rival as they drive you out of the service.",
+      "effectDescription": "Gain a Rival.",
+      "effects": [{ "type": "rival", "detail": "Gain a Rival" }]
+    },
+    {
+      "rollValue": 6,
+      "description": "Injured. Roll on the Injury table.",
+      "effectDescription": "Roll on the Injury table.",
+      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+    }
+  ],
+  "musteringOut": {
+    "cash": [2000, 5000, 5000, 10000, 20000, 30000, 40000],
+    "benefits": ["Armour", "INT +1", "EDU +1", "Weapon", "TAS Membership", "Armour or END +1", "SOC +2"]
+  }
+}
