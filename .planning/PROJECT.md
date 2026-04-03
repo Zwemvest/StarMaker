@@ -102,4 +102,4 @@ Faithful implementation of the Mongoose Traveller 2E character creation rules �
 | Override mode as toggle, not default | Preserves the Traveller creation experience while allowing experimentation | — Pending |
 
 ---
-*Last updated: 2026-04-02 after Phase 2 completion — Pre-Career Creation verified (16/16 requirements)*
+*Last updated: 2026-04-03 after Phase 2 re-verification — Pre-Career Creation verified (18/18 must-haves, all UAT gaps closed)*
