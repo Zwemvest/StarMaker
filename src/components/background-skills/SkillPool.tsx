@@ -50,7 +50,7 @@ export function SkillPool({ skills, assignedNames, disabled }: SkillPoolProps) {
               const isAssigned = assignedNames.has(skill.name);
               const isRelevant = RELEVANT_SKILLS.has(skill.name);
               const tooltipText = isRelevant && !isAssigned
-                ? `${skill.description}\nCommonly useful in careers and education paths`
+                ? `${skill.description} — Commonly useful in careers and education paths`
                 : skill.description;
               return (
                 <Tooltip text={tooltipText}>
