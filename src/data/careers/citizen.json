@@ -1,0 +1,168 @@
+{
+  "name": "Citizen",
+  "description": "Individuals in the regular working population, including corporate workers, colonists, and labourers.",
+  "qualification": { "characteristic": "EDU", "target": 5 },
+  "isMilitary": false,
+  "commission": null,
+  "basicTrainingException": true,
+  "assignments": [
+    {
+      "name": "Corporate",
+      "description": "You are a white-collar worker in a large corporation.",
+      "survival": { "characteristic": "SOC", "target": 6 },
+      "advancement": { "characteristic": "INT", "target": 6 },
+      "specialistSkills": ["Advocate", "Admin", "Broker", "Electronics (Computers)", "Diplomat", "Leadership"]
+    },
+    {
+      "name": "Worker",
+      "description": "You are a blue-collar worker on an industrial planet.",
+      "survival": { "characteristic": "END", "target": 4 },
+      "advancement": { "characteristic": "EDU", "target": 8 },
+      "specialistSkills": ["Drive", "Mechanic", "Electronics (Remote Ops)", "Engineer", "Profession", "Science"]
+    },
+    {
+      "name": "Colonist",
+      "description": "You are a colonist building a new life on a recently settled world.",
+      "survival": { "characteristic": "INT", "target": 7 },
+      "advancement": { "characteristic": "END", "target": 5 },
+      "specialistSkills": ["Animals", "Athletics", "Jack-of-all-Trades", "Medic", "Survival", "Recon"]
+    }
+  ],
+  "ranks": {
+    "enlisted": [
+      { "level": 0, "title": "", "bonusSkill": null },
+      { "level": 1, "title": "", "bonusSkill": null },
+      { "level": 2, "title": "Manager", "bonusSkill": "Admin", "bonusSkillLevel": 1 },
+      { "level": 3, "title": "", "bonusSkill": null },
+      { "level": 4, "title": "Senior Manager", "bonusSkill": "Advocate", "bonusSkillLevel": 1 },
+      { "level": 5, "title": "", "bonusSkill": null },
+      { "level": 6, "title": "Director", "bonusSkill": null }
+    ]
+  },
+  "skillTables": {
+    "personalDevelopment": ["EDU", "INT", "Carouse", "Gambler", "Drive", "Jack-of-all-Trades"],
+    "serviceSkills": ["Drive", "Flyer", "Streetwise", "Melee", "Steward", "Profession"],
+    "advancedEducation": ["Art", "Advocate", "Diplomat", "Language", "Electronics (Computers)", "Medic"]
+  },
+  "events": [
+    {
+      "rollValue": 2,
+      "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
+      "effectDescription": "Roll on the Mishap table but remain in career.",
+      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 3,
+      "description": "Political upheaval strikes your homeworld and you are caught up in the revolution.",
+      "effectDescription": "Roll Streetwise 8+ or Deception 8+. Succeed: gain an extra Benefit roll. Fail: roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Streetwise/Deception 8+ for extra Benefit or Injury", "options": ["Streetwise 8+", "Deception 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 4,
+      "description": "You spend time maintaining and using heavy vehicles.",
+      "effectDescription": "Gain one of Drive 1, Electronics 1, Flyer 1 or Mechanic 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Drive 1, Electronics 1, Flyer 1 or Mechanic 1", "options": ["Drive", "Electronics", "Flyer", "Mechanic"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 5,
+      "description": "Your business or employment is thriving.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 6,
+      "description": "You are given advanced training in a specialist field.",
+      "effectDescription": "Roll EDU 8+ to gain any skill.",
+      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 7,
+      "description": "Life Event. Roll on the Life Events table.",
+      "effectDescription": "Roll on the Life Events table.",
+      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 8,
+      "description": "You learn something you should not have and people want to kill you for it. Gain an Enemy and gain Deception 1, Streetwise 1 or a Contact.",
+      "effectDescription": "Gain an Enemy. Gain Deception 1, Streetwise 1 or a Contact.",
+      "effects": [{ "type": "enemy", "detail": "Gain an Enemy" }, { "type": "choice", "detail": "Gain Deception 1, Streetwise 1 or Contact", "options": ["Deception", "Streetwise", "Contact"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 9,
+      "description": "You are a natural leader.",
+      "effectDescription": "Gain DM+2 to your next advancement roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 10,
+      "description": "You are rewarded for your diligence or brilliance.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll and gain an Ally.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }, { "type": "ally", "detail": "Gain an Ally" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 11,
+      "description": "You gain experience in a wide variety of fields.",
+      "effectDescription": "Gain Jack-of-all-Trades 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Jack-of-all-Trades 1" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 12,
+      "description": "You rise to a position of power in your organisation.",
+      "effectDescription": "You are automatically promoted.",
+      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "hasChoice": false
+    }
+  ],
+  "mishaps": [
+    {
+      "rollValue": 1,
+      "description": "Severely injured.",
+      "effectDescription": "Roll twice on the Injury table and take the lower result.",
+      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+    },
+    {
+      "rollValue": 2,
+      "description": "You are harassed and your life is ruined by a criminal gang. Gain the gang as an Enemy.",
+      "effectDescription": "Gain a criminal gang as an Enemy.",
+      "effects": [{ "type": "enemy", "detail": "Gain criminal gang as Enemy" }]
+    },
+    {
+      "rollValue": 3,
+      "description": "Hard times caused by a lack of interstellar trade costs you your job.",
+      "effectDescription": "Gain Streetwise 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Streetwise 1" }]
+    },
+    {
+      "rollValue": 4,
+      "description": "Your business is consumed by a new and unexpected rival.",
+      "effectDescription": "Gain a Rival. Gain Broker 1 or Electronics 1.",
+      "effects": [{ "type": "rival", "detail": "Gain a Rival" }, { "type": "skill", "detail": "Gain Broker 1 or Electronics 1", "options": ["Broker", "Electronics"] }]
+    },
+    {
+      "rollValue": 5,
+      "description": "A revolution, attack or other unusual event throws your life into chaos, forcing you to leave the planet.",
+      "effectDescription": "Roll Streetwise 8+. If you succeed, increase one skill. If you fail, increase Deception or Streetwise.",
+      "effects": [{ "type": "choice", "detail": "Streetwise 8+ for any skill or Deception/Streetwise" }]
+    },
+    {
+      "rollValue": 6,
+      "description": "Injured. Roll on the Injury table.",
+      "effectDescription": "Roll on the Injury table.",
+      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+    }
+  ],
+  "musteringOut": {
+    "cash": [1000, 5000, 10000, 10000, 10000, 50000, 100000],
+    "benefits": ["Ship Share", "Ally", "INT +1", "Gun", "EDU +1", "Two Ship Shares", "TAS Membership"]
+  }
+}

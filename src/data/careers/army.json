@@ -1,0 +1,178 @@
+{
+  "name": "Army",
+  "description": "Members of the planetary armed fighting forces. Soldiers deal with planetary surface actions, battles and campaigns.",
+  "qualification": { "characteristic": "END", "target": 5 },
+  "isMilitary": true,
+  "commission": { "characteristic": "SOC", "target": 8 },
+  "basicTrainingException": false,
+  "assignments": [
+    {
+      "name": "Support",
+      "description": "You are an engineer, cook, or in some other support role behind the front lines.",
+      "survival": { "characteristic": "END", "target": 5 },
+      "advancement": { "characteristic": "EDU", "target": 7 },
+      "specialistSkills": ["Mechanic", "Drive", "Flyer", "Explosives", "Electronics (Comms)", "Medic"]
+    },
+    {
+      "name": "Infantry",
+      "description": "You are one of the Poor Bloody Infantry on the sharp end of combat.",
+      "survival": { "characteristic": "STR", "target": 6 },
+      "advancement": { "characteristic": "EDU", "target": 6 },
+      "specialistSkills": ["Gun Combat", "Melee", "Heavy Weapons", "Stealth", "Athletics", "Recon"]
+    },
+    {
+      "name": "Cavalry",
+      "description": "You are one of the crew of a tank or other armoured fighting vehicle.",
+      "survival": { "characteristic": "DEX", "target": 7 },
+      "advancement": { "characteristic": "INT", "target": 5 },
+      "specialistSkills": ["Mechanic", "Drive", "Flyer", "Recon", "Heavy Weapons", "Electronics (Sensors)"]
+    }
+  ],
+  "ranks": {
+    "enlisted": [
+      { "level": 0, "title": "Private", "bonusSkill": "Gun Combat", "bonusSkillLevel": 1 },
+      { "level": 1, "title": "Lance Corporal", "bonusSkill": "Recon", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "Corporal", "bonusSkill": null },
+      { "level": 3, "title": "Lance Sergeant", "bonusSkill": "Leadership", "bonusSkillLevel": 1 },
+      { "level": 4, "title": "Sergeant", "bonusSkill": null },
+      { "level": 5, "title": "Gunnery Sergeant", "bonusSkill": null },
+      { "level": 6, "title": "Sergeant Major", "bonusSkill": null }
+    ],
+    "officer": [
+      { "level": 0, "title": "", "bonusSkill": null },
+      { "level": 1, "title": "Lieutenant", "bonusSkill": "Leadership", "bonusSkillLevel": 1 },
+      { "level": 2, "title": "Captain", "bonusSkill": "Tactics (Military)", "bonusSkillLevel": 1 },
+      { "level": 3, "title": "Major", "bonusSkill": null },
+      { "level": 4, "title": "Lieutenant Colonel", "bonusSkill": null },
+      { "level": 5, "title": "Colonel", "bonusSkill": null },
+      { "level": 6, "title": "General", "bonusSkill": "SOC +1", "bonusSkillLevel": 1 }
+    ]
+  },
+  "skillTables": {
+    "personalDevelopment": ["STR", "DEX", "END", "Gambler", "Medic", "Melee"],
+    "serviceSkills": ["Drive", "Athletics", "Gun Combat", "Recon", "Melee", "Heavy Weapons"],
+    "advancedEducation": ["Tactics (Military)", "Electronics", "Navigation", "Explosives", "Engineer", "Survival"],
+    "officer": ["Tactics (Military)", "Leadership", "Advocate", "Diplomat", "Electronics", "Admin"]
+  },
+  "events": [
+    {
+      "rollValue": 2,
+      "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
+      "effectDescription": "Roll on the Mishap table but remain in career.",
+      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 3,
+      "description": "You are assigned to a planet with a hostile or wild environment.",
+      "effectDescription": "Gain one of Vacc Suit 1, Engineer 1, Animals (Riding or Training) 1 or Recon 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Vacc Suit 1, Engineer 1, Animals 1 or Recon 1", "options": ["Vacc Suit", "Engineer", "Animals (Riding)", "Animals (Training)", "Recon"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 4,
+      "description": "You are assigned to an urbanised planet torn by war.",
+      "effectDescription": "Gain one of Stealth 1, Streetwise 1, Persuade 1 or Recon 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Stealth 1, Streetwise 1, Persuade 1 or Recon 1", "options": ["Stealth", "Streetwise", "Persuade", "Recon"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 5,
+      "description": "You are given a special assignment or duty in your unit.",
+      "effectDescription": "Gain DM+1 to any one Benefit roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 6,
+      "description": "You are thrown into a brutal ground war.",
+      "effectDescription": "Roll either Melee or Gun Combat 8+. If you succeed, gain one of Leadership 1 or Tactics (Military) 1. If you fail, roll on the Injury table.",
+      "effects": [{ "type": "choice", "detail": "Melee/Gun Combat 8+ for Leadership/Tactics or Injury", "options": ["Melee 8+", "Gun Combat 8+"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 7,
+      "description": "Life Event. Roll on the Life Events table.",
+      "effectDescription": "Roll on the Life Events table.",
+      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 8,
+      "description": "You are given advanced training in a specialist field.",
+      "effectDescription": "Roll EDU 8+ to gain any skill.",
+      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 9,
+      "description": "Surrounded and outnumbered by the enemy, you hold out until relief arrives.",
+      "effectDescription": "Gain DM+2 to your next advancement roll.",
+      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "hasChoice": false
+    },
+    {
+      "rollValue": 10,
+      "description": "You are assigned to a peacekeeping role.",
+      "effectDescription": "Gain one of Admin 1, Investigate 1, Deception 1 or Recon 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Admin 1, Investigate 1, Deception 1 or Recon 1", "options": ["Admin", "Investigate", "Deception", "Recon"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 11,
+      "description": "You are commanding officer in a major battle.",
+      "effectDescription": "Gain Tactics (Military) 1 and either gain an Ally or gain DM+4 to your next advancement roll.",
+      "effects": [{ "type": "skill", "detail": "Gain Tactics (Military) 1" }, { "type": "choice", "detail": "Gain Ally or DM+4 to next advancement", "options": ["Ally", "DM+4 advancement"] }],
+      "hasChoice": true
+    },
+    {
+      "rollValue": 12,
+      "description": "You display heroism in battle.",
+      "effectDescription": "You may gain a promotion or a commission automatically. You gain an Ally.",
+      "effects": [{ "type": "special", "detail": "Automatic promotion or commission" }, { "type": "ally", "detail": "Gain an Ally" }],
+      "hasChoice": true
+    }
+  ],
+  "mishaps": [
+    {
+      "rollValue": 1,
+      "description": "Severely injured in action.",
+      "effectDescription": "Roll twice on the Injury table and take the lower result.",
+      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+    },
+    {
+      "rollValue": 2,
+      "description": "Your unit is slaughtered in a disastrous battle, for which you blame your commander. Gain them as an Enemy.",
+      "effectDescription": "Gain an Enemy (your commander). You are not ejected from this career.",
+      "effects": [{ "type": "enemy", "detail": "Gain commander as Enemy" }]
+    },
+    {
+      "rollValue": 3,
+      "description": "You are sent to a very unpleasant region (jungle, swamp, desert, icecap, urban) to battle against guerrilla fighters and rebels. You are discharged because of stress, injury or because the government wishes to bury the whole incident. Gain Recon 1 or Survival 1.",
+      "effectDescription": "Discharged. Gain Recon 1 or Survival 1.",
+      "effects": [{ "type": "skill", "detail": "Gain Recon 1 or Survival 1", "options": ["Recon", "Survival"] }]
+    },
+    {
+      "rollValue": 4,
+      "description": "You discover that your commanding officer is engaged in some illegal activity, such as weapon smuggling. You can join them and gain them as an Ally before the inevitable investigation gets you ejected from the career, or you can cooperate with the investigation.",
+      "effectDescription": "Join: gain Ally, ejected. Cooperate: gain extra Benefit roll.",
+      "effects": [{ "type": "choice", "detail": "Join (Ally, ejected) or cooperate (extra Benefit)", "options": ["Join", "Cooperate"] }]
+    },
+    {
+      "rollValue": 5,
+      "description": "You are tormented by or quarrel with an officer or fellow soldier. Gain that officer as a Rival as they drive you out of the service.",
+      "effectDescription": "Gain a Rival.",
+      "effects": [{ "type": "rival", "detail": "Gain a Rival" }]
+    },
+    {
+      "rollValue": 6,
+      "description": "Injured. Roll on the Injury table.",
+      "effectDescription": "Roll on the Injury table.",
+      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+    }
+  ],
+  "musteringOut": {
+    "cash": [2000, 5000, 10000, 10000, 10000, 20000, 30000],
+    "benefits": ["Combat Implant", "INT +1", "EDU +1", "Weapon", "Armour", "END +1 or Combat Implant", "SOC +1"]
+  }
+}
