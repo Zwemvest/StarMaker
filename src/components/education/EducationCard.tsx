@@ -54,9 +54,6 @@ export function EducationCard({ path, onSelect, disabled, odds, branchOdds }: Ed
     );
   }
 
-  // University or Skip card
-  const isSkip = path.type === 'university' ? false : true;
-
   if (path.label === 'Skip to Career') {
     return (
       <Card className="flex flex-col gap-3 min-w-[220px] flex-1">
