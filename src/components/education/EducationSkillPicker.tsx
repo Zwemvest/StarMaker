@@ -10,6 +10,8 @@ interface EducationSkillPickerProps {
   availableSkills: string[];
   /** Academy branch name, if applicable */
   branchLabel?: string;
+  /** Skills the character already owns (informational indicator only) */
+  existingSkills?: string[];
   onComplete: (selectedSkills: { name: string; level: number }[]) => void;
 }
 
@@ -23,6 +25,7 @@ export function EducationSkillPicker({
   type,
   availableSkills,
   branchLabel,
+  existingSkills = [],
   onComplete,
 }: EducationSkillPickerProps) {
   const sensors = useSensors(
@@ -65,14 +68,18 @@ export function EducationSkillPicker({
           All service skills granted at Level 0 automatically.
         </p>
         <div className="flex flex-wrap gap-2">
-          {availableSkills.map((skill) => (
-            <span
-              key={skill}
-              className="px-2 py-1 bg-scanner-blue/10 border border-scanner-blue/30 rounded text-sm text-scanner-blue font-mono"
-            >
-              {skill} 0
-            </span>
-          ))}
+          {availableSkills.map((skill) => {
+            const isOwned = existingSkills.includes(skill);
+            return (
+              <span
+                key={skill}
+                className={`px-2 py-1 bg-scanner-blue/10 border border-scanner-blue/30 rounded text-sm text-scanner-blue font-mono ${isOwned ? 'opacity-50' : ''}`}
+              >
+                {skill} 0
+                {isOwned && <span className="text-gray-500 text-xs ml-1">(already owned)</span>}
+              </span>
+            );
+          })}
         </div>
         <Button variant="primary" size="sm" onClick={handleConfirm}>
           Continue
@@ -102,11 +109,15 @@ export function EducationSkillPicker({
           <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Available Skills</p>
           <DragPool
             items={unassignedPool}
-            renderItem={(item) => (
-              <span className="px-2 py-1 bg-terminal-surface border border-gray-600 rounded text-sm text-white font-mono cursor-grab">
-                {item.name}
-              </span>
-            )}
+            renderItem={(item) => {
+              const isOwned = existingSkills.includes(item.name);
+              return (
+                <span className={`px-2 py-1 bg-terminal-surface border border-gray-600 rounded text-sm text-white font-mono cursor-grab ${isOwned ? 'opacity-50' : ''}`}>
+                  {item.name}
+                  {isOwned && <span className="text-gray-500 text-xs ml-1">(already owned)</span>}
+                </span>
+              );
+            }}
             getId={(item) => item.id}
             disabled={isComplete}
           />

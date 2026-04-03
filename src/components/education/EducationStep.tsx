@@ -394,6 +394,7 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
             type={isUniversity ? 'university' : 'academy'}
             availableSkills={availableSkills}
             branchLabel={selectedPath?.label}
+            existingSkills={existingSkillNames}
             onComplete={handleSkillsComplete}
           />
         ) : !eventData ? (
