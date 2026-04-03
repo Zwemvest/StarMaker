@@ -75,10 +75,10 @@ Plans:
 **Plans:** 8 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Career types, Zod schemas, and career engine pure functions
-- [ ] 03-02-PLAN.md — Aging engine, mustering-out engine, life events, and draft table
-- [ ] 03-03-PLAN.md — All 12 career JSON data files transcribed from Core Rulebook
-- [ ] 03-04-PLAN.md — Zustand store career extensions and XState career sub-states
+- [x] 03-01-PLAN.md — Career types, Zod schemas, and career engine pure functions
+- [x] 03-02-PLAN.md — Aging engine, mustering-out engine, life events, and draft table
+- [x] 03-03-PLAN.md — All 12 career JSON data files transcribed from Core Rulebook
+- [x] 03-04-PLAN.md — Zustand store career extensions and XState career sub-states
 - [ ] 03-05-PLAN.md — Career selection UI (grid, assignments, qualification, basic training)
 - [ ] 03-06-PLAN.md — Career term loop UI (survival, events, commission, advancement, skills)
 - [ ] 03-07-PLAN.md — Continue/leave, aging, timeline, and mustering out UI

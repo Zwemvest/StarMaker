@@ -101,8 +101,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Social
 
-- [ ] **SOCL-01**: Contacts, Allies, Rivals, Enemies tracked throughout creation with notes
-- [ ] **SOCL-02**: Noble titles derived from Social Standing (11=Knight, 12=Baron, 13=Marquis, 14=Count, 15=Duke)
+- [x] **SOCL-01**: Contacts, Allies, Rivals, Enemies tracked throughout creation with notes
+- [x] **SOCL-02**: Noble titles derived from Social Standing (11=Knight, 12=Baron, 13=Marquis, 14=Count, 15=Duke)
 
 ### Skill Packages
 
@@ -231,8 +231,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | MSTR-03 | Phase 3 | Pending |
 | MSTR-04 | Phase 3 | Pending |
 | MSTR-05 | Phase 3 | Pending |
-| SOCL-01 | Phase 3 | Pending |
-| SOCL-02 | Phase 3 | Pending |
+| SOCL-01 | Phase 3 | Complete |
+| SOCL-02 | Phase 3 | Complete |
 | PSIN-01 | Phase 4 | Pending |
 | PSIN-02 | Phase 4 | Pending |
 | PSIN-03 | Phase 4 | Pending |
