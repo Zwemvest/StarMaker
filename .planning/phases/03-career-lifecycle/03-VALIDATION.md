@@ -2,8 +2,8 @@
 phase: 03
 slug: career-lifecycle
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-04-03
 ---
 
@@ -36,7 +36,23 @@ created: 2026-04-03
 
 ## Per-Task Verification Map
 
-*Populated by planner after plans are created.*
+| Plan | Task | Automated Verify |
+|------|------|-----------------|
+| 03-01 | Task 1 (Types + Zod) | `npx vitest run tests/schemas/career.test.ts` |
+| 03-01 | Task 2 (Engine) | `npx vitest run tests/engine/career.test.ts` |
+| 03-02 | Task 1 (Aging) | `npx vitest run tests/engine/aging.test.ts` |
+| 03-02 | Task 2 (Mustering + Life Events) | `npx vitest run tests/engine/mustering-out.test.ts tests/data/life-events.test.ts` |
+| 03-03 | Task 1a (Careers JSON batch 1) | `node -e "..." structural check` |
+| 03-03 | Task 1b (Careers JSON batch 2) | `node -e "..." structural check` |
+| 03-03 | Task 2 (Index + tests) | `npx vitest run tests/data/careers.test.ts` |
+| 03-04 | Task 1 (Store) | `npx vitest run tests/stores/character.test.ts` |
+| 03-04 | Task 2 (XState) | `npx vitest run tests/machines/creation.test.ts` |
+| 03-05 | Task 1-2 (Career selection UI) | `npx vitest run` (full suite, no regressions) |
+| 03-06 | Task 1-2 (Term loop UI) | `npx vitest run` (full suite, no regressions) |
+| 03-07 | Task 1-2 (Continue/Leave + Mustering UI) | `npx vitest run` (full suite, no regressions) |
+| 03-08 | Task 1 (CharacterPanel) | `npx vitest run` |
+| 03-08 | Task 2 (Golden-path) | `npx vitest run tests/engine/golden-path.test.ts` |
+| 03-08 | Task 3 (Human verify) | Manual checkpoint |
 
 ---
 
@@ -60,11 +76,11 @@ created: 2026-04-03
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 15s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 15s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved
