@@ -46,42 +46,42 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **CRER-01**: All 12 careers implemented: Agent, Army, Citizen, Drifter, Entertainer, Marine, Merchant, Navy, Noble, Rogue, Scholar, Scout
 - [ ] **CRER-02**: Each career has 3 assignments with correct specialist skill tables
-- [x] **CRER-03**: Qualification rolls with DM-1 per previous career enforced
-- [x] **CRER-04**: Basic training: first career = all service skills at level 0; subsequent = pick one
-- [x] **CRER-05**: Citizen and Drifter basic training exception: use assignment skill tables, not service skills
-- [x] **CRER-06**: Survival rolls per assignment with mishap tables (6 entries each) on failure
-- [x] **CRER-07**: Natural 2 on survival is always a failure regardless of modifiers
+- [ ] **CRER-03**: Qualification rolls with DM-1 per previous career enforced
+- [ ] **CRER-04**: Basic training: first career = all service skills at level 0; subsequent = pick one
+- [ ] **CRER-05**: Citizen and Drifter basic training exception: use assignment skill tables, not service skills
+- [ ] **CRER-06**: Survival rolls per assignment with mishap tables (6 entries each) on failure
+- [ ] **CRER-07**: Natural 2 on survival is always a failure regardless of modifiers
 - [ ] **CRER-08**: Event tables (2D, 12 entries per career) fully implemented with all effects
-- [ ] **CRER-09**: Life Events table (shared across careers) fully implemented
-- [x] **CRER-10**: Commission system for Army, Navy, Marines with SOC 9+ extended eligibility
-- [x] **CRER-11**: Commission DM-1 per term after first; events that grant advancement DMs apply to commission
-- [x] **CRER-12**: Cannot advance in the same term as gaining commission
-- [x] **CRER-13**: Advancement rolls with forced-leave mechanic (roll ≤ terms served = must leave)
-- [x] **CRER-14**: Natural 12 on advancement = forced to stay (no choice)
-- [x] **CRER-15**: Rank tables with bonus skills granted immediately upon reaching rank
+- [x] **CRER-09**: Life Events table (shared across careers) fully implemented
+- [ ] **CRER-10**: Commission system for Army, Navy, Marines with SOC 9+ extended eligibility
+- [ ] **CRER-11**: Commission DM-1 per term after first; events that grant advancement DMs apply to commission
+- [ ] **CRER-12**: Cannot advance in the same term as gaining commission
+- [ ] **CRER-13**: Advancement rolls with forced-leave mechanic (roll ≤ terms served = must leave)
+- [ ] **CRER-14**: Natural 12 on advancement = forced to stay (no choice)
+- [ ] **CRER-15**: Rank tables with bonus skills granted immediately upon reaching rank
 - [ ] **CRER-16**: Skills and training tables (Personal Development, Service Skills, Specialist, Officer, Advanced Education)
-- [x] **CRER-17**: Advanced Education and Officer tables restricted by EDU 8+ or rank requirement
-- [x] **CRER-18**: Skill level 4 cap during creation enforced
-- [x] **CRER-19**: Total skill levels ≤ 3 × (INT + EDU) enforced
-- [x] **CRER-20**: Draft table (1D → career assignment), draft limited to once per lifetime
-- [x] **CRER-21**: Failed qualification → choose Draft or Drifter
-- [x] **CRER-22**: Changing careers requires new qualification roll with cumulative DM penalty
-- [x] **CRER-23**: Changing assignments varies by career type (same-career vs new-career rules)
-- [x] **CRER-24**: Cannot return to a career in the term immediately after leaving it
+- [ ] **CRER-17**: Advanced Education and Officer tables restricted by EDU 8+ or rank requirement
+- [ ] **CRER-18**: Skill level 4 cap during creation enforced
+- [ ] **CRER-19**: Total skill levels ≤ 3 × (INT + EDU) enforced
+- [ ] **CRER-20**: Draft table (1D → career assignment), draft limited to once per lifetime
+- [ ] **CRER-21**: Failed qualification → choose Draft or Drifter
+- [ ] **CRER-22**: Changing careers requires new qualification roll with cumulative DM penalty
+- [ ] **CRER-23**: Changing assignments varies by career type (same-career vs new-career rules)
+- [ ] **CRER-24**: Cannot return to a career in the term immediately after leaving it
 
 ### Aging
 
-- [ ] **AGNG-01**: Aging rolls triggered at age 34+ (after 4th term)
-- [ ] **AGNG-02**: Aging effects correctly reduce characteristics per the aging table
-- [ ] **AGNG-03**: Aging crisis rules applied when characteristic reaches 0
+- [x] **AGNG-01**: Aging rolls triggered at age 34+ (after 4th term)
+- [x] **AGNG-02**: Aging effects correctly reduce characteristics per the aging table
+- [x] **AGNG-03**: Aging crisis rules applied when characteristic reaches 0
 
 ### Mustering Out
 
-- [ ] **MSTR-01**: Cash table rolls (max 3 rolls across entire lifetime, all careers combined)
-- [ ] **MSTR-02**: Benefits table rolls with rank-based bonus rolls (rank 1-2: +1, rank 3-4: +2, rank 5-6: +3 and DM+1)
-- [ ] **MSTR-03**: Pension calculation for 5+ terms of service
-- [ ] **MSTR-04**: Lost benefit roll for term ended by mishap (previous terms' benefits retained)
-- [ ] **MSTR-05**: Commission + enlisted rank combined for benefits if applicable
+- [x] **MSTR-01**: Cash table rolls (max 3 rolls across entire lifetime, all careers combined)
+- [x] **MSTR-02**: Benefits table rolls with rank-based bonus rolls (rank 1-2: +1, rank 3-4: +2, rank 5-6: +3 and DM+1)
+- [x] **MSTR-03**: Pension calculation for 5+ terms of service
+- [x] **MSTR-04**: Lost benefit roll for term ended by mishap (previous terms' benefits retained)
+- [x] **MSTR-05**: Commission + enlisted rank combined for benefits if applicable
 
 ### Psionics
 
@@ -101,7 +101,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Social
 
-- [ ] **SOCL-01**: Contacts, Allies, Rivals, Enemies tracked throughout creation with notes
+- [x] **SOCL-01**: Contacts, Allies, Rivals, Enemies tracked throughout creation with notes
 - [ ] **SOCL-02**: Noble titles derived from Social Standing (11=Knight, 12=Baron, 13=Marquis, 14=Count, 15=Duke)
 
 ### Skill Packages
@@ -201,37 +201,37 @@ Deferred to future release. Tracked but not in current roadmap.
 | EDUC-10 | Phase 2 | Complete |
 | CRER-01 | Phase 3 | Pending |
 | CRER-02 | Phase 3 | Pending |
-| CRER-03 | Phase 3 | Complete |
-| CRER-04 | Phase 3 | Complete |
-| CRER-05 | Phase 3 | Complete |
-| CRER-06 | Phase 3 | Complete |
-| CRER-07 | Phase 3 | Complete |
+| CRER-03 | Phase 3 | Pending |
+| CRER-04 | Phase 3 | Pending |
+| CRER-05 | Phase 3 | Pending |
+| CRER-06 | Phase 3 | Pending |
+| CRER-07 | Phase 3 | Pending |
 | CRER-08 | Phase 3 | Pending |
-| CRER-09 | Phase 3 | Pending |
-| CRER-10 | Phase 3 | Complete |
-| CRER-11 | Phase 3 | Complete |
-| CRER-12 | Phase 3 | Complete |
-| CRER-13 | Phase 3 | Complete |
-| CRER-14 | Phase 3 | Complete |
-| CRER-15 | Phase 3 | Complete |
+| CRER-09 | Phase 3 | Complete |
+| CRER-10 | Phase 3 | Pending |
+| CRER-11 | Phase 3 | Pending |
+| CRER-12 | Phase 3 | Pending |
+| CRER-13 | Phase 3 | Pending |
+| CRER-14 | Phase 3 | Pending |
+| CRER-15 | Phase 3 | Pending |
 | CRER-16 | Phase 3 | Pending |
-| CRER-17 | Phase 3 | Complete |
-| CRER-18 | Phase 3 | Complete |
-| CRER-19 | Phase 3 | Complete |
-| CRER-20 | Phase 3 | Complete |
-| CRER-21 | Phase 3 | Complete |
-| CRER-22 | Phase 3 | Complete |
-| CRER-23 | Phase 3 | Complete |
-| CRER-24 | Phase 3 | Complete |
-| AGNG-01 | Phase 3 | Pending |
-| AGNG-02 | Phase 3 | Pending |
-| AGNG-03 | Phase 3 | Pending |
-| MSTR-01 | Phase 3 | Pending |
-| MSTR-02 | Phase 3 | Pending |
-| MSTR-03 | Phase 3 | Pending |
-| MSTR-04 | Phase 3 | Pending |
-| MSTR-05 | Phase 3 | Pending |
-| SOCL-01 | Phase 3 | Pending |
+| CRER-17 | Phase 3 | Pending |
+| CRER-18 | Phase 3 | Pending |
+| CRER-19 | Phase 3 | Pending |
+| CRER-20 | Phase 3 | Pending |
+| CRER-21 | Phase 3 | Pending |
+| CRER-22 | Phase 3 | Pending |
+| CRER-23 | Phase 3 | Pending |
+| CRER-24 | Phase 3 | Pending |
+| AGNG-01 | Phase 3 | Complete |
+| AGNG-02 | Phase 3 | Complete |
+| AGNG-03 | Phase 3 | Complete |
+| MSTR-01 | Phase 3 | Complete |
+| MSTR-02 | Phase 3 | Complete |
+| MSTR-03 | Phase 3 | Complete |
+| MSTR-04 | Phase 3 | Complete |
+| MSTR-05 | Phase 3 | Complete |
+| SOCL-01 | Phase 3 | Complete |
 | SOCL-02 | Phase 3 | Pending |
 | PSIN-01 | Phase 4 | Pending |
 | PSIN-02 | Phase 4 | Pending |
