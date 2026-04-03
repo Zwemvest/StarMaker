@@ -15,7 +15,25 @@ export type CareerName =
   | 'scholar'
   | 'scout';
 
-/** A specific assignment within a career */
+/** A skill entry — either a simple name or an object with specialty */
+export type SkillEntry = string | { name: string; specialty?: string };
+
+/** Target roll for a characteristic check */
+export interface CharacteristicCheck {
+  characteristic: string;
+  target: number;
+}
+
+/** A specific assignment within a career (full data) */
+export interface AssignmentData {
+  name: string;
+  description: string;
+  survival: CharacteristicCheck;
+  advancement: CharacteristicCheck;
+  specialistSkills: SkillEntry[];
+}
+
+/** A specific assignment within a career (runtime reference) */
 export interface Assignment {
   career: CareerName;
   name: string;
@@ -27,6 +45,71 @@ export interface Rank {
   level: number;
   title: string;
   bonusSkill: string | null;
+  bonusSkillLevel?: number;
+}
+
+/** Effect from a career event or mishap */
+export interface EventEffect {
+  type:
+    | 'skill'
+    | 'characteristic'
+    | 'contact'
+    | 'ally'
+    | 'rival'
+    | 'enemy'
+    | 'choice'
+    | 'special'
+    | 'benefit'
+    | 'injury';
+  detail: string;
+  options?: string[];
+}
+
+/** A career event entry (2D table, rolls 2-12) */
+export interface CareerEvent {
+  rollValue: number;
+  description: string;
+  effectDescription: string;
+  effects: EventEffect[];
+  hasChoice: boolean;
+}
+
+/** A mishap entry (1D table, rolls 1-6) */
+export interface Mishap {
+  rollValue: number;
+  description: string;
+  effectDescription: string;
+  effects: EventEffect[];
+}
+
+/** Mustering out tables */
+export interface MusteringOutTable {
+  cash: number[];
+  benefits: string[];
+}
+
+/** Full career data structure — one per career JSON file */
+export interface CareerData {
+  name: string;
+  description: string;
+  qualification: CharacteristicCheck | null;
+  assignments: AssignmentData[];
+  isMilitary: boolean;
+  commission: CharacteristicCheck | null;
+  ranks: {
+    enlisted: Rank[];
+    officer?: Rank[];
+  };
+  skillTables: {
+    personalDevelopment: SkillEntry[];
+    serviceSkills: SkillEntry[];
+    advancedEducation: SkillEntry[];
+    officer?: SkillEntry[];
+  };
+  events: CareerEvent[];
+  mishaps: Mishap[];
+  musteringOut: MusteringOutTable;
+  basicTrainingException: boolean;
 }
 
 /** A single term of career service */
