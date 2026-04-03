@@ -41,3 +41,26 @@ export interface CareerTerm {
 
 /** Ordered history of career terms */
 export type CareerHistory = CareerTerm[];
+
+/** Types of effects that events can produce */
+export type EventEffectType =
+  | 'skill'
+  | 'characteristic'
+  | 'contact'
+  | 'ally'
+  | 'rival'
+  | 'enemy'
+  | 'benefit'
+  | 'injury'
+  | 'special';
+
+/** An effect produced by a career or life event */
+export interface EventEffect {
+  type: EventEffectType;
+  /** Description of what this effect does */
+  description: string;
+  /** Optional target (skill name, characteristic ID, etc.) */
+  target?: string;
+  /** Optional value (skill level, characteristic change, credit amount, etc.) */
+  value?: number;
+}
