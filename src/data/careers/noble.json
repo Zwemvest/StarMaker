@@ -1,7 +1,10 @@
 {
   "name": "Noble",
   "description": "Members of the ruling classes, whether through inheritance, election, or appointment.",
-  "qualification": { "characteristic": "SOC", "target": 10 },
+  "qualification": {
+    "characteristic": "SOC",
+    "target": 10
+  },
   "isMilitary": false,
   "commission": null,
   "basicTrainingException": false,
@@ -9,117 +12,290 @@
     {
       "name": "Administrator",
       "description": "You serve as a bureaucrat or functionary in a government.",
-      "survival": { "characteristic": "INT", "target": 4 },
-      "advancement": { "characteristic": "EDU", "target": 6 },
-      "specialistSkills": ["Admin", "Advocate", "Broker", "Diplomat", "Leadership", "Persuade"]
+      "survival": {
+        "characteristic": "INT",
+        "target": 4
+      },
+      "advancement": {
+        "characteristic": "EDU",
+        "target": 6
+      },
+      "specialistSkills": [
+        "Admin",
+        "Advocate",
+        "Broker",
+        "Diplomat",
+        "Leadership",
+        "Persuade"
+      ]
     },
     {
       "name": "Diplomat",
       "description": "You serve as a representative of your world or faction.",
-      "survival": { "characteristic": "INT", "target": 5 },
-      "advancement": { "characteristic": "SOC", "target": 7 },
-      "specialistSkills": ["Advocate", "Carouse", "Electronics (Computers)", "Diplomat", "Investigate", "Recon"]
+      "survival": {
+        "characteristic": "INT",
+        "target": 5
+      },
+      "advancement": {
+        "characteristic": "SOC",
+        "target": 7
+      },
+      "specialistSkills": [
+        "Advocate",
+        "Carouse",
+        "Electronics (Computers)",
+        "Diplomat",
+        "Investigate",
+        "Recon"
+      ]
     },
     {
       "name": "Dilettante",
       "description": "You are a wastrel with too much money and not enough sense.",
-      "survival": { "characteristic": "SOC", "target": 3 },
-      "advancement": { "characteristic": "INT", "target": 8 },
-      "specialistSkills": ["Carouse", "Deception", "Flyer", "Gambler", "Jack-of-all-Trades", "Streetwise"]
+      "survival": {
+        "characteristic": "SOC",
+        "target": 3
+      },
+      "advancement": {
+        "characteristic": "INT",
+        "target": 8
+      },
+      "specialistSkills": [
+        "Carouse",
+        "Deception",
+        "Flyer",
+        "Gambler",
+        "Jack-of-all-Trades",
+        "Streetwise"
+      ]
     }
   ],
   "ranks": {
     "enlisted": [
-      { "level": 0, "title": "", "bonusSkill": null },
-      { "level": 1, "title": "Knight", "bonusSkill": "Melee (Blade)", "bonusSkillLevel": 1 },
-      { "level": 2, "title": "Baron", "bonusSkill": "Leadership", "bonusSkillLevel": 1 },
-      { "level": 3, "title": "Marquis", "bonusSkill": null },
-      { "level": 4, "title": "Count", "bonusSkill": null },
-      { "level": 5, "title": "Duke", "bonusSkill": null },
-      { "level": 6, "title": "Archduke", "bonusSkill": null }
-    ]
+      {
+        "level": 0,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 1,
+        "title": "Knight",
+        "bonusSkill": "Melee (Blade)",
+        "bonusSkillLevel": 1
+      },
+      {
+        "level": 2,
+        "title": "Baron",
+        "bonusSkill": "Leadership",
+        "bonusSkillLevel": 1
+      },
+      {
+        "level": 3,
+        "title": "Marquis",
+        "bonusSkill": null
+      },
+      {
+        "level": 4,
+        "title": "Count",
+        "bonusSkill": null
+      },
+      {
+        "level": 5,
+        "title": "Duke",
+        "bonusSkill": null
+      },
+      {
+        "level": 6,
+        "title": "Archduke",
+        "bonusSkill": null
+      }
+    ],
+    "officer": null
   },
   "skillTables": {
-    "personalDevelopment": ["STR", "DEX", "END", "Gambler", "Gun Combat", "Melee"],
-    "serviceSkills": ["Admin", "Advocate", "Electronics (Computers)", "Diplomat", "Investigate", "Persuade"],
-    "advancedEducation": ["Admin", "Advocate", "Language", "Leadership", "Diplomat", "Art"]
+    "personalDevelopment": [
+      "STR",
+      "DEX",
+      "END",
+      "Gambler",
+      "Gun Combat",
+      "Melee"
+    ],
+    "serviceSkills": [
+      "Admin",
+      "Advocate",
+      "Electronics (Computers)",
+      "Diplomat",
+      "Investigate",
+      "Persuade"
+    ],
+    "advancedEducation": [
+      "Admin",
+      "Advocate",
+      "Language",
+      "Leadership",
+      "Diplomat",
+      "Art"
+    ],
+    "officer": null
   },
   "events": [
     {
       "rollValue": 2,
       "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
       "effectDescription": "Roll on the Mishap table but remain in career.",
-      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Roll on Mishap table, stay in career"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 3,
       "description": "You are challenged to a duel for your honour and standing.",
       "effectDescription": "If you refuse, reduce SOC by 1. If you accept, roll Melee (Blade) 8+. Succeed: gain SOC +1. Fail: roll on the Injury table plus lose SOC -1.",
-      "effects": [{ "type": "choice", "detail": "Refuse (SOC -1) or accept duel (Melee 8+ for SOC +1 or Injury + SOC -1)", "options": ["Refuse", "Accept"] }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Refuse (SOC -1) or accept duel (Melee 8+ for SOC +1 or Injury + SOC -1)",
+          "options": [
+            "Refuse",
+            "Accept"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 4,
       "description": "Your time as a noble gives you a wide range of experiences.",
       "effectDescription": "Gain one of Animals (Riding) 1, Art 1, Carouse 1 or Streetwise 1.",
-      "effects": [{ "type": "skill", "detail": "Gain Animals (Riding) 1, Art 1, Carouse 1 or Streetwise 1", "options": ["Animals (Riding)", "Art", "Carouse", "Streetwise"] }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "Gain Animals (Riding) 1, Art 1, Carouse 1 or Streetwise 1",
+          "options": [
+            "Animals (Riding)",
+            "Art",
+            "Carouse",
+            "Streetwise"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 5,
       "description": "You inherit a gift from a rich relative.",
       "effectDescription": "Gain DM+1 to any one Benefit roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+1 to one Benefit roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 6,
       "description": "You are given advanced training in a specialist field.",
       "effectDescription": "Roll EDU 8+ to gain any skill.",
-      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "EDU 8+ to gain any skill"
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 7,
       "description": "Life Event. Roll on the Life Events table.",
       "effectDescription": "Roll on the Life Events table.",
-      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Life Event"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 8,
       "description": "A conspiracy of nobles against the ruling house involves you. You can join them, gaining them as Allies and the target as an Enemy. If you refuse, gain them as Enemies and the target as an Ally.",
       "effectDescription": "Join conspiracy: gain Allies and target Enemy. Refuse: gain Enemies and target Ally.",
-      "effects": [{ "type": "choice", "detail": "Join (Allies + Enemy) or refuse (Enemies + Ally)", "options": ["Join", "Refuse"] }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Join (Allies + Enemy) or refuse (Enemies + Ally)",
+          "options": [
+            "Join",
+            "Refuse"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 9,
       "description": "Your reign is acclaimed by all.",
       "effectDescription": "Gain DM+2 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+2 to next advancement roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 10,
       "description": "You make an alliance with a powerful and charismatic noble.",
       "effectDescription": "Gain an Ally. Either gain Leadership 1 or gain DM+4 to your next advancement roll.",
-      "effects": [{ "type": "ally", "detail": "Gain an Ally" }, { "type": "choice", "detail": "Leadership 1 or DM+4 advancement", "options": ["Leadership 1", "DM+4 advancement"] }],
+      "effects": [
+        {
+          "type": "ally",
+          "detail": "Gain an Ally"
+        },
+        {
+          "type": "choice",
+          "detail": "Leadership 1 or DM+4 advancement",
+          "options": [
+            "Leadership 1",
+            "DM+4 advancement"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 11,
       "description": "Your efforts expand your domain and increase your standing.",
       "effectDescription": "Gain one level of any skill and DM+2 to your next advancement roll.",
-      "effects": [{ "type": "skill", "detail": "Gain any skill" }, { "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "Gain any skill"
+        },
+        {
+          "type": "benefit",
+          "detail": "DM+2 to next advancement roll"
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 12,
       "description": "Your standing and influence increase enormously.",
       "effectDescription": "You are automatically promoted.",
-      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Automatic promotion"
+        }
+      ],
       "hasChoice": false
     }
   ],
@@ -128,41 +304,99 @@
       "rollValue": 1,
       "description": "Severely injured.",
       "effectDescription": "Roll twice on the Injury table and take the lower result.",
-      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll twice on Injury table, take lower result"
+        }
+      ]
     },
     {
       "rollValue": 2,
       "description": "A family scandal forces you out of your position.",
       "effectDescription": "Lose SOC -1. Gain a Rival.",
-      "effects": [{ "type": "characteristic", "detail": "SOC -1" }, { "type": "rival", "detail": "Gain a Rival" }]
+      "effects": [
+        {
+          "type": "characteristic",
+          "detail": "SOC -1"
+        },
+        {
+          "type": "rival",
+          "detail": "Gain a Rival"
+        }
+      ]
     },
     {
       "rollValue": 3,
       "description": "A disaster or war devastates your family's holdings. Lose all Benefit rolls from this career.",
       "effectDescription": "Lose all Benefit rolls from this career.",
-      "effects": [{ "type": "special", "detail": "Lose all Benefit rolls from this career" }]
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Lose all Benefit rolls from this career"
+        }
+      ]
     },
     {
       "rollValue": 4,
       "description": "Political manoeuvrings usurp your position. Gain a Rival. Gain Diplomat 1 or Advocate 1.",
       "effectDescription": "Gain a Rival. Gain Diplomat 1 or Advocate 1.",
-      "effects": [{ "type": "rival", "detail": "Gain a Rival" }, { "type": "skill", "detail": "Gain Diplomat 1 or Advocate 1", "options": ["Diplomat", "Advocate"] }]
+      "effects": [
+        {
+          "type": "rival",
+          "detail": "Gain a Rival"
+        },
+        {
+          "type": "skill",
+          "detail": "Gain Diplomat 1 or Advocate 1",
+          "options": [
+            "Diplomat",
+            "Advocate"
+          ]
+        }
+      ]
     },
     {
       "rollValue": 5,
       "description": "An assassin attempts to end your life. Roll END 8+. If you fail, roll on the Injury table.",
       "effectDescription": "END 8+: no effect. Fail: Injury.",
-      "effects": [{ "type": "choice", "detail": "END 8+ or Injury" }]
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "END 8+ or Injury"
+        }
+      ]
     },
     {
       "rollValue": 6,
       "description": "Injured. Roll on the Injury table.",
       "effectDescription": "Roll on the Injury table.",
-      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll on Injury table"
+        }
+      ]
     }
   ],
   "musteringOut": {
-    "cash": [10000, 10000, 50000, 50000, 100000, 100000, 200000],
-    "benefits": ["Ship Share", "Two Ship Shares", "Blade", "SOC +1", "TAS Membership", "Yacht", "SOC +2 and Yacht"]
+    "cash": [
+      10000,
+      10000,
+      50000,
+      50000,
+      100000,
+      100000,
+      200000
+    ],
+    "benefits": [
+      "Ship Share",
+      "Two Ship Shares",
+      "Blade",
+      "SOC +1",
+      "TAS Membership",
+      "Yacht",
+      "SOC +2 and Yacht"
+    ]
   }
 }

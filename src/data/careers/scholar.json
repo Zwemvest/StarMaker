@@ -1,7 +1,10 @@
 {
   "name": "Scholar",
   "description": "Scientists, researchers, and physicians who pursue knowledge and healing.",
-  "qualification": { "characteristic": "INT", "target": 6 },
+  "qualification": {
+    "characteristic": "INT",
+    "target": 6
+  },
   "isMilitary": false,
   "commission": null,
   "basicTrainingException": false,
@@ -9,117 +12,275 @@
     {
       "name": "Field Researcher",
       "description": "You are an explorer or field scientist who investigates natural phenomena first-hand.",
-      "survival": { "characteristic": "END", "target": 6 },
-      "advancement": { "characteristic": "INT", "target": 6 },
-      "specialistSkills": ["Electronics (Sensors)", "Navigation", "Survival", "Investigate", "Science", "Stealth"]
+      "survival": {
+        "characteristic": "END",
+        "target": 6
+      },
+      "advancement": {
+        "characteristic": "INT",
+        "target": 6
+      },
+      "specialistSkills": [
+        "Electronics (Sensors)",
+        "Navigation",
+        "Survival",
+        "Investigate",
+        "Science",
+        "Stealth"
+      ]
     },
     {
       "name": "Scientist",
       "description": "You work in a laboratory or research institution.",
-      "survival": { "characteristic": "EDU", "target": 4 },
-      "advancement": { "characteristic": "INT", "target": 8 },
-      "specialistSkills": ["Admin", "Engineer", "Science", "Investigate", "Electronics (Computers)", "Science"]
+      "survival": {
+        "characteristic": "EDU",
+        "target": 4
+      },
+      "advancement": {
+        "characteristic": "INT",
+        "target": 8
+      },
+      "specialistSkills": [
+        "Admin",
+        "Engineer",
+        "Science",
+        "Investigate",
+        "Electronics (Computers)",
+        "Science"
+      ]
     },
     {
       "name": "Physician",
       "description": "You are a doctor or medical researcher.",
-      "survival": { "characteristic": "EDU", "target": 4 },
-      "advancement": { "characteristic": "EDU", "target": 8 },
-      "specialistSkills": ["Medic", "Electronics", "Investigate", "Medic", "Persuade", "Science"]
+      "survival": {
+        "characteristic": "EDU",
+        "target": 4
+      },
+      "advancement": {
+        "characteristic": "EDU",
+        "target": 8
+      },
+      "specialistSkills": [
+        "Medic",
+        "Electronics",
+        "Investigate",
+        "Medic",
+        "Persuade",
+        "Science"
+      ]
     }
   ],
   "ranks": {
     "enlisted": [
-      { "level": 0, "title": "", "bonusSkill": null },
-      { "level": 1, "title": "", "bonusSkill": "Science", "bonusSkillLevel": 1 },
-      { "level": 2, "title": "", "bonusSkill": null },
-      { "level": 3, "title": "", "bonusSkill": null },
-      { "level": 4, "title": "", "bonusSkill": null },
-      { "level": 5, "title": "", "bonusSkill": null },
-      { "level": 6, "title": "", "bonusSkill": null }
-    ]
+      {
+        "level": 0,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 1,
+        "title": "",
+        "bonusSkill": "Science",
+        "bonusSkillLevel": 1
+      },
+      {
+        "level": 2,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 3,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 4,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 5,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 6,
+        "title": "",
+        "bonusSkill": null
+      }
+    ],
+    "officer": null
   },
   "skillTables": {
-    "personalDevelopment": ["INT", "EDU", "SOC", "DEX", "END", "Language"],
-    "serviceSkills": ["Drive", "Electronics (Computers)", "Diplomat", "Medic", "Investigate", "Science"],
-    "advancedEducation": ["Art", "Advocate", "Electronics", "Language", "Engineer", "Science"]
+    "personalDevelopment": [
+      "INT",
+      "EDU",
+      "SOC",
+      "DEX",
+      "END",
+      "Language"
+    ],
+    "serviceSkills": [
+      "Drive",
+      "Electronics (Computers)",
+      "Diplomat",
+      "Medic",
+      "Investigate",
+      "Science"
+    ],
+    "advancedEducation": [
+      "Art",
+      "Advocate",
+      "Electronics",
+      "Language",
+      "Engineer",
+      "Science"
+    ],
+    "officer": null
   },
   "events": [
     {
       "rollValue": 2,
       "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
       "effectDescription": "Roll on the Mishap table but remain in career.",
-      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Roll on Mishap table, stay in career"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 3,
       "description": "Your work is sabotaged by unknown parties. You may salvage what you can and try to continue. Roll Investigate 8+ to identify who sabotaged your work.",
       "effectDescription": "Roll Investigate 8+. Succeed: gain a Rival. Fail: lose a Benefit roll.",
-      "effects": [{ "type": "choice", "detail": "Investigate 8+ to identify saboteur or lose Benefit" }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Investigate 8+ to identify saboteur or lose Benefit"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 4,
       "description": "You make a breakthrough in your field.",
       "effectDescription": "Gain DM+2 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+2 to next advancement roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 5,
       "description": "A rival researcher steals some of your work. Gain a Rival.",
       "effectDescription": "Gain a Rival. Gain one level in any skill.",
-      "effects": [{ "type": "rival", "detail": "Gain a Rival" }, { "type": "skill", "detail": "Gain one level in any skill" }],
+      "effects": [
+        {
+          "type": "rival",
+          "detail": "Gain a Rival"
+        },
+        {
+          "type": "skill",
+          "detail": "Gain one level in any skill"
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 6,
       "description": "You are given advanced training in a specialist field.",
       "effectDescription": "Roll EDU 8+ to gain any skill.",
-      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "EDU 8+ to gain any skill"
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 7,
       "description": "Life Event. Roll on the Life Events table.",
       "effectDescription": "Roll on the Life Events table.",
-      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Life Event"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 8,
       "description": "You have the opportunity to cheat in some fashion, advancing your career and research by making claims about data that are simply not true.",
       "effectDescription": "If you refuse, gain nothing. If you accept, gain DM+2 to your next advancement roll but also gain a Rival.",
-      "effects": [{ "type": "choice", "detail": "Refuse (nothing) or cheat (DM+2 advancement + Rival)", "options": ["Refuse", "Cheat"] }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Refuse (nothing) or cheat (DM+2 advancement + Rival)",
+          "options": [
+            "Refuse",
+            "Cheat"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 9,
       "description": "You make a breakthrough in your field.",
       "effectDescription": "Gain DM+2 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+2 to next advancement roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 10,
       "description": "You are entrusted with a secret project by a patron or organisation.",
       "effectDescription": "Gain a Contact and an extra Benefit roll.",
-      "effects": [{ "type": "contact", "detail": "Gain a Contact" }, { "type": "benefit", "detail": "Extra Benefit roll" }],
+      "effects": [
+        {
+          "type": "contact",
+          "detail": "Gain a Contact"
+        },
+        {
+          "type": "benefit",
+          "detail": "Extra Benefit roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 11,
       "description": "Your work leads to a considerable breakthrough.",
       "effectDescription": "Gain DM+4 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+4 to next advancement roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+4 to next advancement roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 12,
       "description": "Your work is revolutionary, changing the course of your field.",
       "effectDescription": "You are automatically promoted.",
-      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Automatic promotion"
+        }
+      ],
       "hasChoice": false
     }
   ],
@@ -128,41 +289,91 @@
       "rollValue": 1,
       "description": "Severely injured.",
       "effectDescription": "Roll twice on the Injury table and take the lower result.",
-      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll twice on Injury table, take lower result"
+        }
+      ]
     },
     {
       "rollValue": 2,
       "description": "A disaster leaves several colleagues dead. You are blamed for it. Gain D3 Enemies.",
       "effectDescription": "Gain D3 Enemies.",
-      "effects": [{ "type": "enemy", "detail": "Gain D3 Enemies" }]
+      "effects": [
+        {
+          "type": "enemy",
+          "detail": "Gain D3 Enemies"
+        }
+      ]
     },
     {
       "rollValue": 3,
       "description": "The planetary government interferes with your research for political or religious reasons. If you continue with your work openly, gain an Enemy. If you continue secretly, roll Deception 8+. Fail: gain an Enemy.",
       "effectDescription": "Continue openly: Enemy. Continue secretly: Deception 8+ or Enemy.",
-      "effects": [{ "type": "choice", "detail": "Continue openly (Enemy) or secretly (Deception 8+)", "options": ["Openly", "Secretly"] }]
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Continue openly (Enemy) or secretly (Deception 8+)",
+          "options": [
+            "Openly",
+            "Secretly"
+          ]
+        }
+      ]
     },
     {
       "rollValue": 4,
       "description": "An expedition or field research goes wrong, leaving you stranded in the wilderness. Gain Survival 1.",
       "effectDescription": "Gain Survival 1.",
-      "effects": [{ "type": "skill", "detail": "Gain Survival 1" }]
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "Gain Survival 1"
+        }
+      ]
     },
     {
       "rollValue": 5,
       "description": "Your work is sabotaged by unknown parties. You may salvage what you can and try to continue.",
       "effectDescription": "Gain a Rival.",
-      "effects": [{ "type": "rival", "detail": "Gain a Rival" }]
+      "effects": [
+        {
+          "type": "rival",
+          "detail": "Gain a Rival"
+        }
+      ]
     },
     {
       "rollValue": 6,
       "description": "Injured. Roll on the Injury table.",
       "effectDescription": "Roll on the Injury table.",
-      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll on Injury table"
+        }
+      ]
     }
   ],
   "musteringOut": {
-    "cash": [5000, 10000, 20000, 30000, 40000, 60000, 100000],
-    "benefits": ["Scientific Equipment", "INT +1", "INT +1", "EDU +1", "Scientific Equipment", "Lab Ship", "Lab Ship"]
+    "cash": [
+      5000,
+      10000,
+      20000,
+      30000,
+      40000,
+      60000,
+      100000
+    ],
+    "benefits": [
+      "Scientific Equipment",
+      "INT +1",
+      "INT +1",
+      "EDU +1",
+      "Scientific Equipment",
+      "Lab Ship",
+      "Lab Ship"
+    ]
   }
 }

@@ -93,7 +93,7 @@ const careerNameSchema = z.enum([
 
 /** Top-level career data schema for validating career JSON files */
 export const careerSchema = z.object({
-  name: careerNameSchema,
+  name: z.string().min(1),
   description: z.string().min(1),
   qualification: checkTargetSchema.nullable(),
   assignments: z.array(assignmentDataSchema).length(3),

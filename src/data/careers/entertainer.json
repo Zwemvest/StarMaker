@@ -1,7 +1,10 @@
 {
   "name": "Entertainer",
   "description": "Artists, performers, and media personalities who make their living through creative expression.",
-  "qualification": { "characteristic": "INT", "target": 5 },
+  "qualification": {
+    "characteristic": "INT",
+    "target": 5
+  },
   "isMilitary": false,
   "commission": null,
   "basicTrainingException": false,
@@ -9,117 +12,282 @@
     {
       "name": "Artist",
       "description": "You are a writer, sculptor, painter, or other creative artist.",
-      "survival": { "characteristic": "SOC", "target": 6 },
-      "advancement": { "characteristic": "INT", "target": 6 },
-      "specialistSkills": ["Art", "Carouse", "Electronics (Computers)", "Gambler", "Persuade", "Profession"]
+      "survival": {
+        "characteristic": "SOC",
+        "target": 6
+      },
+      "advancement": {
+        "characteristic": "INT",
+        "target": 6
+      },
+      "specialistSkills": [
+        "Art",
+        "Carouse",
+        "Electronics (Computers)",
+        "Gambler",
+        "Persuade",
+        "Profession"
+      ]
     },
     {
       "name": "Journalist",
       "description": "You report on local or galactic events for a media corporation.",
-      "survival": { "characteristic": "EDU", "target": 7 },
-      "advancement": { "characteristic": "INT", "target": 5 },
-      "specialistSkills": ["Art (Holography)", "Electronics (Comms)", "Investigate", "Persuade", "Recon", "Streetwise"]
+      "survival": {
+        "characteristic": "EDU",
+        "target": 7
+      },
+      "advancement": {
+        "characteristic": "INT",
+        "target": 5
+      },
+      "specialistSkills": [
+        "Art (Holography)",
+        "Electronics (Comms)",
+        "Investigate",
+        "Persuade",
+        "Recon",
+        "Streetwise"
+      ]
     },
     {
       "name": "Performer",
       "description": "You are an actor, dancer, acrobat, professional athlete, or other public performer.",
-      "survival": { "characteristic": "INT", "target": 5 },
-      "advancement": { "characteristic": "DEX", "target": 7 },
-      "specialistSkills": ["Athletics", "Art (Acting)", "Art (Instrument)", "Carouse", "Deception", "Stealth"]
+      "survival": {
+        "characteristic": "INT",
+        "target": 5
+      },
+      "advancement": {
+        "characteristic": "DEX",
+        "target": 7
+      },
+      "specialistSkills": [
+        "Athletics",
+        "Art (Acting)",
+        "Art (Instrument)",
+        "Carouse",
+        "Deception",
+        "Stealth"
+      ]
     }
   ],
   "ranks": {
     "enlisted": [
-      { "level": 0, "title": "", "bonusSkill": null },
-      { "level": 1, "title": "", "bonusSkill": "Art", "bonusSkillLevel": 1 },
-      { "level": 2, "title": "", "bonusSkill": null },
-      { "level": 3, "title": "", "bonusSkill": null },
-      { "level": 4, "title": "", "bonusSkill": null },
-      { "level": 5, "title": "Famous Entertainer", "bonusSkill": "SOC +1", "bonusSkillLevel": 1 },
-      { "level": 6, "title": "", "bonusSkill": null }
-    ]
+      {
+        "level": 0,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 1,
+        "title": "",
+        "bonusSkill": "Art",
+        "bonusSkillLevel": 1
+      },
+      {
+        "level": 2,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 3,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 4,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 5,
+        "title": "Famous Entertainer",
+        "bonusSkill": "SOC +1",
+        "bonusSkillLevel": 1
+      },
+      {
+        "level": 6,
+        "title": "",
+        "bonusSkill": null
+      }
+    ],
+    "officer": null
   },
   "skillTables": {
-    "personalDevelopment": ["DEX", "INT", "SOC", "Language", "Carouse", "Jack-of-all-Trades"],
-    "serviceSkills": ["Art", "Carouse", "Deception", "Persuade", "Steward", "Streetwise"],
-    "advancedEducation": ["Advocate", "Broker", "Deception", "Science", "Streetwise", "Diplomat"]
+    "personalDevelopment": [
+      "DEX",
+      "INT",
+      "SOC",
+      "Language",
+      "Carouse",
+      "Jack-of-all-Trades"
+    ],
+    "serviceSkills": [
+      "Art",
+      "Carouse",
+      "Deception",
+      "Persuade",
+      "Steward",
+      "Streetwise"
+    ],
+    "advancedEducation": [
+      "Advocate",
+      "Broker",
+      "Deception",
+      "Science",
+      "Streetwise",
+      "Diplomat"
+    ],
+    "officer": null
   },
   "events": [
     {
       "rollValue": 2,
       "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
       "effectDescription": "Roll on the Mishap table but remain in career.",
-      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Roll on Mishap table, stay in career"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 3,
       "description": "You are invited to take part in a controversial event or exhibition.",
       "effectDescription": "Roll Art or Persuade 8+. Succeed: gain an extra Benefit roll. Fail: reduce SOC by 1.",
-      "effects": [{ "type": "choice", "detail": "Art/Persuade 8+ for Benefit or lose SOC", "options": ["Art 8+", "Persuade 8+"] }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Art/Persuade 8+ for Benefit or lose SOC",
+          "options": [
+            "Art 8+",
+            "Persuade 8+"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 4,
       "description": "You join a group of like-minded travellers on an expedition.",
       "effectDescription": "Gain any one of Animals (Riding) 1, Survival 1, Stealth 1 or Seafarer 1.",
-      "effects": [{ "type": "skill", "detail": "Gain Animals (Riding) 1, Survival 1, Stealth 1 or Seafarer 1", "options": ["Animals (Riding)", "Survival", "Stealth", "Seafarer"] }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "Gain Animals (Riding) 1, Survival 1, Stealth 1 or Seafarer 1",
+          "options": [
+            "Animals (Riding)",
+            "Survival",
+            "Stealth",
+            "Seafarer"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 5,
       "description": "One of your works is especially well received and earns you money.",
       "effectDescription": "Gain DM+1 to any one Benefit roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+1 to one Benefit roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 6,
       "description": "You are given advanced training in a specialist field.",
       "effectDescription": "Roll EDU 8+ to gain any skill.",
-      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "EDU 8+ to gain any skill"
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 7,
       "description": "Life Event. Roll on the Life Events table.",
       "effectDescription": "Roll on the Life Events table.",
-      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Life Event"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 8,
       "description": "You go on a tour of the sector, visiting many worlds.",
       "effectDescription": "Gain D3 Contacts.",
-      "effects": [{ "type": "contact", "detail": "Gain D3 Contacts" }],
+      "effects": [
+        {
+          "type": "contact",
+          "detail": "Gain D3 Contacts"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 9,
       "description": "One of your pieces of art is widely illegally copied and you lose income.",
       "effectDescription": "Gain nothing this term.",
-      "effects": [{ "type": "special", "detail": "No benefit this term" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "No benefit this term"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 10,
       "description": "You win a prestigious prize for your work.",
       "effectDescription": "Gain DM+1 to any one Benefit roll and SOC +1.",
-      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }, { "type": "characteristic", "detail": "SOC +1" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+1 to one Benefit roll"
+        },
+        {
+          "type": "characteristic",
+          "detail": "SOC +1"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 11,
       "description": "You gain a patron in the arts.",
       "effectDescription": "Gain DM+2 to your next advancement roll and gain an Ally.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }, { "type": "ally", "detail": "Gain an Ally" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+2 to next advancement roll"
+        },
+        {
+          "type": "ally",
+          "detail": "Gain an Ally"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 12,
       "description": "You win a major award for your work.",
       "effectDescription": "You are automatically promoted.",
-      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Automatic promotion"
+        }
+      ],
       "hasChoice": false
     }
   ],
@@ -128,41 +296,87 @@
       "rollValue": 1,
       "description": "Severely injured.",
       "effectDescription": "Roll twice on the Injury table and take the lower result.",
-      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll twice on Injury table, take lower result"
+        }
+      ]
     },
     {
       "rollValue": 2,
       "description": "You expose or are involved in a scandal of some sort.",
       "effectDescription": "Lose SOC -1.",
-      "effects": [{ "type": "characteristic", "detail": "Lose SOC -1" }]
+      "effects": [
+        {
+          "type": "characteristic",
+          "detail": "Lose SOC -1"
+        }
+      ]
     },
     {
       "rollValue": 3,
       "description": "Public opinion turns on you.",
       "effectDescription": "Reduce SOC by 1.",
-      "effects": [{ "type": "characteristic", "detail": "Lose SOC -1" }]
+      "effects": [
+        {
+          "type": "characteristic",
+          "detail": "Lose SOC -1"
+        }
+      ]
     },
     {
       "rollValue": 4,
       "description": "You are betrayed by a peer. One of your Contacts or Allies betrays you, ending your career. That Contact or Ally becomes a Rival or Enemy.",
       "effectDescription": "A Contact or Ally becomes a Rival or Enemy.",
-      "effects": [{ "type": "rival", "detail": "Contact/Ally becomes Rival or Enemy" }]
+      "effects": [
+        {
+          "type": "rival",
+          "detail": "Contact/Ally becomes Rival or Enemy"
+        }
+      ]
     },
     {
       "rollValue": 5,
       "description": "An accident, Loss of Confidence or otherwise causes you to lose a term.",
       "effectDescription": "No additional effect beyond leaving career.",
-      "effects": [{ "type": "special", "detail": "No additional effect" }]
+      "effects": [
+        {
+          "type": "special",
+          "detail": "No additional effect"
+        }
+      ]
     },
     {
       "rollValue": 6,
       "description": "Injured. Roll on the Injury table.",
       "effectDescription": "Roll on the Injury table.",
-      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll on Injury table"
+        }
+      ]
     }
   ],
   "musteringOut": {
-    "cash": [0, 0, 10000, 10000, 40000, 40000, 80000],
-    "benefits": ["Contact", "SOC +1", "Contact", "Weapon", "EDU +1", "Ship Shares x2", "SOC +1"]
+    "cash": [
+      0,
+      0,
+      10000,
+      10000,
+      40000,
+      40000,
+      80000
+    ],
+    "benefits": [
+      "Contact",
+      "SOC +1",
+      "Contact",
+      "Weapon",
+      "EDU +1",
+      "Ship Shares x2",
+      "SOC +1"
+    ]
   }
 }

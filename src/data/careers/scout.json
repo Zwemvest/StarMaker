@@ -1,7 +1,10 @@
 {
   "name": "Scout",
   "description": "Members of the exploratory service. Scouts survey uncharted worlds, map new routes, and make first contact with alien species.",
-  "qualification": { "characteristic": "INT", "target": 5 },
+  "qualification": {
+    "characteristic": "INT",
+    "target": 5
+  },
   "isMilitary": false,
   "commission": null,
   "basicTrainingException": false,
@@ -9,117 +12,289 @@
     {
       "name": "Courier",
       "description": "You are responsible for shuttling messages and important packages from one world to another.",
-      "survival": { "characteristic": "END", "target": 5 },
-      "advancement": { "characteristic": "EDU", "target": 9 },
-      "specialistSkills": ["Electronics (Comms)", "Pilot (Spacecraft)", "Engineer", "Astrogation", "Vacc Suit", "Electronics (Sensors)"]
+      "survival": {
+        "characteristic": "END",
+        "target": 5
+      },
+      "advancement": {
+        "characteristic": "EDU",
+        "target": 9
+      },
+      "specialistSkills": [
+        "Electronics (Comms)",
+        "Pilot (Spacecraft)",
+        "Engineer",
+        "Astrogation",
+        "Vacc Suit",
+        "Electronics (Sensors)"
+      ]
     },
     {
       "name": "Survey",
       "description": "You survey uncharted worlds, creating star maps and gathering data.",
-      "survival": { "characteristic": "END", "target": 6 },
-      "advancement": { "characteristic": "INT", "target": 8 },
-      "specialistSkills": ["Electronics (Sensors)", "Persuade", "Pilot", "Navigation", "Diplomat", "Streetwise"]
+      "survival": {
+        "characteristic": "END",
+        "target": 6
+      },
+      "advancement": {
+        "characteristic": "INT",
+        "target": 8
+      },
+      "specialistSkills": [
+        "Electronics (Sensors)",
+        "Persuade",
+        "Pilot",
+        "Navigation",
+        "Diplomat",
+        "Streetwise"
+      ]
     },
     {
       "name": "Exploration",
       "description": "You go to the edge of known space and beyond, exploring new worlds.",
-      "survival": { "characteristic": "END", "target": 7 },
-      "advancement": { "characteristic": "EDU", "target": 7 },
-      "specialistSkills": ["Electronics (Sensors)", "Pilot", "Navigation", "Vacc Suit", "Recon", "Gun Combat"]
+      "survival": {
+        "characteristic": "END",
+        "target": 7
+      },
+      "advancement": {
+        "characteristic": "EDU",
+        "target": 7
+      },
+      "specialistSkills": [
+        "Electronics (Sensors)",
+        "Pilot",
+        "Navigation",
+        "Vacc Suit",
+        "Recon",
+        "Gun Combat"
+      ]
     }
   ],
   "ranks": {
     "enlisted": [
-      { "level": 0, "title": "", "bonusSkill": null },
-      { "level": 1, "title": "Scout", "bonusSkill": "Vacc Suit", "bonusSkillLevel": 1 },
-      { "level": 2, "title": "", "bonusSkill": null },
-      { "level": 3, "title": "Senior Scout", "bonusSkill": "Pilot", "bonusSkillLevel": 1 },
-      { "level": 4, "title": "", "bonusSkill": null },
-      { "level": 5, "title": "", "bonusSkill": null },
-      { "level": 6, "title": "", "bonusSkill": null }
-    ]
+      {
+        "level": 0,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 1,
+        "title": "Scout",
+        "bonusSkill": "Vacc Suit",
+        "bonusSkillLevel": 1
+      },
+      {
+        "level": 2,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 3,
+        "title": "Senior Scout",
+        "bonusSkill": "Pilot",
+        "bonusSkillLevel": 1
+      },
+      {
+        "level": 4,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 5,
+        "title": "",
+        "bonusSkill": null
+      },
+      {
+        "level": 6,
+        "title": "",
+        "bonusSkill": null
+      }
+    ],
+    "officer": null
   },
   "skillTables": {
-    "personalDevelopment": ["STR", "DEX", "END", "INT", "EDU", "Jack-of-all-Trades"],
-    "serviceSkills": ["Pilot (Small Craft)", "Survival", "Mechanic", "Astrogation", "Electronics (Comms)", "Gun Combat"],
-    "advancedEducation": ["Medic", "Navigation", "Engineer", "Electronics (Computers)", "Pilot", "Jack-of-all-Trades"]
+    "personalDevelopment": [
+      "STR",
+      "DEX",
+      "END",
+      "INT",
+      "EDU",
+      "Jack-of-all-Trades"
+    ],
+    "serviceSkills": [
+      "Pilot (Small Craft)",
+      "Survival",
+      "Mechanic",
+      "Astrogation",
+      "Electronics (Comms)",
+      "Gun Combat"
+    ],
+    "advancedEducation": [
+      "Medic",
+      "Navigation",
+      "Engineer",
+      "Electronics (Computers)",
+      "Pilot",
+      "Jack-of-all-Trades"
+    ],
+    "officer": null
   },
   "events": [
     {
       "rollValue": 2,
       "description": "Disaster! Roll on the Mishap table but you are not ejected from this career.",
       "effectDescription": "Roll on the Mishap table but remain in career.",
-      "effects": [{ "type": "special", "detail": "Roll on Mishap table, stay in career" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Roll on Mishap table, stay in career"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 3,
       "description": "Your ship is ambushed by hostile forces.",
       "effectDescription": "Roll Pilot 8+ or Gunner 8+. Succeed: gain an extra Benefit roll. Fail: roll on the Injury table.",
-      "effects": [{ "type": "choice", "detail": "Pilot/Gunner 8+ for Benefit or Injury", "options": ["Pilot 8+", "Gunner 8+"] }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Pilot/Gunner 8+ for Benefit or Injury",
+          "options": [
+            "Pilot 8+",
+            "Gunner 8+"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 4,
       "description": "You survey an alien world.",
       "effectDescription": "Gain one of Animals (Riding or Training) 1, Survival 1, Recon 1 or Science 1.",
-      "effects": [{ "type": "skill", "detail": "Gain Animals 1, Survival 1, Recon 1 or Science 1", "options": ["Animals (Riding)", "Animals (Training)", "Survival", "Recon", "Science"] }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "Gain Animals 1, Survival 1, Recon 1 or Science 1",
+          "options": [
+            "Animals (Riding)",
+            "Animals (Training)",
+            "Survival",
+            "Recon",
+            "Science"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 5,
       "description": "You perform an exemplary service for the scouts.",
       "effectDescription": "Gain DM+1 to any one Benefit roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+1 to one Benefit roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+1 to one Benefit roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 6,
       "description": "You are given advanced training in a specialist field.",
       "effectDescription": "Roll EDU 8+ to gain any skill.",
-      "effects": [{ "type": "skill", "detail": "EDU 8+ to gain any skill" }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "EDU 8+ to gain any skill"
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 7,
       "description": "Life Event. Roll on the Life Events table.",
       "effectDescription": "Roll on the Life Events table.",
-      "effects": [{ "type": "special", "detail": "Life Event" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Life Event"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 8,
       "description": "You spend several years jumping from world to world in your Scout ship.",
       "effectDescription": "Gain one of Astrogation 1, Navigation 1, Pilot (Small Craft) 1 or Mechanic 1.",
-      "effects": [{ "type": "skill", "detail": "Gain Astrogation 1, Navigation 1, Pilot 1 or Mechanic 1", "options": ["Astrogation", "Navigation", "Pilot (Small Craft)", "Mechanic"] }],
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "Gain Astrogation 1, Navigation 1, Pilot 1 or Mechanic 1",
+          "options": [
+            "Astrogation",
+            "Navigation",
+            "Pilot (Small Craft)",
+            "Mechanic"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 9,
       "description": "When dealing with an alien species, you have an opportunity to gather extra intelligence about them.",
       "effectDescription": "Roll Deception 8+ or Persuade 8+. Succeed: gain an Ally and an extra Benefit roll. Fail: gain an Enemy.",
-      "effects": [{ "type": "choice", "detail": "Deception/Persuade 8+ for Ally + Benefit or Enemy", "options": ["Deception 8+", "Persuade 8+"] }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Deception/Persuade 8+ for Ally + Benefit or Enemy",
+          "options": [
+            "Deception 8+",
+            "Persuade 8+"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 10,
       "description": "You discover a world, artifact, or species that is of great scientific value.",
       "effectDescription": "Gain DM+2 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [
+        {
+          "type": "benefit",
+          "detail": "DM+2 to next advancement roll"
+        }
+      ],
       "hasChoice": false
     },
     {
       "rollValue": 11,
       "description": "You serve as the courier for an important message from the Imperium.",
       "effectDescription": "Either gain one level of Diplomat or DM+4 to your next advancement roll.",
-      "effects": [{ "type": "choice", "detail": "Diplomat 1 or DM+4 to next advancement", "options": ["Diplomat 1", "DM+4 advancement"] }],
+      "effects": [
+        {
+          "type": "choice",
+          "detail": "Diplomat 1 or DM+4 to next advancement",
+          "options": [
+            "Diplomat 1",
+            "DM+4 advancement"
+          ]
+        }
+      ],
       "hasChoice": true
     },
     {
       "rollValue": 12,
       "description": "You make a truly remarkable discovery, one that changes the course of your field.",
       "effectDescription": "You are automatically promoted.",
-      "effects": [{ "type": "special", "detail": "Automatic promotion" }],
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Automatic promotion"
+        }
+      ],
       "hasChoice": false
     }
   ],
@@ -128,41 +303,93 @@
       "rollValue": 1,
       "description": "Severely injured in action.",
       "effectDescription": "Roll twice on the Injury table and take the lower result.",
-      "effects": [{ "type": "injury", "detail": "Roll twice on Injury table, take lower result" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll twice on Injury table, take lower result"
+        }
+      ]
     },
     {
       "rollValue": 2,
       "description": "Your ship is damaged and you have to hitch a ride back. Gain one of Mechanic 1, Survival 1, Engineer 1 or Electronics 1.",
       "effectDescription": "Gain Mechanic 1, Survival 1, Engineer 1 or Electronics 1.",
-      "effects": [{ "type": "skill", "detail": "Gain Mechanic 1, Survival 1, Engineer 1 or Electronics 1", "options": ["Mechanic", "Survival", "Engineer", "Electronics"] }]
+      "effects": [
+        {
+          "type": "skill",
+          "detail": "Gain Mechanic 1, Survival 1, Engineer 1 or Electronics 1",
+          "options": [
+            "Mechanic",
+            "Survival",
+            "Engineer",
+            "Electronics"
+          ]
+        }
+      ]
     },
     {
       "rollValue": 3,
       "description": "Your scout ship is one of the ones that never come back.",
       "effectDescription": "No additional effect.",
-      "effects": [{ "type": "special", "detail": "Ship lost" }]
+      "effects": [
+        {
+          "type": "special",
+          "detail": "Ship lost"
+        }
+      ]
     },
     {
       "rollValue": 4,
       "description": "You are psychologically damaged by your time in the scouts. Reduce INT or SOC by 1.",
       "effectDescription": "Reduce INT or SOC by 1.",
-      "effects": [{ "type": "characteristic", "detail": "Reduce INT or SOC by 1" }]
+      "effects": [
+        {
+          "type": "characteristic",
+          "detail": "Reduce INT or SOC by 1"
+        }
+      ]
     },
     {
       "rollValue": 5,
       "description": "Your ship encounters an anomaly that causes damage. Gain a Contact.",
       "effectDescription": "Gain a Contact.",
-      "effects": [{ "type": "contact", "detail": "Gain a Contact" }]
+      "effects": [
+        {
+          "type": "contact",
+          "detail": "Gain a Contact"
+        }
+      ]
     },
     {
       "rollValue": 6,
       "description": "Injured. Roll on the Injury table.",
       "effectDescription": "Roll on the Injury table.",
-      "effects": [{ "type": "injury", "detail": "Roll on Injury table" }]
+      "effects": [
+        {
+          "type": "injury",
+          "detail": "Roll on Injury table"
+        }
+      ]
     }
   ],
   "musteringOut": {
-    "cash": [20000, 20000, 30000, 30000, 50000, 50000, 50000],
-    "benefits": ["Ship Share", "INT +1", "EDU +1", "Weapon", "Weapon", "Scout Ship", "Scout Ship"]
+    "cash": [
+      20000,
+      20000,
+      30000,
+      30000,
+      50000,
+      50000,
+      50000
+    ],
+    "benefits": [
+      "Ship Share",
+      "INT +1",
+      "EDU +1",
+      "Weapon",
+      "Weapon",
+      "Scout Ship",
+      "Scout Ship"
+    ]
   }
 }
