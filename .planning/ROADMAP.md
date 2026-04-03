@@ -13,7 +13,7 @@ StarMaker delivers a faithful Mongoose Traveller 2E character builder as a stati
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Foundation** - Project scaffold, dice engine, roll log, hash system, state architecture, and deployment pipeline
-- [x] **Phase 2: Pre-Career Creation** - Characteristics, background skills, and pre-career education with working wizard UI (completed 2026-04-02)
+- [ ] **Phase 2: Pre-Career Creation** - Characteristics, background skills, and pre-career education with working wizard UI
 - [ ] **Phase 3: Career Lifecycle** - All 12 careers with full term resolution, aging, mustering out, and social tracking
 - [ ] **Phase 4: Post-Career and Character Sheet** - Psionics, equipment catalog, skill packages, and complete character sheet with export
 - [ ] **Phase 5: Override Mode and Persistence** - Override/reroll system, legitimacy hash display, save/load, and multi-character management
@@ -48,7 +48,7 @@ Plans:
   3. User can choose to attend University or Military Academy with correct entry rolls, skill grants, graduation/honours rolls, and all education events
   4. Failed education entry or graduation is handled correctly (skills retained, no benefits, proper state transitions)
   5. The wizard enforces creation sequence — user cannot skip ahead or access steps out of order
-**Plans:** 10/10 plans complete
+**Plans:** 11 plans (10 complete, 1 gap closure)
 
 Plans:
 - [x] 02-01-PLAN.md — Wizard shell, shared DnD components, UI primitives, and core hooks
@@ -61,6 +61,7 @@ Plans:
 - [x] 02-08-PLAN.md — Education entry roll UX, event choices, roll log labels, relevance tooltips (gap closure)
 - [x] 02-09-PLAN.md — Background skills drag overlay and tooltip overlap fix (gap closure)
 - [x] 02-10-PLAN.md — Duplicate skill prevention and education entry navigation (gap closure)
+- [ ] 02-11-PLAN.md — Already-owned skill indicators and tooltip sizing fix (gap closure)
 
 ### Phase 3: Career Lifecycle
 **Goal**: Users can pursue any of the 12 careers through multiple terms with full rules enforcement — qualification, basic training, survival, events, commission, advancement, rank skills, aging, and mustering out
@@ -123,7 +124,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/4 | In Progress|  |
-| 2. Pre-Career Creation | 10/10 | Complete   | 2026-04-02 |
+| 2. Pre-Career Creation | 10/11 | In Progress |  |
 | 3. Career Lifecycle | 5/8 | In Progress|  |
 | 4. Post-Career and Character Sheet | 0/? | Not started | - |
 | 5. Override Mode and Persistence | 0/? | Not started | - |
