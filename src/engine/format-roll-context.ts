@@ -15,6 +15,17 @@ const CONTEXT_LABELS: Record<string, string> = {
   'education.entry.academy.navy': 'Navy Academy Entry',
   'education.event': 'Education Event',
   'education.graduation': 'Graduation Roll',
+  // Career roll contexts
+  'career-survival': 'Career Survival Roll',
+  'career-commission': 'Commission Roll',
+  'career-advancement': 'Advancement Roll',
+  'career-event': 'Career Event Roll',
+  'career-skill': 'Career Skill Roll',
+  'aging-check': 'Aging Check',
+  'mustering-cash': 'Mustering Out Cash Roll',
+  'mustering-benefit': 'Mustering Out Benefits Roll',
+  'draft': 'Draft Roll',
+  'qualification': 'Career Qualification Roll',
 };
 
 /**
