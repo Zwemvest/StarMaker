@@ -56,8 +56,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CRER-10**: Commission system for Army, Navy, Marines with SOC 9+ extended eligibility
 - [ ] **CRER-11**: Commission DM-1 per term after first; events that grant advancement DMs apply to commission
 - [ ] **CRER-12**: Cannot advance in the same term as gaining commission
-- [ ] **CRER-13**: Advancement rolls with forced-leave mechanic (roll ≤ terms served = must leave)
-- [ ] **CRER-14**: Natural 12 on advancement = forced to stay (no choice)
+- [x] **CRER-13**: Advancement rolls with forced-leave mechanic (roll ≤ terms served = must leave)
+- [x] **CRER-14**: Natural 12 on advancement = forced to stay (no choice)
 - [ ] **CRER-15**: Rank tables with bonus skills granted immediately upon reaching rank
 - [x] **CRER-16**: Skills and training tables (Personal Development, Service Skills, Specialist, Officer, Advanced Education)
 - [ ] **CRER-17**: Advanced Education and Officer tables restricted by EDU 8+ or rank requirement
@@ -66,22 +66,22 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CRER-20**: Draft table (1D → career assignment), draft limited to once per lifetime
 - [ ] **CRER-21**: Failed qualification → choose Draft or Drifter
 - [ ] **CRER-22**: Changing careers requires new qualification roll with cumulative DM penalty
-- [ ] **CRER-23**: Changing assignments varies by career type (same-career vs new-career rules)
-- [ ] **CRER-24**: Cannot return to a career in the term immediately after leaving it
+- [x] **CRER-23**: Changing assignments varies by career type (same-career vs new-career rules)
+- [x] **CRER-24**: Cannot return to a career in the term immediately after leaving it
 
 ### Aging
 
-- [ ] **AGNG-01**: Aging rolls triggered at age 34+ (after 4th term)
-- [ ] **AGNG-02**: Aging effects correctly reduce characteristics per the aging table
-- [ ] **AGNG-03**: Aging crisis rules applied when characteristic reaches 0
+- [x] **AGNG-01**: Aging rolls triggered at age 34+ (after 4th term)
+- [x] **AGNG-02**: Aging effects correctly reduce characteristics per the aging table
+- [x] **AGNG-03**: Aging crisis rules applied when characteristic reaches 0
 
 ### Mustering Out
 
-- [ ] **MSTR-01**: Cash table rolls (max 3 rolls across entire lifetime, all careers combined)
-- [ ] **MSTR-02**: Benefits table rolls with rank-based bonus rolls (rank 1-2: +1, rank 3-4: +2, rank 5-6: +3 and DM+1)
-- [ ] **MSTR-03**: Pension calculation for 5+ terms of service
-- [ ] **MSTR-04**: Lost benefit roll for term ended by mishap (previous terms' benefits retained)
-- [ ] **MSTR-05**: Commission + enlisted rank combined for benefits if applicable
+- [x] **MSTR-01**: Cash table rolls (max 3 rolls across entire lifetime, all careers combined)
+- [x] **MSTR-02**: Benefits table rolls with rank-based bonus rolls (rank 1-2: +1, rank 3-4: +2, rank 5-6: +3 and DM+1)
+- [x] **MSTR-03**: Pension calculation for 5+ terms of service
+- [x] **MSTR-04**: Lost benefit roll for term ended by mishap (previous terms' benefits retained)
+- [x] **MSTR-05**: Commission + enlisted rank combined for benefits if applicable
 
 ### Psionics
 
@@ -211,8 +211,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | CRER-10 | Phase 3 | Pending |
 | CRER-11 | Phase 3 | Pending |
 | CRER-12 | Phase 3 | Pending |
-| CRER-13 | Phase 3 | Pending |
-| CRER-14 | Phase 3 | Pending |
+| CRER-13 | Phase 3 | Complete |
+| CRER-14 | Phase 3 | Complete |
 | CRER-15 | Phase 3 | Pending |
 | CRER-16 | Phase 3 | Complete |
 | CRER-17 | Phase 3 | Pending |
@@ -221,16 +221,16 @@ Deferred to future release. Tracked but not in current roadmap.
 | CRER-20 | Phase 3 | Pending |
 | CRER-21 | Phase 3 | Pending |
 | CRER-22 | Phase 3 | Pending |
-| CRER-23 | Phase 3 | Pending |
-| CRER-24 | Phase 3 | Pending |
-| AGNG-01 | Phase 3 | Pending |
-| AGNG-02 | Phase 3 | Pending |
-| AGNG-03 | Phase 3 | Pending |
-| MSTR-01 | Phase 3 | Pending |
-| MSTR-02 | Phase 3 | Pending |
-| MSTR-03 | Phase 3 | Pending |
-| MSTR-04 | Phase 3 | Pending |
-| MSTR-05 | Phase 3 | Pending |
+| CRER-23 | Phase 3 | Complete |
+| CRER-24 | Phase 3 | Complete |
+| AGNG-01 | Phase 3 | Complete |
+| AGNG-02 | Phase 3 | Complete |
+| AGNG-03 | Phase 3 | Complete |
+| MSTR-01 | Phase 3 | Complete |
+| MSTR-02 | Phase 3 | Complete |
+| MSTR-03 | Phase 3 | Complete |
+| MSTR-04 | Phase 3 | Complete |
+| MSTR-05 | Phase 3 | Complete |
 | SOCL-01 | Phase 3 | Complete |
 | SOCL-02 | Phase 3 | Complete |
 | PSIN-01 | Phase 4 | Pending |

@@ -72,7 +72,7 @@ Plans:
   3. Career transitions enforce all rules: DM-1 per previous career on qualification, draft-once-per-lifetime, failed-qualification routes to Draft or Drifter, no return to career in immediately following term
   4. After completing all career terms, user receives correct mustering out benefits (cash table max 3 rolls, benefit table with rank bonuses, pension for 5+ terms, lost benefit on mishap term)
   5. Aging effects trigger at 34+ with correct characteristic reductions and aging crisis at 0; skill limits (level 4 cap, total 3x(INT+EDU)) are enforced throughout; contacts/allies/rivals/enemies and noble titles are tracked
-**Plans:** 8 plans
+**Plans:** 5/8 plans executed
 
 Plans:
 - [x] 03-01-PLAN.md — Career types, Zod schemas, and career engine pure functions
@@ -81,7 +81,7 @@ Plans:
 - [x] 03-04-PLAN.md — Zustand store career extensions and XState career sub-states
 - [ ] 03-05-PLAN.md — Career selection UI (grid, assignments, qualification, basic training)
 - [ ] 03-06-PLAN.md — Career term loop UI (survival, events, commission, advancement, skills)
-- [ ] 03-07-PLAN.md — Continue/leave, aging, timeline, and mustering out UI
+- [x] 03-07-PLAN.md — Continue/leave, aging, timeline, and mustering out UI
 - [ ] 03-08-PLAN.md — Character panel extensions, golden-path tests, and human verification
 
 ### Phase 4: Post-Career and Character Sheet
@@ -124,6 +124,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/4 | In Progress|  |
 | 2. Pre-Career Creation | 10/10 | Complete   | 2026-04-02 |
-| 3. Career Lifecycle | 0/8 | Not started | - |
+| 3. Career Lifecycle | 5/8 | In Progress|  |
 | 4. Post-Career and Character Sheet | 0/? | Not started | - |
 | 5. Override Mode and Persistence | 0/? | Not started | - |

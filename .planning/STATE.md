@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-04-03T11:07:55.520Z"
-last_activity: 2026-04-03 -- Phase 03 execution started
+stopped_at: Completed 03-07-PLAN.md
+last_updated: "2026-04-03T13:21:35.512Z"
+last_activity: 2026-04-03
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 22
-  completed_plans: 18
+  completed_plans: 19
   percent: 78
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 ## Current Position
 
 Phase: 03 (career-lifecycle) — EXECUTING
-Plan: 1 of 8
-Status: Executing Phase 03
-Last activity: 2026-04-03 -- Phase 03 execution started
+Plan: 2 of 8
+Status: Ready to execute
+Last activity: 2026-04-03
 
 Progress: [███████▊░░] 78%
 
@@ -62,6 +62,7 @@ Progress: [███████▊░░] 78%
 | Phase 02 P09 | 2min | 2 tasks | 2 files |
 | Phase 02 P10 | 4min | 2 tasks | 7 files |
 | Phase 03 P04 | 9min | 2 tasks | 4 files |
+| Phase 03 P07 | 9min | 2 tasks | 19 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,7 @@ Recent decisions affecting current work:
 - [Phase 02-10]: addSkill upgrades level on duplicate (higher wins) rather than rejecting or replacing
 - [Phase 03]: Commission guard-based routing: isCommissioned sends to advancement, newly-commissioned skips advancement (CRER-12)
 - [Phase 03]: Military career detection via hardcoded CareerName array in isMilitary guard
+- [Phase 03]: CareerStep detects nested XState termLoop substates by inspecting state.value object depth for career → termLoop routing
 
 ### Pending Todos
 
@@ -111,6 +113,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-03T09:45:39.377Z
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-04-03T13:21:35.508Z
+Stopped at: Completed 03-07-PLAN.md
 Resume file: None
