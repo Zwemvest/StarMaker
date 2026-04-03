@@ -81,8 +81,8 @@ Plans:
 - [x] 03-04-PLAN.md — Zustand store career extensions and XState career sub-states
 - [ ] 03-05-PLAN.md — Career selection UI (grid, assignments, qualification, basic training)
 - [ ] 03-06-PLAN.md — Career term loop UI (survival, events, commission, advancement, skills)
-- [x] 03-07-PLAN.md — Continue/leave, aging, timeline, and mustering out UI
-- [ ] 03-08-PLAN.md — Character panel extensions, golden-path tests, and human verification
+- [ ] 03-07-PLAN.md — Continue/leave, aging, timeline, and mustering out UI
+- [x] 03-08-PLAN.md — Character panel extensions, golden-path tests, and human verification
 
 ### Phase 4: Post-Career and Character Sheet
 **Goal**: Users can test for psionics, purchase equipment, select skill packages, and view/export a complete character sheet
