@@ -172,20 +172,24 @@ export function getTotalSkillLevels(skills: Skill[]): number {
 }
 
 /**
- * Get the basic training skills for a career.
- * CRER-04: First career = all service skills at level 0.
- *          Subsequent careers = empty (UI handles pick-one).
- * CRER-05: Citizen/Drifter exception (basicTrainingException=true):
- *          returns assignment specialist skills instead of service skills.
+ * Get the list of service/specialist skill candidates for a career's basic training.
+ * CRER-04: First career grants ALL returned skills at level 0.
+ *          Subsequent careers PICK ONE of the returned skills at level 0.
+ *          (The grant-all vs pick-one distinction lives in BasicTrainingCard, not here.)
+ * CRER-05: Citizen/Drifter exception (basicTrainingException=true): returns assignment
+ *          specialist skills instead of service skills, for both first and subsequent
+ *          careers.
+ *
+ * NOTE: `isFirstCareer` is retained in the signature for API stability and to make
+ * the caller's intent explicit at the call site, even though it no longer affects
+ * the return value. The caller uses `isFirstCareer` to decide grant-all vs pick-one.
  */
 export function getBasicTrainingSkills(
   career: CareerData,
   isFirstCareer: boolean,
   assignmentIndex: number,
 ): SkillEntry[] {
-  if (!isFirstCareer) {
-    return [];
-  }
+  void isFirstCareer; // retained for API stability; see docstring
 
   if (career.basicTrainingException) {
     return career.assignments[assignmentIndex].specialistSkills;

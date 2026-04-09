@@ -368,10 +368,10 @@ describe('getBasicTrainingSkills', () => {
     expect(skills).toEqual(career.skillTables.serviceSkills);
   });
 
-  it('returns empty array for subsequent careers (CRER-04)', () => {
+  it('returns service skills pool for subsequent careers (CRER-04, caller picks one)', () => {
     const career = makeCareerData();
     const skills = getBasicTrainingSkills(career, false, 0);
-    expect(skills).toEqual([]);
+    expect(skills).toEqual(career.skillTables.serviceSkills);
   });
 
   it('returns assignment specialist skills for Citizen/Drifter exception (CRER-05)', () => {
@@ -384,6 +384,12 @@ describe('getBasicTrainingSkills', () => {
     const career = makeCareerData({ basicTrainingException: true });
     const skills = getBasicTrainingSkills(career, true, 1);
     expect(skills).toEqual(career.assignments[1].specialistSkills);
+  });
+
+  it('returns assignment specialist skills for Citizen/Drifter subsequent career (CRER-05)', () => {
+    const career = makeCareerData({ basicTrainingException: true });
+    const skills = getBasicTrainingSkills(career, false, 2);
+    expect(skills).toEqual(career.assignments[2].specialistSkills);
   });
 });
 
