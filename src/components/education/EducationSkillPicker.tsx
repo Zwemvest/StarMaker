@@ -39,6 +39,7 @@ export function EducationSkillPicker({
     unassignedPool,
     isComplete,
     handleDragEnd,
+    unassignSlot,
   } = useDragAssign({
     pool,
     slotCount: type === 'university' ? 2 : 0,
@@ -125,14 +126,24 @@ export function EducationSkillPicker({
 
         {/* Skill slots */}
         <div className="grid grid-cols-2 gap-3">
-          <DropSlot id="slot-0" label="Level 0 Skill" isEmpty={!assignments[0]}>
+          <DropSlot
+            id="slot-0"
+            label="Level 0 Skill"
+            isEmpty={!assignments[0]}
+            onRemove={assignments[0] ? () => unassignSlot(0) : undefined}
+          >
             {assignments[0] ? (
               <span className="text-sm text-white font-mono">{assignments[0].name}</span>
             ) : (
               <span className="text-xs text-gray-500">Drag a skill here</span>
             )}
           </DropSlot>
-          <DropSlot id="slot-1" label="Level 1 Skill" isEmpty={!assignments[1]}>
+          <DropSlot
+            id="slot-1"
+            label="Level 1 Skill"
+            isEmpty={!assignments[1]}
+            onRemove={assignments[1] ? () => unassignSlot(1) : undefined}
+          >
             {assignments[1] ? (
               <span className="text-sm text-white font-mono">{assignments[1].name}</span>
             ) : (

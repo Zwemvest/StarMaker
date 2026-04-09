@@ -39,6 +39,7 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
     assignments,
     isComplete,
     handleDragEnd,
+    unassignSlot,
     unassignedPool: _unassignedPool,
   } = useDragAssign<BackgroundSkill>({
     pool: BACKGROUND_SKILLS,
@@ -118,7 +119,10 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
           </p>
         </Card>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-3">
+          <Button variant="secondary" onClick={() => send({ type: 'EDIT' })}>
+            Go Back to Edit
+          </Button>
           <Button variant="primary" onClick={handleConfirm}>
             Confirm Skills
           </Button>
@@ -161,7 +165,12 @@ export function BackgroundSkillsStep({ subState, send }: BackgroundSkillsStepPro
             </h3>
             <div className="grid gap-2">
               {assignments.map((skill, i) => (
-                <SkillSlot key={i} index={i} skill={skill} />
+                <SkillSlot
+                  key={i}
+                  index={i}
+                  skill={skill}
+                  onRemove={skill ? () => unassignSlot(i) : undefined}
+                />
               ))}
             </div>
           </div>
