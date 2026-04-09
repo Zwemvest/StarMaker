@@ -51,11 +51,24 @@ export function CharacteristicsStep({ subState, send }: CharacteristicsStepProps
     unassignedPool,
     isComplete,
     handleDragEnd: baseHandleDragEnd,
+    unassignSlot,
   } = useDragAssign<PoolItem>({
     pool,
     slotCount: ROLL_COUNT,
     getId: (item) => item.id,
   });
+
+  // Remove handler: unassigns slot locally AND zeroes the store value
+  // so the Zustand characteristic doesn't stay stale after unassign (UAT gap 2).
+  const handleRemoveSlot = useCallback(
+    (slotIndex: number) => {
+      unassignSlot(slotIndex);
+      if (slotIndex >= 0 && slotIndex < CHARACTERISTIC_IDS.length) {
+        setCharacteristic(CHARACTERISTIC_IDS[slotIndex], 0);
+      }
+    },
+    [unassignSlot, setCharacteristic],
+  );
 
   // Sensors with distance constraint to prevent accidental drags
   const sensors = useSensors(
@@ -195,6 +208,7 @@ export function CharacteristicsStep({ subState, send }: CharacteristicsStepProps
                     value={item?.total ?? null}
                     dice={item?.dice ?? null}
                     previewValue={previewValue}
+                    onRemove={item ? () => handleRemoveSlot(i) : undefined}
                   />
                 );
               })}
@@ -216,6 +230,7 @@ export function CharacteristicsStep({ subState, send }: CharacteristicsStepProps
                     value={item?.total ?? null}
                     dice={item?.dice ?? null}
                     previewValue={previewValue}
+                    onRemove={item ? () => handleRemoveSlot(slotIndex) : undefined}
                   />
                 );
               })}
@@ -273,7 +288,10 @@ export function CharacteristicsStep({ subState, send }: CharacteristicsStepProps
           </p>
         </Card>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-3">
+          <Button variant="secondary" onClick={() => send({ type: 'EDIT' })}>
+            Go Back to Edit
+          </Button>
           <Button variant="primary" onClick={handleConfirm}>
             Confirm Characteristics
           </Button>

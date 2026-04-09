@@ -34,6 +34,7 @@ export type CreationEvent =
   | { type: 'ROLL_ALL' }
   | { type: 'ASSIGN_COMPLETE' }
   | { type: 'CONFIRM' }
+  | { type: 'EDIT' }
   | { type: 'CHARACTERISTICS_COMPLETE' }
   | { type: 'BACKGROUND_COMPLETE' }
   | { type: 'SKILLS_SELECTED' }
@@ -150,6 +151,7 @@ export const creationMachine = setup({
         review: {
           on: {
             CONFIRM: '#creation.backgroundSkills',
+            EDIT: 'assigning',
           },
         },
       },
@@ -165,6 +167,7 @@ export const creationMachine = setup({
         review: {
           on: {
             CONFIRM: '#creation.education',
+            EDIT: 'selecting',
           },
         },
       },

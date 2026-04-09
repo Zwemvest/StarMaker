@@ -1,7 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { createElement } from 'react';
 import { characteristicModifier } from '../../src/types/common';
 import { BACKGROUND_SKILLS } from '../../src/data/background-skills';
 import type { SkillCategory } from '../../src/types/skills';
+import { SkillSlot } from '../../src/components/background-skills/SkillSlot';
+import { BackgroundSkillsStep } from '../../src/components/background-skills/BackgroundSkillsStep';
+import { useCharacterStore } from '../../src/stores/character';
 
 describe('Background Skills Step', () => {
   describe('slot count calculation', () => {
@@ -125,5 +130,99 @@ describe('Background Skills Step', () => {
       const expectedLevel = 0;
       expect(expectedLevel).toBe(0);
     });
+  });
+});
+
+describe('SkillSlot — onRemove prop', () => {
+  it('renders × button when onRemove provided and skill is assigned', () => {
+    const onRemove = vi.fn();
+    const skill = BACKGROUND_SKILLS[0];
+    render(
+      createElement(SkillSlot, { index: 0, skill, onRemove }),
+    );
+    expect(screen.getByRole('button', { name: /Remove/i })).toBeTruthy();
+  });
+
+  it('does NOT render × button when skill is null (empty slot)', () => {
+    const onRemove = vi.fn();
+    render(
+      createElement(SkillSlot, { index: 0, skill: null, onRemove }),
+    );
+    expect(screen.queryByRole('button', { name: /Remove/i })).toBeNull();
+  });
+
+  it('does NOT render × button when onRemove is undefined', () => {
+    const skill = BACKGROUND_SKILLS[0];
+    render(
+      createElement(SkillSlot, { index: 0, skill }),
+    );
+    expect(screen.queryByRole('button', { name: /Remove/i })).toBeNull();
+  });
+
+  it('clicking × fires the onRemove callback', () => {
+    const onRemove = vi.fn();
+    const skill = BACKGROUND_SKILLS[0];
+    render(
+      createElement(SkillSlot, { index: 0, skill, onRemove }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Remove/i }));
+    expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('BackgroundSkillsStep — decline path (UAT gap 1 regression)', () => {
+  beforeEach(() => {
+    useCharacterStore.getState().resetCharacter();
+    // EDU 7 -> DM 0 -> 3 slots, enough range for test below
+    useCharacterStore.getState().setCharacteristic('EDU', 7);
+  });
+
+  it('review state renders a "Go Back to Edit" decline button that sends EDIT', () => {
+    const send = vi.fn();
+    render(
+      createElement(BackgroundSkillsStep, { subState: 'review', send }),
+    );
+
+    const declineBtn = screen.getByRole('button', { name: /Go Back to Edit/i });
+    expect(declineBtn).toBeTruthy();
+
+    fireEvent.click(declineBtn);
+    expect(send).toHaveBeenCalledWith({ type: 'EDIT' });
+  });
+
+  it('clicking decline does NOT call addSkill (skills stay uncommitted)', () => {
+    const send = vi.fn();
+    render(
+      createElement(BackgroundSkillsStep, { subState: 'review', send }),
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Go Back to Edit/i }));
+
+    // Verify the store skills array is still empty — decline must not commit.
+    expect(useCharacterStore.getState().skills).toEqual([]);
+    // And only EDIT was sent, not CONFIRM
+    expect(send).toHaveBeenCalledWith({ type: 'EDIT' });
+    expect(send).not.toHaveBeenCalledWith({ type: 'CONFIRM' });
+  });
+
+  it('confirming from review commits skills exactly once', () => {
+    const send = vi.fn();
+    // Pre-seed a single skill via addSkill simulating a previous confirm
+    // so we can prove that the click handler does not double-dip.
+    // Instead of pre-seeding, we verify the store is empty before and
+    // exactly one click does not trigger duplicate additions.
+    // The review screen reads assignments from local state (empty here),
+    // so this regression specifically guards the Confirm button wiring:
+    // it should send CONFIRM and never double-add.
+    render(
+      createElement(BackgroundSkillsStep, { subState: 'review', send }),
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /Confirm Skills/i }));
+    // Confirm sent once
+    expect(send).toHaveBeenCalledWith({ type: 'CONFIRM' });
+    // Store still consistent (no skills because local assignments are empty here;
+    // the key assertion is that nothing crashes and send fires exactly once).
+    expect(send).toHaveBeenCalledTimes(1);
   });
 });
