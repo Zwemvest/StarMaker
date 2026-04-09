@@ -73,17 +73,22 @@ Plans:
   3. Career transitions enforce all rules: DM-1 per previous career on qualification, draft-once-per-lifetime, failed-qualification routes to Draft or Drifter, no return to career in immediately following term
   4. After completing all career terms, user receives correct mustering out benefits (cash table max 3 rolls, benefit table with rank bonuses, pension for 5+ terms, lost benefit on mishap term)
   5. Aging effects trigger at 34+ with correct characteristic reductions and aging crisis at 0; skill limits (level 4 cap, total 3x(INT+EDU)) are enforced throughout; contacts/allies/rivals/enemies and noble titles are tracked
-**Plans:** 5/8 plans executed
+**Plans:** 8/13 plans executed (5 gap-closure plans queued)
 
 Plans:
 - [x] 03-01-PLAN.md — Career types, Zod schemas, and career engine pure functions
 - [x] 03-02-PLAN.md — Aging engine, mustering-out engine, life events, and draft table
 - [x] 03-03-PLAN.md — All 12 career JSON data files transcribed from Core Rulebook
 - [x] 03-04-PLAN.md — Zustand store career extensions and XState career sub-states
-- [ ] 03-05-PLAN.md — Career selection UI (grid, assignments, qualification, basic training)
-- [ ] 03-06-PLAN.md — Career term loop UI (survival, events, commission, advancement, skills)
-- [ ] 03-07-PLAN.md — Continue/leave, aging, timeline, and mustering out UI
+- [x] 03-05-PLAN.md — Career selection UI (grid, assignments, qualification, basic training)
+- [x] 03-06-PLAN.md — Career term loop UI (survival, events, commission, advancement, skills)
+- [x] 03-07-PLAN.md — Continue/leave, aging, timeline, and mustering out UI
 - [x] 03-08-PLAN.md — Character panel extensions, golden-path tests, and human verification
+- [ ] 03-09-PLAN.md — Confirm-gate decline + direct unassign × buttons (gap closure)
+- [ ] 03-10-PLAN.md — Shared DiceRollButton/SkillSelectButton primitives, qualification odds, owned-skill fix (gap closure)
+- [ ] 03-11-PLAN.md — Fix basic-training skill pool for subsequent careers (gap closure)
+- [ ] 03-12-PLAN.md — Persist creationPhase, terminal CompleteSummary, fix "unknown - complete" fallback (gap closure)
+- [ ] 03-13-PLAN.md — CRER-11: event advancement DM applied to commission roll in same term (gap closure)
 
 ### Phase 4: Post-Career and Character Sheet
 **Goal**: Users can test for psionics, purchase equipment, select skill packages, and view/export a complete character sheet
@@ -125,6 +130,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/4 | In Progress|  |
 | 2. Pre-Career Creation | 10/11 | In Progress |  |
-| 3. Career Lifecycle | 5/8 | In Progress|  |
+| 3. Career Lifecycle | 8/13 | In Progress|  |
 | 4. Post-Career and Character Sheet | 0/? | Not started | - |
 | 5. Override Mode and Persistence | 0/? | Not started | - |
