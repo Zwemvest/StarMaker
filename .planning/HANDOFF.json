@@ -1,0 +1,73 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-04-09T12:08:22.118Z",
+  "phase": "03",
+  "phase_name": "career-lifecycle",
+  "phase_dir": ".planning/phases/03-career-lifecycle",
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "workflow": "verify-work",
+  "workflow_step": "verify_gap_plans",
+  "completed_tasks": [
+    {"id": 1, "name": "Resume UAT Test 2 (CRER-11 advisory)", "status": "done", "commit": "fb694dd"},
+    {"id": 2, "name": "Log UAT Test 2 as issue (file gap-fix plan)", "status": "done", "commit": "fb694dd"},
+    {"id": 3, "name": "Spawn 8 parallel gsd-debugger agents for all gaps", "status": "done"},
+    {"id": 4, "name": "Collect root causes from 8 debug agents", "status": "done"},
+    {"id": 5, "name": "Cross-verify suspicious findings (agent 3 stale worktree) against main", "status": "done"},
+    {"id": 6, "name": "Update 03-HUMAN-UAT.md with artifacts/missing/debug_session for all 8 gaps", "status": "done", "commit": "fb694dd"},
+    {"id": 7, "name": "Spawn gsd-planner in gap_closure mode", "status": "done", "commit": "1d112ad"},
+    {"id": 8, "name": "Receive 5 gap-closure plans (03-09 through 03-13)", "status": "done", "commit": "1d112ad"}
+  ],
+  "remaining_tasks": [
+    {"id": 9, "name": "Run gsd-plan-checker to verify the 5 gap-closure plans", "status": "blocked_rate_limit"},
+    {"id": 10, "name": "If checker finds issues: revision loop (planner ↔ checker, max 3 iterations)", "status": "not_started"},
+    {"id": 11, "name": "Present ready state with execute command", "status": "not_started"},
+    {"id": 12, "name": "Execute: /gsd-execute-phase 03 --gaps-only (wave-based)", "status": "not_started"}
+  ],
+  "blockers": [
+    {
+      "description": "Usage limit hit — plan-checker subagent was spawned but returned 'You've hit your limit · resets 2pm (Europe/Amsterdam)'. Plans are written but unverified.",
+      "type": "external",
+      "workaround": "Resume after 2pm Europe/Amsterdam rate-limit reset; re-spawn gsd-plan-checker with the same verification prompt."
+    }
+  ],
+  "human_actions_pending": [
+    {
+      "action": "Wait for Anthropic rate-limit reset (2pm Europe/Amsterdam on 2026-04-09)",
+      "context": "Plan-checker cannot run until limit resets. All 5 plans are already written and committed; verification is the only blocked step.",
+      "blocking": true
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "User chose 'File a gap-fix plan' for CRER-11 advisory (UAT Test 2) rather than accept as MVP gap",
+      "rationale": "CRER-11 is a Core Rulebook rule; leaving it unplumbed would ship a known rules-incompleteness bug. Plumbing cost is bounded (one new context field + one assign + reset + prop thread).",
+      "phase": "03"
+    },
+    {
+      "decision": "Bundled 8 UAT gaps into 5 plans rather than 8",
+      "rationale": "Architectural coupling: gaps 1+2 share review-gate components, gaps 4+5 share the probability helper + DiceRollButton primitive, gaps 6+7 share useCreationMachine and WizardShell. Bundle reduces merge pain and ships strategic primitives before they're needed in Wave 3.",
+      "phase": "03"
+    },
+    {
+      "decision": "Plan 03-10 builds shared DiceRollButton + SkillSelectButton primitives before plan 03-13 (CRER-11) needs them",
+      "rationale": "Debug session for gap 5 noted CareerStep/MusteringOutStep will have the highest dice-roll/skill-pick density in the app. Building primitives now is 10× cheaper than retrofitting later.",
+      "phase": "03"
+    },
+    {
+      "decision": "Plan 03-13 will use Option A for CRER-11 (callers pre-sum charDM + bonusDM, engine signatures unchanged)",
+      "rationale": "Zero test churn in the 474-line career.test.ts; simpler change shape; more self-documenting DM breakdown on the card side.",
+      "phase": "03"
+    },
+    {
+      "decision": "Plan 03-11 will UPDATE the two existing tests that lock in the broken empty-array contract (career.test.ts:371-375, golden-path.test.ts:162-165), not skip them",
+      "rationale": "Those tests were asserting a broken contract discovered in UAT. Keeping them would lock the bug in.",
+      "phase": "03"
+    }
+  ],
+  "uncommitted_files": [],
+  "next_action": "Re-spawn gsd-plan-checker (subagent_type='gsd-plan-checker') with the verification_context prompt already prepared in this thread. Read: 03-HUMAN-UAT.md, 03-09 through 03-13-PLAN.md, ROADMAP.md. Check all 10 verification questions from the prompt (gap coverage, bundling, dependencies, TDD commitments, Option A for 03-13, all 11+ career JSON files, terminal UI for 03-12, EventCard level-ignoring bug fix in 03-10, file touchpoints, cross-plan conflicts). If PASSED → present_ready with /gsd-execute-phase 03 --gaps-only command. If ISSUES FOUND → revision loop (spawn planner with checker issues, max 3 iterations).",
+  "context_notes": "Mid-verify-work workflow at step 'verify_gap_plans'. 8 gaps diagnosed, 5 plans written, checker blocked by rate limit. One caveat discovered during diagnosis: my orchestrator's cwd silently drifted into an agent worktree (agent-ae264253) which was stale (pre-03-05). Had to cd back to main and re-verify agent 3's findings. All other worktree agents investigated the main tree correctly (line numbers in their artifacts should be treated as advisory; main truth prevails). Planner was told to verify line numbers on main. When resuming, spawn the checker with the SAME prompt I used (preserved in the thread history) — do NOT re-diagnose, do NOT re-plan from scratch."
+}
