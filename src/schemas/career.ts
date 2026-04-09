@@ -85,12 +85,6 @@ const rankTablesSchema = z.object({
   officer: z.array(rankEntrySchema).length(7).nullable(),
 });
 
-/** Career name enum schema */
-const careerNameSchema = z.enum([
-  'agent', 'army', 'citizen', 'drifter', 'entertainer', 'marine',
-  'merchant', 'navy', 'noble', 'rogue', 'scholar', 'scout',
-]);
-
 /** Top-level career data schema for validating career JSON files */
 export const careerSchema = z.object({
   name: z.string().min(1),

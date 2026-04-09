@@ -20,7 +20,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'You are severely injured. Roll on the Injury table.',
     effects: [
-      { type: 'injury', description: 'Roll on Injury table' },
+      { type: 'injury', detail: 'Roll on Injury table' },
     ],
   },
   {
@@ -29,7 +29,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'Someone close to you dies, or a new member is born into your family. You are profoundly affected.',
     effects: [
-      { type: 'special', description: 'Significant personal event — birth or death in family' },
+      { type: 'special', detail: 'Significant personal event — birth or death in family' },
     ],
   },
   {
@@ -38,7 +38,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'A romantic relationship or close friendship ends badly. Gain a Rival or Enemy.',
     effects: [
-      { type: 'rival', description: 'Gain a Rival or Enemy from ended relationship', target: 'rival' },
+      { type: 'rival', detail: 'Gain a Rival or Enemy from ended relationship' },
     ],
   },
   {
@@ -47,7 +47,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'A romantic relationship deepens or you make a lifelong friend. Gain an Ally.',
     effects: [
-      { type: 'ally', description: 'Gain an Ally from deepened relationship', target: 'ally' },
+      { type: 'ally', detail: 'Gain an Ally from deepened relationship' },
     ],
   },
   {
@@ -56,7 +56,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'You become involved in a romantic relationship. Gain a Contact.',
     effects: [
-      { type: 'contact', description: 'Gain a Contact from new relationship', target: 'contact' },
+      { type: 'contact', detail: 'Gain a Contact from new relationship' },
     ],
   },
   {
@@ -65,7 +65,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'You gain a new Contact.',
     effects: [
-      { type: 'contact', description: 'Gain a new Contact', target: 'contact' },
+      { type: 'contact', detail: 'Gain a new Contact' },
     ],
   },
   {
@@ -74,7 +74,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'You are betrayed in some fashion by a friend. Convert one Contact or Ally into a Rival or Enemy.',
     effects: [
-      { type: 'enemy', description: 'Convert a Contact or Ally into a Rival or Enemy' },
+      { type: 'enemy', detail: 'Convert a Contact or Ally into a Rival or Enemy' },
     ],
   },
   {
@@ -83,7 +83,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'You move to another world. Gain DM+2 to your next qualification roll.',
     effects: [
-      { type: 'benefit', description: 'DM+2 to next qualification roll', value: 2 },
+      { type: 'benefit', detail: 'DM+2 to next qualification roll' },
     ],
   },
   {
@@ -92,7 +92,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'Something good happens to you. Gain DM+2 to any one Benefit roll.',
     effects: [
-      { type: 'benefit', description: 'DM+2 to any one Benefit roll', value: 2 },
+      { type: 'benefit', detail: 'DM+2 to any one Benefit roll' },
     ],
   },
   {
@@ -101,7 +101,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'You commit or are accused of a crime. Lose one Benefit roll or take the Prisoner career next term.',
     effects: [
-      { type: 'special', description: 'Lose one Benefit roll or become a Prisoner' },
+      { type: 'special', detail: 'Lose one Benefit roll or become a Prisoner' },
     ],
   },
   {
@@ -110,7 +110,7 @@ export const LIFE_EVENTS: readonly LifeEvent[] = [
     effectDescription:
       'Something unusual occurs. Roll 1D: 1-Psionics tested, 2-Alien contact, 3-Unusual event, 4-Political upheaval, 5-Contact with unusual entity, 6-Ancient technology found.',
     effects: [
-      { type: 'special', description: 'Roll 1D for unusual event sub-table' },
+      { type: 'special', detail: 'Roll 1D for unusual event sub-table' },
     ],
   },
 ] as const;
