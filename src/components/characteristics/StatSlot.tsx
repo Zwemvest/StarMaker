@@ -8,6 +8,7 @@ interface StatSlotProps {
   value: number | null;
   dice: number[] | null;
   previewValue: number | null;
+  onRemove?: () => void;
 }
 
 /** Format a DM as +N / -N / +0 */
@@ -21,13 +22,13 @@ function formatDM(dm: number): string {
  * Shows the characteristic label, assigned value with DM,
  * and a faded DM preview when a value is being hovered.
  */
-export function StatSlot({ id, slotIndex, value, dice, previewValue }: StatSlotProps) {
+export function StatSlot({ id, slotIndex, value, dice, previewValue, onRemove }: StatSlotProps) {
   const isEmpty = value === null;
   const dm = value !== null ? characteristicModifier(value) : null;
   const previewDM = previewValue !== null ? characteristicModifier(previewValue) : null;
 
   return (
-    <DropSlot id={`slot-${slotIndex}`} label={id} isEmpty={isEmpty}>
+    <DropSlot id={`slot-${slotIndex}`} label={id} isEmpty={isEmpty} onRemove={onRemove}>
       {value !== null && dice !== null ? (
         <div className="flex flex-col items-center gap-1">
           <DiceDisplay dice={dice} total={value} />

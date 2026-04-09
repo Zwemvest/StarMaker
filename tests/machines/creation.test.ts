@@ -246,6 +246,65 @@ describe('Creation State Machine', () => {
       expect(actor.getSnapshot().value).toEqual({ education: 'choosing' });
       actor.stop();
     });
+
+    it('transitions backgroundSkills.review -> selecting on EDIT (decline path)', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      actor.send({ type: 'CONFIRM' });
+      actor.send({ type: 'SKILLS_SELECTED' });
+      expect(actor.getSnapshot().value).toEqual({ backgroundSkills: 'review' });
+
+      actor.send({ type: 'EDIT' });
+      expect(actor.getSnapshot().value).toEqual({ backgroundSkills: 'selecting' });
+      actor.stop();
+    });
+  });
+
+  describe('EDIT decline event', () => {
+    it('transitions characteristics.review -> assigning on EDIT', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'review' });
+
+      actor.send({ type: 'EDIT' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+      actor.stop();
+    });
+
+    it('EDIT from characteristics.assigning is ignored (no-op)', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+
+      actor.send({ type: 'EDIT' });
+      // Still in assigning — no transition defined from here
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+      actor.stop();
+    });
+
+    it('can round-trip review -> assigning -> review via EDIT + ASSIGN_COMPLETE', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'ROLL_ALL' });
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'review' });
+
+      actor.send({ type: 'EDIT' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'assigning' });
+
+      actor.send({ type: 'ASSIGN_COMPLETE' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'review' });
+      actor.stop();
+    });
   });
 
   describe('Education nested states', () => {
