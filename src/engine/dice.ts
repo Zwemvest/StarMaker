@@ -59,3 +59,28 @@ export function rollD66(): number {
   const ones = rollDie(6);
   return tens * 10 + ones;
 }
+
+/**
+ * Probability of rolling `target` or higher on 2D6 with a given DM.
+ *
+ * Enumerates all 36 outcomes of 2D6 exhaustively and returns the rounded
+ * percentage (0-100). Inputs are clamped so that an effective target of
+ * 2 or less always returns 100, and an effective target above 12 always
+ * returns 0.
+ *
+ * @param target Target number to beat or equal
+ * @param dm Dice modifier applied to the roll
+ * @returns Integer percentage in the range [0, 100]
+ */
+export function probability2DAtLeast(target: number, dm: number): number {
+  const effectiveTarget = target - dm;
+  if (effectiveTarget <= 2) return 100;
+  if (effectiveTarget > 12) return 0;
+  let successes = 0;
+  for (let d1 = 1; d1 <= 6; d1++) {
+    for (let d2 = 1; d2 <= 6; d2++) {
+      if (d1 + d2 >= effectiveTarget) successes++;
+    }
+  }
+  return Math.round((successes / 36) * 100);
+}

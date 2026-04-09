@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, roll1D, roll2D, roll3D, rollD3, rollD66 } from '../../src/engine/dice';
+import {
+  rollDie,
+  rollDice,
+  roll1D,
+  roll2D,
+  roll3D,
+  rollD3,
+  rollD66,
+  probability2DAtLeast,
+} from '../../src/engine/dice';
 
 describe('Dice Engine', () => {
   describe('rollDie', () => {
@@ -93,6 +102,42 @@ describe('Dice Engine', () => {
         const r = rollD66();
         expect(validValues.has(r)).toBe(true);
       }
+    });
+  });
+
+  describe('probability2DAtLeast', () => {
+    describe.each([
+      [2, 0, 100],
+      [8, 0, 42],
+      [8, 2, 72],
+      [12, 0, 3],
+      [13, 0, 0],
+      [5, -2, 58],
+    ])('probability2DAtLeast(%i, %i)', (target, dm, expected) => {
+      it(`returns ${expected}`, () => {
+        expect(probability2DAtLeast(target, dm)).toBe(expected);
+      });
+    });
+
+    it('returns 100 when effective target is <= 2', () => {
+      expect(probability2DAtLeast(2, 0)).toBe(100);
+      expect(probability2DAtLeast(1, 0)).toBe(100);
+      expect(probability2DAtLeast(4, 3)).toBe(100);
+    });
+
+    it('returns 0 when effective target is > 12', () => {
+      expect(probability2DAtLeast(13, 0)).toBe(0);
+      expect(probability2DAtLeast(15, 1)).toBe(0);
+    });
+
+    it('returns an integer (rounded)', () => {
+      const result = probability2DAtLeast(8, 0);
+      expect(Number.isInteger(result)).toBe(true);
+    });
+
+    it('matches expected probability for 7+ on 2D6', () => {
+      // 2D6 >= 7 has 21/36 outcomes = 58.33%
+      expect(probability2DAtLeast(7, 0)).toBe(58);
     });
   });
 
