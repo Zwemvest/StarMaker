@@ -2,8 +2,8 @@ import { CAREERS, ALL_CAREER_NAMES } from '../../data/careers/index';
 import { useCharacterStore } from '../../stores/character';
 import { characteristicModifier } from '../../types/common';
 import { calculateQualificationDM } from '../../engine/career';
+import { probability2DAtLeast } from '../../engine/dice';
 import type { CareerName } from '../../types/careers';
-import { Card } from '../ui/Card';
 
 interface CareerGridProps {
   onChoose: (career: CareerName) => void;
@@ -40,26 +40,40 @@ export function CareerGrid({ onChoose }: CareerGridProps) {
 
           let qualText = 'No Qualification Required';
           let userDM = qualDM;
+          let odds: number | null = null;
           if (qual) {
             const charValue = characteristics[qual.characteristic as keyof typeof characteristics] ?? 0;
             const charDM = characteristicModifier(charValue);
             userDM = qualDM + charDM;
             const dmStr = userDM === 0 ? '' : userDM > 0 ? ` (DM+${userDM})` : ` (DM${userDM})`;
             qualText = `${qual.characteristic} ${qual.target}+${dmStr}`;
+            odds = probability2DAtLeast(qual.target, userDM);
           }
+          const oddsColor =
+            odds !== null && odds >= 50
+              ? 'text-green-400 border-green-700'
+              : 'text-amber-400 border-amber-700';
 
           return (
             <button
               key={careerName}
               onClick={() => !isLocked && onChoose(careerName)}
               disabled={isLocked}
-              className={`text-left rounded-lg border p-3 transition-colors ${
+              className={`relative text-left rounded-lg border p-3 transition-colors ${
                 isLocked
                   ? 'border-gray-700 bg-terminal-surface/20 opacity-40 cursor-not-allowed'
                   : 'border-gray-700 bg-terminal-surface hover:border-scanner-blue/60 hover:bg-terminal-surface/80 cursor-pointer'
               }`}
             >
-              <p className="text-sm font-medium text-white capitalize mb-1">{careerName}</p>
+              {odds !== null && (
+                <span
+                  className={`absolute top-2 right-2 px-1.5 py-0.5 rounded border text-[10px] font-mono ${oddsColor} bg-terminal-surface`}
+                  title={`Qualification odds: ${qual!.characteristic} ${qual!.target}+, DM ${userDM >= 0 ? `+${userDM}` : userDM}`}
+                >
+                  {odds}%
+                </span>
+              )}
+              <p className="text-sm font-medium text-white capitalize mb-1 pr-10">{careerName}</p>
               <p className="text-xs text-gray-400 mb-2">{qualText}</p>
               <div className="space-y-0.5">
                 {career.assignments.map((a) => (

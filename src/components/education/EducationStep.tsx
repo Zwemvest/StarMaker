@@ -6,6 +6,7 @@ import { EventCard } from './EventCard';
 import { GraduationResult } from './GraduationResult';
 import { useLoggedRoll } from '../../hooks/useLoggedRoll';
 import { useCharacterStore } from '../../stores/character';
+import { probability2DAtLeast } from '../../engine/dice';
 import {
   calculateEntryDM,
   resolveEntryRoll,
@@ -87,22 +88,6 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
     setEducationType('academy');
     send({ type: 'CHOOSE_ACADEMY', branch });
   }, [send]);
-
-  /** Calculate odds of success for 2D >= target (accounting for DM) */
-  const calculateOdds = useCallback((target: number, dm: number): number => {
-    // Effective target after DM is applied
-    const effectiveTarget = target - dm;
-    if (effectiveTarget <= 2) return 100;
-    if (effectiveTarget > 12) return 0;
-    // Count 2D combinations that meet the effective target out of 36
-    let successes = 0;
-    for (let d1 = 1; d1 <= 6; d1++) {
-      for (let d2 = 1; d2 <= 6; d2++) {
-        if (d1 + d2 >= effectiveTarget) successes++;
-      }
-    }
-    return Math.round((successes / 36) * 100);
-  }, []);
 
   const handleRollEntry = useCallback(async () => {
     if (!selectedPath) return;
@@ -260,11 +245,11 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
         <div className="grid grid-cols-3 gap-4">
           {(() => {
             const uniDM = calculateEntryDM(educationTermsUsed, characteristics, universityPath);
-            const uniOdds = calculateOdds(universityPath.entryTarget, uniDM);
+            const uniOdds = probability2DAtLeast(universityPath.entryTarget, uniDM);
             const branchOdds = academyPaths.reduce((acc, p) => {
               if (p.branch) {
                 const dm = calculateEntryDM(educationTermsUsed, characteristics, p);
-                acc[p.branch] = calculateOdds(p.entryTarget, dm);
+                acc[p.branch] = probability2DAtLeast(p.entryTarget, dm);
               }
               return acc;
             }, {} as Record<AcademyBranch, number>);
@@ -300,7 +285,7 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
     if (selectedPath && !entryRolled) {
       // Pre-roll card: show target, DM, odds, and Roll button
       const dm = calculateEntryDM(educationTermsUsed, characteristics, selectedPath);
-      const odds = calculateOdds(selectedPath.entryTarget, dm);
+      const odds = probability2DAtLeast(selectedPath.entryTarget, dm);
       const dmParts: string[] = [];
       if (educationTermsUsed > 0) {
         dmParts.push(`Previous attempts: DM${-1 * educationTermsUsed}`);
@@ -424,7 +409,7 @@ export function EducationStep({ subState, send, educationTermsUsed }: EducationS
           /* Show event card */
           <div className="space-y-3">
             <p className="text-xs text-gray-500 uppercase tracking-wide">Education Event</p>
-            <EventCard event={eventData} onResolve={handleEventResolve} existingSkills={existingSkillNames} />
+            <EventCard event={eventData} onResolve={handleEventResolve} existingSkills={skills} />
           </div>
         ) : (
           /* Event resolved, proceed to graduation */
