@@ -1,11 +1,13 @@
 import type { EducationEvent } from '../../types/education';
+import type { Skill } from '../../types/character';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
+import { classifySkillBenefit } from '../../engine/skill-benefit';
 
 interface EventCardProps {
   event: EducationEvent;
   onResolve: (choiceIndex?: number) => void;
-  existingSkills?: string[];
+  existingSkills?: Skill[];
 }
 
 /**
@@ -55,18 +57,29 @@ export function EventCard({ event, onResolve, existingSkills = [] }: EventCardPr
                   <div className="flex flex-wrap gap-2">
                     {effect.options.map((option, optIdx) => {
                       const match = option.match(/^(.+?)\s+(\d+)$/);
-                      const isOwned = match ? existingSkills.includes(match[1]) : false;
+                      const benefit = match
+                        ? classifySkillBenefit(
+                            existingSkills,
+                            match[1],
+                            parseInt(match[2], 10),
+                          )
+                        : 'new';
+                      const isNoBenefit = benefit === 'none';
+                      const isUpgrade = benefit === 'upgrade';
                       return (
                         <Button
                           key={optIdx}
                           variant="secondary"
                           size="sm"
                           onClick={() => onResolve(optIdx)}
-                          className={isOwned ? 'opacity-50' : ''}
+                          className={isNoBenefit ? 'opacity-50' : ''}
                         >
                           {option}
-                          {isOwned && (
-                            <span className="text-gray-500 text-xs ml-1">(already owned)</span>
+                          {isNoBenefit && (
+                            <span className="text-gray-500 text-xs ml-1">(no benefit)</span>
+                          )}
+                          {isUpgrade && (
+                            <span className="text-scanner-blue/70 text-xs ml-1">(upgrade)</span>
                           )}
                         </Button>
                       );

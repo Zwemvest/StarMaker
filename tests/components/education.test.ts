@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { createElement } from 'react';
 import { EDUCATION_PATHS } from '../../src/data/education';
 import { EDUCATION_EVENTS } from '../../src/data/education-events';
 import {
@@ -10,6 +12,9 @@ import {
   getAvailableUniversitySkills,
   getAcademyBasicTraining,
 } from '../../src/engine/education';
+import { EventCard } from '../../src/components/education/EventCard';
+import type { EducationEvent } from '../../src/types/education';
+import type { Skill } from '../../src/types/character';
 
 describe('Education Components - Integration', () => {
   describe('Education Card Selection', () => {
@@ -240,6 +245,121 @@ describe('Education Components - Integration', () => {
 
     it('cannot attempt education with 3 terms used', () => {
       expect(canAttemptEducation(3)).toBe(false);
+    });
+  });
+
+  describe('EventCard owned-skill classification (level-aware)', () => {
+    // Synthetic event with a choice of skills at level 1
+    const skillChoiceEvent: EducationEvent = {
+      rollValue: 5,
+      description: 'A professor offers you extra tutoring.',
+      effectDescription: 'Gain a skill at level 1',
+      hasChoice: true,
+      effects: [
+        {
+          type: 'choice',
+          detail: 'Pick one skill at level 1:',
+          options: ['Admin 1', 'Advocate 1', 'Pilot 1'],
+        },
+      ],
+    };
+
+    it('does NOT mark a skill "no benefit" when existing level is lower', () => {
+      // Character has Admin 0 → offered Admin 1 should be an upgrade, not no-benefit
+      const existing: Skill[] = [{ name: 'Admin', level: 0 }];
+      render(
+        createElement(EventCard, {
+          event: skillChoiceEvent,
+          onResolve: vi.fn(),
+          existingSkills: existing,
+        }),
+      );
+      // The Admin button should NOT be flagged "no benefit"
+      const adminButton = screen
+        .getAllByRole('button')
+        .find((b) => /Admin 1/.test(b.textContent || ''));
+      expect(adminButton).toBeTruthy();
+      expect(adminButton!.textContent).not.toContain('no benefit');
+      expect(adminButton!.className).not.toContain('opacity-50');
+    });
+
+    it('shows "(upgrade)" annotation when existing level is lower', () => {
+      const existing: Skill[] = [{ name: 'Admin', level: 0 }];
+      render(
+        createElement(EventCard, {
+          event: skillChoiceEvent,
+          onResolve: vi.fn(),
+          existingSkills: existing,
+        }),
+      );
+      const adminButton = screen
+        .getAllByRole('button')
+        .find((b) => /Admin 1/.test(b.textContent || ''));
+      expect(adminButton!.textContent).toContain('upgrade');
+    });
+
+    it('marks a skill "no benefit" when existing level is equal', () => {
+      const existing: Skill[] = [{ name: 'Admin', level: 1 }];
+      render(
+        createElement(EventCard, {
+          event: skillChoiceEvent,
+          onResolve: vi.fn(),
+          existingSkills: existing,
+        }),
+      );
+      const adminButton = screen
+        .getAllByRole('button')
+        .find((b) => /Admin 1/.test(b.textContent || ''));
+      expect(adminButton!.textContent).toContain('no benefit');
+      expect(adminButton!.className).toContain('opacity-50');
+    });
+
+    it('marks a skill "no benefit" when existing level is higher', () => {
+      const existing: Skill[] = [{ name: 'Admin', level: 2 }];
+      render(
+        createElement(EventCard, {
+          event: skillChoiceEvent,
+          onResolve: vi.fn(),
+          existingSkills: existing,
+        }),
+      );
+      const adminButton = screen
+        .getAllByRole('button')
+        .find((b) => /Admin 1/.test(b.textContent || ''));
+      expect(adminButton!.textContent).toContain('no benefit');
+    });
+
+    it('new skill renders with no annotation', () => {
+      const existing: Skill[] = [];
+      render(
+        createElement(EventCard, {
+          event: skillChoiceEvent,
+          onResolve: vi.fn(),
+          existingSkills: existing,
+        }),
+      );
+      const adminButton = screen
+        .getAllByRole('button')
+        .find((b) => /Admin 1/.test(b.textContent || ''));
+      expect(adminButton!.textContent).not.toContain('no benefit');
+      expect(adminButton!.textContent).not.toContain('upgrade');
+    });
+
+    it('click still fires onResolve even when annotated as no benefit', () => {
+      const existing: Skill[] = [{ name: 'Admin', level: 1 }];
+      const onResolve = vi.fn();
+      render(
+        createElement(EventCard, {
+          event: skillChoiceEvent,
+          onResolve,
+          existingSkills: existing,
+        }),
+      );
+      const adminButton = screen
+        .getAllByRole('button')
+        .find((b) => /Admin 1/.test(b.textContent || ''));
+      fireEvent.click(adminButton!);
+      expect(onResolve).toHaveBeenCalledTimes(1);
     });
   });
 });
