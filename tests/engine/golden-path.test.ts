@@ -159,9 +159,10 @@ describe('GP1 — Army Infantry (golden path)', () => {
     expect(skills.length).toBe(6);
   });
 
-  it('basic training for second army career returns empty array', () => {
+  it('basic training for second army career returns service skills pool', () => {
     const skills = getBasicTrainingSkills(army, false, 1);
-    expect(skills).toHaveLength(0);
+    expect(skills).toContain('Gun Combat');
+    expect(skills.length).toBe(6);
   });
 });
 
