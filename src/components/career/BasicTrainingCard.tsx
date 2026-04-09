@@ -84,25 +84,36 @@ export function BasicTrainingCard({
             <p className="text-sm text-gray-300">
               Choose one service skill at level 0:
             </p>
-            <div className="grid grid-cols-2 gap-2">
-              {skills.map((skill, i) => {
-                const name = getSkillName(skill);
-                return (
-                  <button
-                    key={i}
-                    onClick={() => !granted && handleSelectSkill(name)}
-                    disabled={granted}
-                    className={`px-3 py-2 rounded border text-sm text-left transition-colors ${
-                      selectedSkill === name
-                        ? 'border-scanner-blue bg-scanner-blue/20 text-scanner-blue'
-                        : 'border-gray-700 bg-terminal-surface/30 text-gray-300 hover:border-gray-600'
-                    } disabled:opacity-40 disabled:cursor-not-allowed`}
-                  >
-                    {name} 0
-                  </button>
-                );
-              })}
-            </div>
+            {skills.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2" data-testid="basic-training-pick-grid">
+                {skills.map((skill, i) => {
+                  const name = getSkillName(skill);
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => !granted && handleSelectSkill(name)}
+                      disabled={granted}
+                      className={`px-3 py-2 rounded border text-sm text-left transition-colors ${
+                        selectedSkill === name
+                          ? 'border-scanner-blue bg-scanner-blue/20 text-scanner-blue'
+                          : 'border-gray-700 bg-terminal-surface/30 text-gray-300 hover:border-gray-600'
+                      } disabled:opacity-40 disabled:cursor-not-allowed`}
+                    >
+                      {name} 0
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="space-y-2" data-testid="basic-training-empty-fallback">
+                <p className="text-xs text-amber-400">
+                  No basic training skills available for this career.
+                </p>
+                <Button variant="primary" onClick={onComplete} className="w-full">
+                  Continue
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Card>
