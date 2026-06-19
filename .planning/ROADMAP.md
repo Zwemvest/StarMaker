@@ -102,16 +102,16 @@ Plans:
   3. User can browse the full Core Rulebook equipment catalog with category filtering, see stats (damage, range, protection, cost, TL, traits), and purchase items against their mustering-out credits
   4. A real-time character sheet (Mission Dossier) updates progressively during creation, and a final sheet shows all stats, skills, career history, equipment, and contacts
   5. User can export/print the character sheet as PDF (Field Manual print stylesheet) with the legitimacy hash prominently displayed and a clear Legitimate vs Modified indicator
-**Plans:** 0/7 plans executed
+**Plans:** 7/7 plans executed (automated verification green — 929 tests; human UAT pending per 04-HUMAN-UAT.md)
 
 Plans:
-- [ ] 04-01-PLAN.md — Types & data scaffolding (equipment union, psionics, legitimacy state; talents + Unusual-Events sub-table data)
-- [ ] 04-02-PLAN.md — Equipment catalog data (full Core transcription + golden-data tests)
-- [ ] 04-03-PLAN.md — Engines: psionics, equipment/budget, legitimacy, unusual-events resolution (TDD)
-- [ ] 04-04-PLAN.md — Store extensions + post-career XState sub-states + psionicsUnlocked wiring
-- [ ] 04-05-PLAN.md — Post-career UI: psionics step + equipment step
-- [ ] 04-06-PLAN.md — Character sheet: Dossier (live + final), legitimacy badge/hash, print/PDF
-- [ ] 04-07-PLAN.md — Verification + UAT
+- [x] 04-01-PLAN.md — Types & data scaffolding (equipment union, psionics, legitimacy state; talents + Unusual-Events sub-table data)
+- [x] 04-02-PLAN.md — Equipment catalog data (full Core transcription + golden-data tests)
+- [x] 04-03-PLAN.md — Engines: psionics, equipment/budget, unusual-events resolution (TDD)
+- [x] 04-04-PLAN.md — Store extensions + post-career XState sub-states + psionicsUnlocked wiring
+- [x] 04-05-PLAN.md — Post-career UI: psionics step + equipment step
+- [x] 04-06-PLAN.md — Character sheet: Dossier (live + final), legitimacy badge/hash, print/PDF
+- [x] 04-07-PLAN.md — Verification + UAT
 
 ### Phase 5: Override Mode and Persistence
 **Goal**: Users can experiment freely with override mode while the legitimacy system tracks integrity, characters persist across sessions, and a multi-character roster can be managed
@@ -152,6 +152,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Foundation | 2/4 | In Progress|  |
 | 2. Pre-Career Creation | 10/11 | In Progress |  |
 | 3. Career Lifecycle | 13/13 | Complete | 2026-06-19 |
-| 4. Post-Career and Character Sheet | 0/7 | Not started | - |
+| 4. Post-Career and Character Sheet | 7/7 | Code complete (UAT pending) | - |
 | 5. Override Mode and Persistence | 0/? | Not started | - |
 | 6. Group and Connections | 0/? | Not started | - |
