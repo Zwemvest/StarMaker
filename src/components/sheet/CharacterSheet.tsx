@@ -5,18 +5,8 @@ import { Button } from '../ui/Button';
 import { LegitimacyBadge } from './LegitimacyBadge';
 import { characteristicModifier, CHARACTERISTIC_IDS } from '../../types/common';
 import { getNobleTitle } from '../../engine/career';
-import type { OwnedEquipment } from '../../types/equipment';
-
-function keyStat(item: OwnedEquipment['item']): string {
-  switch (item.category) {
-    case 'weapons':
-      return item.damage;
-    case 'armour':
-      return `Prot ${item.protection}`;
-    default:
-      return `TL${item.tl}`;
-  }
-}
+import { EquipmentList } from './EquipmentList';
+import { PsionicsTalentList } from './PsionicsList';
 
 /**
  * Final review sheet (SHEE-02), shown at the `sheet` machine state.
@@ -106,17 +96,7 @@ export function CharacterSheet({ onDone }: { onDone?: () => void }) {
       {ownedEquipment.length > 0 && (
         <Card className="sheet-section">
           <h2 className="text-sm text-gray-400 uppercase tracking-wide mb-3">Equipment</h2>
-          <ul className="space-y-1">
-            {ownedEquipment.map((owned) => (
-              <li key={owned.item.name} className="flex items-center justify-between text-sm">
-                <span className="text-gray-300">
-                  {owned.item.name}
-                  {owned.quantity > 1 && <span className="text-gray-500"> ×{owned.quantity}</span>}
-                </span>
-                <span className="font-mono text-xs text-scanner-blue">{keyStat(owned.item)}</span>
-              </li>
-            ))}
-          </ul>
+          <EquipmentList items={ownedEquipment} />
         </Card>
       )}
 
@@ -128,22 +108,7 @@ export function CharacterSheet({ onDone }: { onDone?: () => void }) {
           {psiTalents.length === 0 ? (
             <p className="text-xs text-gray-500">No talents.</p>
           ) : (
-            <ul className="space-y-2">
-              {psiTalents.map((t) => (
-                <li key={t.talent}>
-                  <span className="text-sm text-gray-300 capitalize">
-                    {t.talent} <span className="text-gray-500">({t.level})</span>
-                  </span>
-                  <ul className="mt-0.5 space-y-0.5 pl-3 border-l border-white/5">
-                    {t.powers.map((p) => (
-                      <li key={p.name} className="text-xs text-gray-400">
-                        {p.name} <span className="text-gray-600">(PSI {p.psiCost}, {p.range})</span>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
+            <PsionicsTalentList talents={psiTalents} />
           )}
         </Card>
       )}

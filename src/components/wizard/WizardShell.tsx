@@ -155,7 +155,7 @@ export function WizardShell() {
             ) : currentPhase === 'equipment' ? (
               <EquipmentStep send={send} />
             ) : currentPhase === 'sheet' ? (
-              <CharacterSheet onDone={() => send({ type: 'SHEET_COMPLETE' } as never)} />
+              <CharacterSheet onDone={() => send({ type: 'SHEET_COMPLETE' })} />
             ) : (
               <StepPlaceholder
                 label={stepLabels[currentStepIndex]}
