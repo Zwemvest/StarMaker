@@ -1,0 +1,75 @@
+/*
+ * Field Manual print stylesheet (SHEE-03).
+ * The PDF export is the browser's native print / Save-as-PDF pipeline.
+ * Per design D-1 there is intentionally NO @react-pdf/renderer dependency:
+ * screen Dossier and paper Field Manual read the same store, so they match.
+ */
+
+@media print {
+  /* Force a clean monochrome page; drop the dark sci-fi theme for paper. */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Hide everything not part of the sheet (nav, panel, buttons, footer). */
+  .print-hide,
+  [data-print-hide='true'] {
+    display: none !important;
+  }
+
+  /* The sheet fills the page; remove app layout chrome. */
+  .character-sheet {
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    font-size: 9pt;
+    line-height: 1.25;
+  }
+
+  /* Dense bordered "Field Manual" cards. */
+  .character-sheet .sheet-section {
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-radius: 0 !important;
+    padding: 4pt 6pt !important;
+    margin: 0 0 4pt 0 !important;
+    break-inside: avoid;
+  }
+
+  .character-sheet .sheet-section h2,
+  .character-sheet .sheet-section h3 {
+    color: #000000 !important;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 2pt 0;
+  }
+
+  /* Skill / item pills read as plain bordered chips on paper. */
+  .character-sheet .sheet-pill {
+    border: 1px solid #000000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-radius: 0 !important;
+  }
+
+  /* Two-up dense grid where the screen used cards. */
+  .character-sheet .sheet-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 4pt;
+  }
+
+  /* Page setup: tight margins, single page where possible. */
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+}

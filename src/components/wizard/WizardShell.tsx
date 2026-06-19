@@ -9,6 +9,7 @@ import { EducationStep } from '../education/EducationStep';
 import { CareerStep } from '../career/CareerStep';
 import { PsionicsStep } from '../psionics/PsionicsStep';
 import { EquipmentStep } from '../equipment/EquipmentStep';
+import { CharacterSheet } from '../sheet/CharacterSheet';
 import { CompleteSummary } from './CompleteSummary';
 import { Button } from '../ui/Button';
 import { useCreationMachine } from '../../hooks/useCreationMachine';
@@ -153,6 +154,8 @@ export function WizardShell() {
               <PsionicsStep send={send} />
             ) : currentPhase === 'equipment' ? (
               <EquipmentStep send={send} />
+            ) : currentPhase === 'sheet' ? (
+              <CharacterSheet onDone={() => send({ type: 'SHEET_COMPLETE' } as never)} />
             ) : (
               <StepPlaceholder
                 label={stepLabels[currentStepIndex]}

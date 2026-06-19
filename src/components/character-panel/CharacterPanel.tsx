@@ -5,6 +5,8 @@ import { getNobleTitle } from '../../engine/career';
 import type { CharacteristicId } from '../../types/common';
 import type { Contact } from '../../types/character';
 import type { CareerTerm } from '../../types/careers';
+import type { AcquiredPsiTalent } from '../../types/psionics';
+import type { OwnedEquipment } from '../../types/equipment';
 
 const PHYSICAL: CharacteristicId[] = ['STR', 'DEX', 'END'];
 const MENTAL: CharacteristicId[] = ['INT', 'EDU', 'SOC'];
@@ -153,6 +155,69 @@ function ContactsSection({ contacts }: { contacts: Contact[] }) {
   );
 }
 
+function equipmentKeyStat(item: OwnedEquipment['item']): string {
+  switch (item.category) {
+    case 'weapons':
+      return item.damage;
+    case 'armour':
+      return `Prot ${item.protection}`;
+    default:
+      return `TL${item.tl}`;
+  }
+}
+
+function PsionicsSection({ strength, talents }: { strength: number; talents: AcquiredPsiTalent[] }) {
+  return (
+    <CollapsibleSection title="Psionics" defaultExpanded={true}>
+      <div className="flex items-center justify-between text-sm mb-2">
+        <span className="text-gray-400">PSI Strength</span>
+        <span className="font-mono text-scanner-blue">PSI {strength}</span>
+      </div>
+      {talents.length === 0 ? (
+        <p className="text-sm text-gray-500 italic">No talents</p>
+      ) : (
+        <ul className="space-y-2">
+          {talents.map((t) => (
+            <li key={t.talent}>
+              <span className="text-sm text-gray-300 capitalize">
+                {t.talent} <span className="text-gray-500">({t.level})</span>
+              </span>
+              <ul className="mt-0.5 space-y-0.5 pl-3 border-l border-white/5">
+                {t.powers.map((p) => (
+                  <li key={p.name} className="text-xs text-gray-400">
+                    {p.name}{' '}
+                    <span className="text-gray-600">(PSI {p.psiCost}, {p.range})</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      )}
+    </CollapsibleSection>
+  );
+}
+
+function EquipmentSection({ items }: { items: OwnedEquipment[] }) {
+  return (
+    <CollapsibleSection title="Equipment" defaultExpanded={true}>
+      <ul className="space-y-1">
+        {items.map((owned) => (
+          <li key={owned.item.name} className="flex items-center justify-between text-sm">
+            <span className="text-gray-300">
+              {owned.item.name}
+              {owned.quantity > 1 && <span className="text-gray-500"> ×{owned.quantity}</span>}
+            </span>
+            <span className="font-mono text-xs text-scanner-blue">
+              {equipmentKeyStat(owned.item)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </CollapsibleSection>
+  );
+}
+
 export function CharacterPanel() {
   const characteristics = useCharacterStore((s) => s.characteristics);
   const skills = useCharacterStore((s) => s.skills);
@@ -161,6 +226,9 @@ export function CharacterPanel() {
   const credits = useCharacterStore((s) => s.credits);
   const pension = useCharacterStore((s) => s.pension);
   const benefits = useCharacterStore((s) => s.benefits);
+  const psiStrength = useCharacterStore((s) => s.psiStrength);
+  const psiTalents = useCharacterStore((s) => s.psiTalents);
+  const ownedEquipment = useCharacterStore((s) => s.ownedEquipment);
 
   const nobleTitle = getNobleTitle(characteristics.SOC);
 
@@ -280,6 +348,16 @@ export function CharacterPanel() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Psionics */}
+      {psiStrength !== null && (
+        <PsionicsSection strength={psiStrength} talents={psiTalents} />
+      )}
+
+      {/* Equipment */}
+      {ownedEquipment.length > 0 && (
+        <EquipmentSection items={ownedEquipment} />
       )}
     </div>
   );
