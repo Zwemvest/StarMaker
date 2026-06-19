@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { createElement } from 'react';
 import { WizardShell } from '../../src/components/wizard/WizardShell';
 import { CompleteSummary } from '../../src/components/wizard/CompleteSummary';
@@ -30,6 +30,20 @@ describe('WizardShell — complete phase routing', () => {
 
     // Fresh store → characteristics.rolling, not the complete summary
     expect(screen.queryByText('Character Complete')).toBeNull();
+  });
+
+  it('switches to CompleteSummary when creationPhase flips to complete mid-session', () => {
+    // WizardShell's own actor starts at characteristics and never receives the
+    // career sub-machine's MUSTERING_COMPLETE — only the store flag flips. The
+    // shell must still show the terminal view immediately (no refresh required).
+    render(createElement(WizardShell));
+    expect(screen.queryByText('Character Complete')).toBeNull();
+
+    act(() => {
+      useCharacterStore.getState().setCreationPhase('complete');
+    });
+
+    expect(screen.getByText('Character Complete')).toBeTruthy();
   });
 });
 

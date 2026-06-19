@@ -10,6 +10,7 @@ import { CareerStep } from '../career/CareerStep';
 import { CompleteSummary } from './CompleteSummary';
 import { Button } from '../ui/Button';
 import { useCreationMachine } from '../../hooks/useCreationMachine';
+import { useCharacterStore } from '../../stores/character';
 import type { CreationPhase } from '../../machines/creation';
 
 const STEPS = [
@@ -60,7 +61,13 @@ function StepPlaceholder({ label, onContinue }: { label: string; onContinue?: ()
  */
 export function WizardShell() {
   const { currentPhase, subState, send, state, isRestored } = useCreationMachine();
-  const currentStepIndex = PHASE_TO_INDEX[currentPhase];
+  // CareerStep runs its own machine actor; when it finishes muster-out it flips
+  // the persisted creationPhase to 'complete'. WizardShell's own actor never sees
+  // that transition (separate actor), so consult the store directly to switch to
+  // the terminal summary immediately — not just after a refresh.
+  const storeCreationPhase = useCharacterStore((s) => s.creationPhase);
+  const isComplete = currentPhase === 'complete' || storeCreationPhase === 'complete';
+  const currentStepIndex = isComplete ? PHASE_TO_INDEX.complete : PHASE_TO_INDEX[currentPhase];
   const prevIndexRef = useRef(currentStepIndex);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
 
@@ -119,7 +126,9 @@ export function WizardShell() {
             stepKey={STEPS[currentStepIndex].id}
             suppressAnimation={suppressAnimationRef.current}
           >
-            {currentPhase === 'characteristics' ? (
+            {isComplete ? (
+              <CompleteSummary />
+            ) : currentPhase === 'characteristics' ? (
               <CharacteristicsStep subState={subState} send={send} />
             ) : currentPhase === 'backgroundSkills' ? (
               <BackgroundSkillsStep subState={subState} send={send} />
@@ -131,8 +140,6 @@ export function WizardShell() {
               />
             ) : currentPhase === 'career' ? (
               <CareerStep />
-            ) : currentPhase === 'complete' ? (
-              <CompleteSummary />
             ) : (
               <StepPlaceholder
                 label={stepLabels[currentStepIndex]}
