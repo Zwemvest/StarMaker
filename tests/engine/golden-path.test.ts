@@ -11,8 +11,23 @@
  * Per D-09: every assertion must match the Core Rulebook.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { getCareer } from '../../src/data/careers/index';
+import { useCharacterStore } from '../../src/stores/character';
+import { computeHash } from '../../src/engine/hash';
+import {
+  rollPsiStrength,
+  getTalentLearnDM,
+  isTelepathyAutoGranted,
+  resolveTalentLearn,
+} from '../../src/engine/psionics';
+import { PSI_TALENTS, PSI_LEARN_TARGET } from '../../src/data/psionics';
+import { resolveUnusualEvent } from '../../src/engine/unusual-events';
+import { canAfford, applyPurchase } from '../../src/engine/equipment';
+import { EQUIPMENT_CATALOG } from '../../src/data/equipment/index';
+import { characteristicModifier } from '../../src/types/common';
+import type { RollLogEntry } from '../../src/types/dice';
+import type { WeaponItem, ArmourItem } from '../../src/types/equipment';
 import {
   resolveQualificationRoll,
   resolveSurvivalRoll,
@@ -519,5 +534,335 @@ describe('GP6 — CRER-11: event advancement DM applies to both commission and a
     // 6 + 3 = 9 ≥ 7 → advanced, 9 > 1 so not forced to leave
     expect(res.advanced).toBe(true);
     expect(res.forcedToLeave).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GP7 — Psionic + equipped character (Phase-4 golden path)
+//
+// A single deterministic character that walks the whole post-career sequence
+// through the PURE engines + Zustand store (no React, no DOM):
+//   - Legitimate psionics unlock via the Unusual-Event roll-12 → 1D result 1.
+//   - PSI strength = 2D − terms served (PSIN-01), then Telepathy auto-grant
+//     (PSIN-04) plus one rolled talent applying its DM + PSI DM + cumulative −1
+//     (PSIN-02/03), with talent powers carried through (PSIN-05/06).
+//   - A weapon + armour purchase against mustering-out credits that can never
+//     overspend (EQUP-01/02/03/04).
+//   - Reaching the terminal sheet phase with a STABLE legitimacy hash that
+//     matches the Legitimate badge state (SHEE-02/03/04/05).
+//
+// Every dice value is supplied explicitly — nothing is randomly rolled. The
+// roll-log entries mirror what the real UI appends (PsiTestCard appends a
+// "Psionics Strength" 2D roll; TalentLearnCard appends a "Psionics Talent
+// Learn" roll), so the locked hash is the one the legitimate flow produces.
+// ---------------------------------------------------------------------------
+describe('GP7 — Psionic + equipped character (Phase-4 golden path)', () => {
+  beforeEach(() => {
+    useCharacterStore.getState().resetCharacter();
+  });
+
+  it('Unusual-Event roll 12 → 1D result 1 unlocks psionics and stays Legitimate', () => {
+    const store = useCharacterStore.getState();
+    expect(store.isModified).toBe(false);
+
+    // Life-Events roll 12 sends us to the Unusual-Event 1D sub-table; result 1
+    // is the legitimate psionics unlock.
+    const event = resolveUnusualEvent(1);
+    expect(event.unlocksPsionics).toBe(true);
+
+    // The legitimate unlock uses setPsionicsUnlocked (NOT the force door), so
+    // isModified must remain false.
+    store.setPsionicsUnlocked();
+    const after = useCharacterStore.getState();
+    expect(after.psionicsUnlocked).toBe(true);
+    expect(after.isModified).toBe(false);
+  });
+
+  it('PSI strength = 2D − terms served, clamped at 0 (PSIN-01)', () => {
+    // terms served = 3, 2D total = 10 → PSI 7.
+    const psi = rollPsiStrength(10, 3);
+    expect(psi).toBe(7);
+
+    // Clamp: a low 2D total against many terms never goes below 0.
+    expect(rollPsiStrength(2, 6)).toBe(0);
+
+    useCharacterStore.getState().setPsiStrength(psi);
+    expect(useCharacterStore.getState().psiStrength).toBe(7);
+  });
+
+  it('Telepathy chosen first is auto-granted with no roll (PSIN-04)', () => {
+    // priorAttempts 0 + telepathy → auto-grant, no dice consumed.
+    expect(isTelepathyAutoGranted('telepathy', 0)).toBe(true);
+    // Telepathy after other attempts is NOT auto-granted.
+    expect(isTelepathyAutoGranted('telepathy', 1)).toBe(false);
+    // Any other talent is never auto-granted.
+    expect(isTelepathyAutoGranted('clairvoyance', 0)).toBe(false);
+
+    const telepathy = PSI_TALENTS.find((t) => t.name === 'telepathy')!;
+    useCharacterStore
+      .getState()
+      .addPsiTalent({ talent: 'telepathy', level: 1, powers: telepathy.powers });
+
+    const talents = useCharacterStore.getState().psiTalents;
+    expect(talents).toHaveLength(1);
+    expect(talents[0].talent).toBe('telepathy');
+  });
+
+  it('a rolled talent applies talent DM + PSI DM + cumulative −1 (PSIN-02/03)', () => {
+    const psi = 7;
+    const psiDM = characteristicModifier(psi); // PSI 7 → +0
+    expect(psiDM).toBe(0);
+
+    // Talent learning DMs (PSIN-02): Telepathy +4 … Teleportation +0.
+    expect(getTalentLearnDM('telepathy')).toBe(4);
+    expect(getTalentLearnDM('clairvoyance')).toBe(3);
+    expect(getTalentLearnDM('telekinesis')).toBe(2);
+    expect(getTalentLearnDM('awareness')).toBe(1);
+    expect(getTalentLearnDM('teleportation')).toBe(0);
+
+    // Second talent attempt (Telepathy was talent #1, auto-granted but still a
+    // prior attempt) → priorAttempts = 1. Clairvoyance, dice total 8:
+    //   8 + psiDM(0) + learnDM(3) − priorAttempts(1) = 10 ≥ 8 → success.
+    const clair = resolveTalentLearn(8, psiDM, 'clairvoyance', 1);
+    expect(clair.total).toBe(10);
+    expect(clair.target).toBe(PSI_LEARN_TARGET);
+    expect(clair.success).toBe(true);
+
+    // Cumulative penalty bites harder next attempt: same dice, priorAttempts 2.
+    //   8 + 0 + 3 − 2 = 9, still ≥ 8 here, but a third attempt (prior 3) with a
+    //   weaker talent fails — proving the −1 accumulates.
+    const next = resolveTalentLearn(8, psiDM, 'clairvoyance', 2);
+    expect(next.total).toBe(9);
+    const teleport = resolveTalentLearn(8, psiDM, 'teleportation', 3);
+    // 8 + 0 + 0 − 3 = 5 < 8 → failure (cumulative −3 sank it).
+    expect(teleport.total).toBe(5);
+    expect(teleport.success).toBe(false);
+
+    // Persist the successfully-rolled talent.
+    const clairData = PSI_TALENTS.find((t) => t.name === 'clairvoyance')!;
+    useCharacterStore
+      .getState()
+      .addPsiTalent({ talent: 'clairvoyance', level: 1, powers: clairData.powers });
+    expect(useCharacterStore.getState().psiTalents.map((t) => t.talent)).toEqual([
+      'clairvoyance',
+    ]);
+  });
+
+  it('acquired talents carry their powers with PSI cost + range (PSIN-05/06)', () => {
+    const telepathy = PSI_TALENTS.find((t) => t.name === 'telepathy')!;
+    useCharacterStore
+      .getState()
+      .addPsiTalent({ talent: 'telepathy', level: 1, powers: telepathy.powers });
+
+    const stored = useCharacterStore.getState().psiTalents[0];
+    expect(stored.powers.length).toBeGreaterThan(0);
+
+    // Shield is a real Telepathy power: 0 PSI, Personal range (rulebook).
+    const shield = stored.powers.find((p) => p.name === 'Shield');
+    expect(shield).toBeDefined();
+    expect(shield!.psiCost).toBe(0);
+    expect(shield!.range).toBe('Personal');
+
+    // Life Detection costs 1 PSI at Distant range.
+    const lifeDetection = stored.powers.find((p) => p.name === 'Life Detection');
+    expect(lifeDetection!.psiCost).toBe(1);
+    expect(lifeDetection!.range).toBe('Distant');
+  });
+
+  it('buys a weapon + armour against credits and cannot overspend (EQUP-01/02/03/04)', () => {
+    const store = useCharacterStore.getState();
+
+    // Seed mustering-out credits.
+    store.addCredits(10000);
+    expect(useCharacterStore.getState().credits).toBe(10000);
+
+    // Pull a concrete weapon and armour from the real catalog (EQUP-01).
+    const blade = EQUIPMENT_CATALOG.find(
+      (e): e is WeaponItem => e.category === 'weapons' && e.name === 'Blade',
+    )!;
+    const mesh = EQUIPMENT_CATALOG.find(
+      (e): e is ArmourItem => e.category === 'armour' && e.name === 'Mesh',
+    )!;
+
+    // Discriminated-union stats are real (EQUP-04).
+    expect(blade.damage).toBe('2D');
+    expect(blade.range).toBe('Melee');
+    expect(mesh.protection).toBe(2);
+
+    const combined = blade.cost + mesh.cost; // 100 + 150 = 250
+    expect(combined).toBe(250);
+
+    // canAfford true, purchase decrements by exactly the combined cost (EQUP-02/03).
+    expect(canAfford(10000, combined)).toBe(true);
+    let credits = useCharacterStore.getState().credits;
+    credits = applyPurchase(credits, blade.cost);
+    store.addEquipment(blade);
+    store.spendCredits(blade.cost);
+    credits = applyPurchase(credits, mesh.cost);
+    store.addEquipment(mesh);
+    store.spendCredits(mesh.cost);
+
+    expect(credits).toBe(10000 - 250);
+    const afterBuy = useCharacterStore.getState();
+    expect(afterBuy.credits).toBe(9750);
+    expect(afterBuy.ownedEquipment.map((o) => o.item.name).sort()).toEqual([
+      'Blade',
+      'Mesh',
+    ]);
+
+    // Over-budget purchase is rejected — balance never goes negative (EQUP-03).
+    const tooExpensive = EQUIPMENT_CATALOG.find(
+      (e): e is ArmourItem =>
+        e.category === 'armour' && e.cost > afterBuy.credits,
+    )!;
+    expect(canAfford(afterBuy.credits, tooExpensive.cost)).toBe(false);
+    expect(() => applyPurchase(afterBuy.credits, tooExpensive.cost)).toThrow();
+    // Store balance unchanged by the rejected purchase.
+    expect(useCharacterStore.getState().credits).toBe(9750);
+  });
+
+  it('reaches sheet/complete with a stable Legitimate hash (SHEE-02/03/04/05)', async () => {
+    const store = useCharacterStore.getState();
+
+    // The legitimate roll log the real flow appends during psionics:
+    //   PsiTestCard → one "Psionics Strength" 2D roll (5+5 = 10 → PSI 7),
+    //   TalentLearnCard → one "Psionics Talent Learn" roll for Clairvoyance (4+4).
+    const rollLog: RollLogEntry[] = [
+      {
+        id: 'gp7-psi-strength',
+        context: 'Psionics Strength',
+        notation: '2D',
+        results: [5, 5],
+        total: 10,
+        modifier: 0,
+        target: 0,
+        success: null,
+        overridden: false,
+      },
+      {
+        id: 'gp7-clairvoyance',
+        context: 'Psionics Talent Learn',
+        notation: '2D',
+        results: [4, 4],
+        total: 10,
+        modifier: 2,
+        target: PSI_LEARN_TARGET,
+        success: true,
+        overridden: false,
+      },
+    ];
+    rollLog.forEach((entry) => store.appendRoll(entry));
+
+    // Drive to the terminal sheet phase.
+    store.setCreationPhase('complete');
+    expect(useCharacterStore.getState().creationPhase).toBe('complete');
+
+    const log = useCharacterStore.getState().rollLog;
+
+    // Hash is deterministic: identical inputs → identical 8-char hex.
+    const hashA = await computeHash(log);
+    const hashB = await computeHash(log);
+    expect(hashA).toBe(hashB);
+    expect(hashA).toMatch(/^[0-9a-f]{8}$/);
+
+    // Concrete locked value for this legitimate roll log.
+    expect(hashA).toBe('abc6e95a');
+
+    store.setLegitimacyHash(hashA);
+
+    // Legitimate path: never modified, so the badge reads ● Legitimate (SHEE-05).
+    expect(useCharacterStore.getState().isModified).toBe(false);
+    expect(useCharacterStore.getState().legitimacyHash).toBe('abc6e95a');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GP8 — Force-unlock flips Modified (Phase-4 golden path)
+//
+// The honest-cheat door: a character that is NOT event-unlocked elects
+// "Test anyway", which flips isModified false → true, logs a forceUnlock marker
+// into the roll log, and changes the legitimacy hash away from the legitimate
+// one (D-2, D-3, SHEE-05).
+// ---------------------------------------------------------------------------
+describe('GP8 — Force-unlock flips Modified (Phase-4 golden path)', () => {
+  beforeEach(() => {
+    useCharacterStore.getState().resetCharacter();
+  });
+
+  it('baseline is Legitimate before any forcing', () => {
+    const store = useCharacterStore.getState();
+    expect(store.isModified).toBe(false);
+    expect(store.psionicsUnlocked).toBe(false);
+  });
+
+  it('force-unlock flips isModified false → true and logs the action (SHEE-05, D-2/D-3)', () => {
+    const store = useCharacterStore.getState();
+    expect(store.isModified).toBe(false);
+    expect(store.psionicsUnlocked).toBe(false);
+    const logLenBefore = store.rollLog.length;
+
+    // "Test anyway" on the locked gate.
+    store.forcePsionicsUnlock();
+
+    const after = useCharacterStore.getState();
+    expect(after.psionicsUnlocked).toBe(true);
+    expect(after.isModified).toBe(true);
+
+    // A modification marker was recorded in the roll log.
+    expect(after.rollLog.length).toBe(logLenBefore + 1);
+    const marker = after.rollLog[after.rollLog.length - 1];
+    expect(marker.context).toBe('psionics.forceUnlock');
+    expect(marker.overridden).toBe(true);
+
+    // The badge derivation (LegitimacyBadge reads isModified) would read Modified.
+    expect(after.isModified).toBe(true);
+  });
+
+  it('the forced hash differs from the legitimate GP7 hash', async () => {
+    const store = useCharacterStore.getState();
+
+    // Mirror GP7's legitimate roll log, then add the force-unlock marker on top.
+    store.appendRoll({
+      id: 'gp7-psi-strength',
+      context: 'Psionics Strength',
+      notation: '2D',
+      results: [5, 5],
+      total: 10,
+      modifier: 0,
+      target: 0,
+      success: null,
+      overridden: false,
+    });
+    store.appendRoll({
+      id: 'gp7-clairvoyance',
+      context: 'Psionics Talent Learn',
+      notation: '2D',
+      results: [4, 4],
+      total: 10,
+      modifier: 2,
+      target: PSI_LEARN_TARGET,
+      success: true,
+      overridden: false,
+    });
+
+    const legitHash = await computeHash(useCharacterStore.getState().rollLog);
+    expect(legitHash).toBe('abc6e95a');
+
+    // Append the force-unlock marker with a fixed id so the hash is deterministic.
+    useCharacterStore.getState().appendRoll({
+      id: 'gp8-force',
+      context: 'psionics.forceUnlock',
+      notation: '1D',
+      results: [],
+      total: 0,
+      modifier: 0,
+      target: null,
+      success: null,
+      overridden: true,
+    });
+
+    const forcedHash = await computeHash(useCharacterStore.getState().rollLog);
+    expect(forcedHash).not.toBe(legitHash);
+    expect(forcedHash).toBe('3a9e18b7');
   });
 });
