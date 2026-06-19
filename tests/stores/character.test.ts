@@ -3,6 +3,8 @@ import { useCharacterStore } from '../../src/stores/character';
 import type { RollLogEntry } from '../../src/types/dice';
 import type { CareerTerm } from '../../src/types/careers';
 import type { Contact } from '../../src/types/character';
+import type { AcquiredPsiTalent } from '../../src/types/psionics';
+import type { GearItem } from '../../src/types/equipment';
 
 describe('Character Store', () => {
   beforeEach(() => {
@@ -288,6 +290,121 @@ describe('Character Store', () => {
       expect(state.drafted).toBe(false);
       expect(state.previousCareers).toEqual([]);
       expect(state.lastCareer).toBeNull();
+    });
+  });
+
+  describe('post-career: psionics + equipment', () => {
+    const sampleTalent: AcquiredPsiTalent = {
+      talent: 'telepathy',
+      level: 0,
+      powers: [],
+    };
+
+    const sampleGear: GearItem = {
+      name: 'Binoculars',
+      category: 'tools',
+      tl: 5,
+      cost: 50,
+      mass: 1,
+      traits: [],
+      description: '',
+    };
+
+    it('has correct psionics + equipment defaults', () => {
+      const state = useCharacterStore.getState();
+      expect(state.psionicsUnlocked).toBe(false);
+      expect(state.psiStrength).toBeNull();
+      expect(state.psiTalents).toHaveLength(0);
+      expect(state.ownedEquipment).toHaveLength(0);
+    });
+
+    it('setPsionicsUnlocked sets the flag without touching isModified (D-2)', () => {
+      expect(useCharacterStore.getState().isModified).toBe(false);
+      useCharacterStore.getState().setPsionicsUnlocked();
+      expect(useCharacterStore.getState().psionicsUnlocked).toBe(true);
+      // Legitimate path: must NOT flip Modified
+      expect(useCharacterStore.getState().isModified).toBe(false);
+    });
+
+    it('forcePsionicsUnlock sets flag, flips isModified, and logs a marker (SHEE-05)', () => {
+      const beforeLogLength = useCharacterStore.getState().rollLog.length;
+      useCharacterStore.getState().forcePsionicsUnlock();
+      const state = useCharacterStore.getState();
+      expect(state.psionicsUnlocked).toBe(true);
+      expect(state.isModified).toBe(true);
+      expect(state.rollLog).toHaveLength(beforeLogLength + 1);
+      expect(state.rollLog[state.rollLog.length - 1].context).toBe('psionics.forceUnlock');
+    });
+
+    it('setPsiStrength stores the value (including 0)', () => {
+      useCharacterStore.getState().setPsiStrength(0);
+      expect(useCharacterStore.getState().psiStrength).toBe(0);
+      useCharacterStore.getState().setPsiStrength(7);
+      expect(useCharacterStore.getState().psiStrength).toBe(7);
+    });
+
+    it('addPsiTalent pushes an acquired talent', () => {
+      useCharacterStore.getState().addPsiTalent(sampleTalent);
+      const { psiTalents } = useCharacterStore.getState();
+      expect(psiTalents).toHaveLength(1);
+      expect(psiTalents[0]).toEqual(sampleTalent);
+    });
+
+    it('addEquipment pushes new item at quantity 1 and increments same-name item', () => {
+      useCharacterStore.getState().addEquipment(sampleGear);
+      let owned = useCharacterStore.getState().ownedEquipment;
+      expect(owned).toHaveLength(1);
+      expect(owned[0].quantity).toBe(1);
+      expect(owned[0].item.name).toBe('Binoculars');
+
+      // Same name -> increment, length stays 1
+      useCharacterStore.getState().addEquipment(sampleGear);
+      owned = useCharacterStore.getState().ownedEquipment;
+      expect(owned).toHaveLength(1);
+      expect(owned[0].quantity).toBe(2);
+    });
+
+    it('removeEquipment decrements quantity and prunes at zero', () => {
+      useCharacterStore.getState().addEquipment(sampleGear);
+      useCharacterStore.getState().addEquipment(sampleGear);
+      expect(useCharacterStore.getState().ownedEquipment[0].quantity).toBe(2);
+
+      useCharacterStore.getState().removeEquipment('Binoculars');
+      expect(useCharacterStore.getState().ownedEquipment[0].quantity).toBe(1);
+
+      useCharacterStore.getState().removeEquipment('Binoculars');
+      expect(useCharacterStore.getState().ownedEquipment).toHaveLength(0);
+    });
+
+    it('removeEquipment is a no-op for an unowned name', () => {
+      useCharacterStore.getState().addEquipment(sampleGear);
+      useCharacterStore.getState().removeEquipment('Nonexistent');
+      expect(useCharacterStore.getState().ownedEquipment).toHaveLength(1);
+      expect(useCharacterStore.getState().ownedEquipment[0].quantity).toBe(1);
+    });
+
+    it('spendCredits subtracts and clamps at zero (EQUP-03)', () => {
+      useCharacterStore.getState().addCredits(100);
+      useCharacterStore.getState().spendCredits(30);
+      expect(useCharacterStore.getState().credits).toBe(70);
+
+      useCharacterStore.getState().spendCredits(1000);
+      expect(useCharacterStore.getState().credits).toBe(0);
+    });
+
+    it('resetCharacter clears all post-career fields back to defaults', () => {
+      useCharacterStore.getState().forcePsionicsUnlock();
+      useCharacterStore.getState().setPsiStrength(9);
+      useCharacterStore.getState().addPsiTalent(sampleTalent);
+      useCharacterStore.getState().addEquipment(sampleGear);
+
+      useCharacterStore.getState().resetCharacter();
+
+      const state = useCharacterStore.getState();
+      expect(state.psionicsUnlocked).toBe(false);
+      expect(state.psiStrength).toBeNull();
+      expect(state.psiTalents).toHaveLength(0);
+      expect(state.ownedEquipment).toHaveLength(0);
     });
   });
 });
