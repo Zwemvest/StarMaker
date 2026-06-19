@@ -28,10 +28,11 @@ describe('weapons catalog', () => {
     for (const w of WEAPONS) {
       const magIsNull = w.magazine === null;
       const costIsNull = w.magazineCost === null;
-      // Grenade launchers list a magazine but "As grenades" for cost: magazineCost
-      // may legitimately be null while magazine is a number. Otherwise they pair up.
+      // Grenade launchers list a numeric magazine but "As grenades" for cost, so
+      // magazineCost is null while magazine is a number. Otherwise they pair up.
       if (typeof w.damage === 'string' && w.damage.startsWith('As grenade')) {
-        expect(w.magazine === null || typeof w.magazine === 'number').toBe(true);
+        expect(typeof w.magazine).toBe('number');
+        expect(w.magazineCost).toBeNull();
       } else {
         expect(magIsNull).toBe(costIsNull);
       }
