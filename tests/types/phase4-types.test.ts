@@ -9,6 +9,13 @@ import type {
   GearItem,
   OwnedEquipment,
 } from '../../src/types/equipment';
+import { psiTalentDataSchema, psiPowerSchema } from '../../src/schemas/psionics';
+import type {
+  PsiTalentName,
+  PsiPower,
+  PsiTalentData,
+  AcquiredPsiTalent,
+} from '../../src/types/psionics';
 
 describe('equipment types and schema', () => {
   const validWeapon: WeaponItem = {
@@ -72,5 +79,45 @@ describe('equipment types and schema', () => {
     const owned: OwnedEquipment = { item: validWeapon, quantity: 2 };
     expect(owned.quantity).toBe(2);
     expect(owned.item.name).toBe('Autopistol');
+  });
+});
+
+describe('psionics types and schema', () => {
+  const validPower: PsiPower = {
+    name: 'Life Detection',
+    talent: 'telepathy',
+    psiCost: 1,
+    range: 'Distant',
+    description: 'Detect the presence of other minds.',
+  };
+
+  const validTalent: PsiTalentData = {
+    name: 'telepathy',
+    learnDM: 4,
+    powers: [validPower],
+  };
+
+  it('parses a valid power', () => {
+    expect(psiPowerSchema.parse(validPower)).toEqual(validPower);
+  });
+
+  it('parses a valid talent', () => {
+    expect(psiTalentDataSchema.parse(validTalent)).toEqual(validTalent);
+  });
+
+  it('throws for an unknown talent name', () => {
+    const broken = { ...validTalent, name: 'pyromancy' };
+    expect(() => psiTalentDataSchema.parse(broken)).toThrow();
+  });
+
+  it('models acquired talents', () => {
+    const acquired: AcquiredPsiTalent = {
+      talent: 'telepathy',
+      level: 0,
+      powers: [validPower],
+    };
+    expect(acquired.level).toBe(0);
+    const name: PsiTalentName = acquired.talent;
+    expect(name).toBe('telepathy');
   });
 });
