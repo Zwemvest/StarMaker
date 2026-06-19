@@ -7,6 +7,8 @@ import { CharacteristicsStep } from '../characteristics/CharacteristicsStep';
 import { BackgroundSkillsStep } from '../background-skills/BackgroundSkillsStep';
 import { EducationStep } from '../education/EducationStep';
 import { CareerStep } from '../career/CareerStep';
+import { PsionicsStep } from '../psionics/PsionicsStep';
+import { EquipmentStep } from '../equipment/EquipmentStep';
 import { CompleteSummary } from './CompleteSummary';
 import { Button } from '../ui/Button';
 import { useCreationMachine } from '../../hooks/useCreationMachine';
@@ -19,6 +21,8 @@ const STEPS = [
   { id: 'education', label: 'Education' },
   { id: 'career', label: 'Career' },
   { id: 'musteringOut', label: 'Muster Out' },
+  { id: 'psionics', label: 'Psionics' },
+  { id: 'equipment', label: 'Equipment' },
 ] as const;
 
 const PHASE_TO_INDEX: Record<CreationPhase, number> = {
@@ -28,7 +32,10 @@ const PHASE_TO_INDEX: Record<CreationPhase, number> = {
   education: 2,
   career: 3,
   musteringOut: 4,
-  complete: 4,
+  psionics: 5,
+  equipment: 6,
+  sheet: 6,
+  complete: 6,
 };
 
 const STEP_EVENTS: Record<number, string> = {
@@ -107,6 +114,8 @@ export function WizardShell() {
     'Education Step',
     'Career Step (Phase 3)',
     'Mustering Out (Phase 3)',
+    'Psionics',
+    'Character Sheet',
   ];
 
   return (
@@ -140,6 +149,10 @@ export function WizardShell() {
               />
             ) : currentPhase === 'career' ? (
               <CareerStep />
+            ) : currentPhase === 'psionics' ? (
+              <PsionicsStep send={send} />
+            ) : currentPhase === 'equipment' ? (
+              <EquipmentStep send={send} />
             ) : (
               <StepPlaceholder
                 label={stepLabels[currentStepIndex]}
