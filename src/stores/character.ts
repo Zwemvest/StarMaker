@@ -8,6 +8,7 @@ import type { PoolItem } from '../components/characteristics/DicePool';
 import type { CareerName, CareerTerm } from '../types/careers';
 import type { AcquiredPsiTalent } from '../types/psionics';
 import type { Equipment, OwnedEquipment } from '../types/equipment';
+import { computeHash } from '../engine/hash';
 
 /** Initial characteristics — all six stats at 0 */
 function initialCharacteristics(): Characteristics {
@@ -43,7 +44,7 @@ interface CharacterState {
   psiStrength: number | null;
   psiTalents: AcquiredPsiTalent[];
   ownedEquipment: OwnedEquipment[];
-  creationPhase: 'active' | 'complete';
+  creationPhase: 'active' | 'postCareer' | 'complete';
 }
 
 /** Character store actions */
@@ -68,13 +69,13 @@ interface CharacterActions {
   setLastCareer: (career: CareerName | null) => void;
   reduceCharacteristic: (id: CharacteristicId, amount: number) => void;
   setPsionicsUnlocked: () => void;
-  forcePsionicsUnlock: () => void;
+  forcePsionicsUnlock: () => Promise<void>;
   setPsiStrength: (value: number) => void;
   addPsiTalent: (talent: AcquiredPsiTalent) => void;
   addEquipment: (item: Equipment) => void;
   removeEquipment: (name: string) => void;
   spendCredits: (amount: number) => void;
-  setCreationPhase: (phase: 'active' | 'complete') => void;
+  setCreationPhase: (phase: 'active' | 'postCareer' | 'complete') => void;
 }
 
 /** Combined store type */
@@ -226,7 +227,7 @@ export const useCharacterStore = create<CharacterStore>()(
           state.psionicsUnlocked = true;
         }),
 
-      forcePsionicsUnlock: () =>
+      forcePsionicsUnlock: async () => {
         set((state) => {
           state.psionicsUnlocked = true;
           state.isModified = true;
@@ -242,7 +243,15 @@ export const useCharacterStore = create<CharacterStore>()(
             success: null,
             overridden: true,
           });
-        }),
+        });
+        // Recompute the certified hash over the updated log so the displayed
+        // legitimacy hash stays consistent with the marker entry immediately,
+        // not just after the next logged roll (mirrors useLoggedRoll). (I-1)
+        const hash = await computeHash(useCharacterStore.getState().rollLog);
+        set((state) => {
+          state.legitimacyHash = hash;
+        });
+      },
 
       setPsiStrength: (value) =>
         set((state) => {

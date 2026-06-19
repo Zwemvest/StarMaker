@@ -37,6 +37,7 @@ interface CreationContext {
 export type CreationEvent =
   | { type: 'START_CREATION' }
   | { type: 'RESTORE_COMPLETE' }
+  | { type: 'RESTORE_POST_CAREER' }
   | { type: 'ROLL_ALL' }
   | { type: 'ASSIGN_COMPLETE' }
   | { type: 'CONFIRM' }
@@ -143,6 +144,7 @@ export const creationMachine = setup({
       on: {
         START_CREATION: 'characteristics',
         RESTORE_COMPLETE: '#creation.complete',
+        RESTORE_POST_CAREER: '#creation.psionics',
       },
     },
     characteristics: {

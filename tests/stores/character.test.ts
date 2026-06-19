@@ -326,14 +326,19 @@ describe('Character Store', () => {
       expect(useCharacterStore.getState().isModified).toBe(false);
     });
 
-    it('forcePsionicsUnlock sets flag, flips isModified, and logs a marker (SHEE-05)', () => {
+    it('forcePsionicsUnlock sets flag, flips isModified, logs a marker, and recomputes the hash (SHEE-05, I-1)', async () => {
       const beforeLogLength = useCharacterStore.getState().rollLog.length;
-      useCharacterStore.getState().forcePsionicsUnlock();
+      const beforeHash = useCharacterStore.getState().legitimacyHash;
+      await useCharacterStore.getState().forcePsionicsUnlock();
       const state = useCharacterStore.getState();
       expect(state.psionicsUnlocked).toBe(true);
       expect(state.isModified).toBe(true);
       expect(state.rollLog).toHaveLength(beforeLogLength + 1);
       expect(state.rollLog[state.rollLog.length - 1].context).toBe('psionics.forceUnlock');
+      // The certified hash must reflect the new marker entry immediately, not
+      // remain stale until the next logged roll.
+      expect(state.legitimacyHash).not.toBe(beforeHash);
+      expect(state.legitimacyHash).not.toBe('');
     });
 
     it('setPsiStrength stores the value (including 0)', () => {

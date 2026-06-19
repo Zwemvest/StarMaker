@@ -795,14 +795,15 @@ describe('GP8 — Force-unlock flips Modified (Phase-4 golden path)', () => {
     expect(store.psionicsUnlocked).toBe(false);
   });
 
-  it('force-unlock flips isModified false → true and logs the action (SHEE-05, D-2/D-3)', () => {
+  it('force-unlock flips isModified false → true, logs the action, and recertifies the hash (SHEE-05, D-2/D-3, I-1)', async () => {
     const store = useCharacterStore.getState();
     expect(store.isModified).toBe(false);
     expect(store.psionicsUnlocked).toBe(false);
     const logLenBefore = store.rollLog.length;
+    const hashBefore = store.legitimacyHash;
 
     // "Test anyway" on the locked gate.
-    store.forcePsionicsUnlock();
+    await store.forcePsionicsUnlock();
 
     const after = useCharacterStore.getState();
     expect(after.psionicsUnlocked).toBe(true);
@@ -813,6 +814,10 @@ describe('GP8 — Force-unlock flips Modified (Phase-4 golden path)', () => {
     const marker = after.rollLog[after.rollLog.length - 1];
     expect(marker.context).toBe('psionics.forceUnlock');
     expect(marker.overridden).toBe(true);
+
+    // The certified hash reflects the marker immediately (no stale hash).
+    expect(after.legitimacyHash).not.toBe(hashBefore);
+    expect(after.legitimacyHash).toBe(await computeHash(after.rollLog));
 
     // The badge derivation (LegitimacyBadge reads isModified) would read Modified.
     expect(after.isModified).toBe(true);

@@ -28,7 +28,6 @@ type Phase = 'gate' | 'test' | 'talents' | 'done';
 export function PsionicsStep({ send }: PsionicsStepProps) {
   const psionicsUnlocked = useCharacterStore((s) => s.psionicsUnlocked);
   const psiStrength = useCharacterStore((s) => s.psiStrength);
-  const psiTalents = useCharacterStore((s) => s.psiTalents);
   const careerHistory = useCharacterStore((s) => s.careerHistory);
   const forcePsionicsUnlock = useCharacterStore((s) => s.forcePsionicsUnlock);
   const setPsiStrength = useCharacterStore((s) => s.setPsiStrength);
@@ -49,7 +48,7 @@ export function PsionicsStep({ send }: PsionicsStepProps) {
   };
 
   const handleForce = () => {
-    forcePsionicsUnlock();
+    void forcePsionicsUnlock();
     setPhase('test');
   };
 
@@ -87,7 +86,6 @@ export function PsionicsStep({ send }: PsionicsStepProps) {
     const talent = PSI_TALENTS[talentIndex];
     const autoGranted = isTelepathyAutoGranted(talent.name, priorAttempts);
     const psiDM = characteristicModifier(psiStrength ?? 0);
-    const alreadyOwned = psiTalents.some((t) => t.talent === talent.name);
 
     return (
       <div className="space-y-4">
@@ -108,7 +106,6 @@ export function PsionicsStep({ send }: PsionicsStepProps) {
           psiDM={psiDM}
           priorAttempts={priorAttempts}
           autoGranted={autoGranted}
-          alreadyOwned={alreadyOwned}
           onLearned={(t) => handleLearned(t)}
           onSkip={advanceTalent}
         />

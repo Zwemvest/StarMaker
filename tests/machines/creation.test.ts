@@ -804,6 +804,44 @@ describe('Creation State Machine', () => {
     });
   });
 
+  describe('RESTORE_POST_CAREER (post-career replay)', () => {
+    it('transitions idle -> psionics on RESTORE_POST_CAREER', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'RESTORE_POST_CAREER' });
+      // Lands at the start of the post-career flow, not at complete.
+      expect(actor.getSnapshot().value).toBe('psionics');
+      expect(actor.getSnapshot().status).toBe('active');
+      actor.stop();
+    });
+
+    it('RESTORE_POST_CAREER is ignored outside idle', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'RESTORE_POST_CAREER' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
+      actor.stop();
+    });
+  });
+
+  describe('post-career flow reaches completion (C-1)', () => {
+    it('drives musteringOut -> psionics -> equipment -> sheet -> complete', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'RESTORE_POST_CAREER' });
+      expect(actor.getSnapshot().value).toBe('psionics');
+      actor.send({ type: 'PSIONICS_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('equipment');
+      actor.send({ type: 'EQUIPMENT_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('sheet');
+      actor.send({ type: 'SHEET_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('complete');
+      expect(actor.getSnapshot().status).toBe('done');
+      actor.stop();
+    });
+  });
+
   describe('CRER-11 bonusAdvancementDM carry-over', () => {
     /** Drive a (military) career to the term-loop event state. */
     function navigateToArmyEvent() {

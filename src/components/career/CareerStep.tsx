@@ -19,6 +19,9 @@ import { AgingCard } from './AgingCard';
 import { ContinueLeaveCard } from './ContinueLeaveCard';
 import { TermTimeline } from './TermTimeline';
 import { MusteringOutStep } from '../mustering-out/MusteringOutStep';
+import { PsionicsStep } from '../psionics/PsionicsStep';
+import { EquipmentStep } from '../equipment/EquipmentStep';
+import { CharacterSheet } from '../sheet/CharacterSheet';
 import type { CareerName } from '../../types/careers';
 import type { CreationEvent } from '../../machines/creation';
 import { Card } from '../ui/Card';
@@ -45,12 +48,17 @@ export function CareerStep() {
   const setCreationPhase = useCharacterStore((s) => s.setCreationPhase);
   const { loggedRoll2D } = useLoggedRoll();
 
-  // Wrap send so that completing muster-out also persists the terminal
-  // creationPhase marker. This lets a page refresh fast-forward straight to the
-  // complete summary instead of dropping the user back into career selection.
+  // Wrap send so that completing muster-out persists a 'postCareer' marker.
+  // The character is NOT complete yet — the post-career flow (psionics →
+  // equipment → sheet) still runs. The marker lets a page refresh restore the
+  // user back into that flow instead of dropping them at career selection.
+  // True completion ('complete') is set only at SHEET_COMPLETE (WizardShell).
   const sendWithCompletion = useCallback(
     (event: CreationEvent) => {
       if (event.type === 'MUSTERING_COMPLETE') {
+        setCreationPhase('postCareer');
+      } else if (event.type === 'SHEET_COMPLETE') {
+        // The sheet's Done action is the true completion point.
         setCreationPhase('complete');
       }
       send(event);
@@ -294,6 +302,22 @@ export function CareerStep() {
         send={sendWithCompletion}
       />
     );
+  }
+
+  // --- Post-career flow ---
+  // After muster-out the machine flows musteringOut → psionics → equipment →
+  // sheet → complete. This component owns the actor that drives those states,
+  // so it must render them (WizardShell's own actor never sees these events).
+  if (currentPhase === 'psionics') {
+    return <PsionicsStep send={sendWithCompletion} />;
+  }
+
+  if (currentPhase === 'equipment') {
+    return <EquipmentStep send={sendWithCompletion} />;
+  }
+
+  if (currentPhase === 'sheet') {
+    return <CharacterSheet onDone={() => sendWithCompletion({ type: 'SHEET_COMPLETE' })} />;
   }
 
   // --- Career selection ---

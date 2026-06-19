@@ -11,7 +11,6 @@ interface TalentLearnCardProps {
   psiDM: number;
   priorAttempts: number;
   autoGranted: boolean;
-  alreadyOwned: boolean;
   onLearned: (talent: PsiTalentData) => void;
   onSkip: () => void;
 }
