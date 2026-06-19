@@ -239,8 +239,9 @@
       "effectDescription": "Gain DM+2 to your next advancement roll.",
       "effects": [
         {
-          "type": "benefit",
-          "detail": "DM+2 to next advancement roll"
+          "type": "advancement_dm",
+          "detail": "DM+2 to next advancement roll",
+          "value": 2
         }
       ],
       "hasChoice": false
@@ -271,6 +272,7 @@
         {
           "type": "choice",
           "detail": "Investigate 1 or DM+4 to next advancement",
+          "value": 4,
           "options": [
             "Investigate 1",
             "DM+4 advancement"

@@ -26,11 +26,14 @@ interface CreationContext {
   justCommissioned: boolean;
   forcedToLeave: boolean;
   forcedToStay: boolean;
+  /** Event-granted advancement DM for the current term (CRER-11). Resets each term. */
+  bonusAdvancementDM: number;
 }
 
 /** All events the creation machine responds to */
 export type CreationEvent =
   | { type: 'START_CREATION' }
+  | { type: 'RESTORE_COMPLETE' }
   | { type: 'ROLL_ALL' }
   | { type: 'ASSIGN_COMPLETE' }
   | { type: 'CONFIRM' }
@@ -72,6 +75,7 @@ export type CreationEvent =
   | { type: 'AGING_RESOLVED' }
   | { type: 'CONTINUE_CAREER' }
   | { type: 'CHANGE_CAREER' }
+  | { type: 'SET_EVENT_BONUS_DM'; amount: number }
   | { type: 'BENEFIT_ROLLED' };
 
 /**
@@ -125,11 +129,13 @@ export const creationMachine = setup({
     justCommissioned: false,
     forcedToLeave: false,
     forcedToStay: false,
+    bonusAdvancementDM: 0,
   },
   states: {
     idle: {
       on: {
         START_CREATION: 'characteristics',
+        RESTORE_COMPLETE: '#creation.complete',
       },
     },
     characteristics: {
@@ -274,6 +280,7 @@ export const creationMachine = setup({
                 justCommissioned: false,
                 forcedToLeave: false,
                 forcedToStay: false,
+                bonusAdvancementDM: 0,
               }),
             },
           },
@@ -318,6 +325,7 @@ export const creationMachine = setup({
                 justCommissioned: false,
                 forcedToLeave: false,
                 forcedToStay: false,
+                bonusAdvancementDM: 0,
               }),
             },
           },
@@ -338,6 +346,11 @@ export const creationMachine = setup({
             },
             event: {
               on: {
+                SET_EVENT_BONUS_DM: {
+                  actions: assign({
+                    bonusAdvancementDM: ({ event }) => event.amount,
+                  }),
+                },
                 EVENT_RESOLVED: [
                   {
                     // Military + not yet commissioned -> commission roll
@@ -409,6 +422,7 @@ export const creationMachine = setup({
                     justCommissioned: false,
                     forcedToLeave: false,
                     forcedToStay: false,
+                    bonusAdvancementDM: 0,
                   }),
                 },
                 CHANGE_CAREER: '#career.choosingCareer',

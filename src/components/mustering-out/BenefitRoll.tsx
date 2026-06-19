@@ -46,7 +46,6 @@ export function BenefitRoll({
     setRolling(true);
     const context = `Mustering Out ${type === 'cash' ? 'Cash' : 'Benefits'}`;
     const entry = await loggedRoll2D(context);
-    const diceTotal = entry.results.reduce((a, b) => a + b, 0);
 
     let rollIndex: number;
     let resultValue: string;

@@ -230,9 +230,10 @@
         {
           "type": "choice",
           "detail": "Backstab (DM+4 advancement) or don't (Ally)",
+          "value": 4,
           "options": [
-            "Backstab",
-            "Spare them"
+            "Backstab (DM+4 advancement)",
+            "Spare them (Ally)"
           ]
         }
       ],
@@ -260,8 +261,9 @@
       "effectDescription": "Gain DM+2 to your next advancement roll and gain an extra Benefit roll.",
       "effects": [
         {
-          "type": "benefit",
-          "detail": "DM+2 to next advancement roll"
+          "type": "advancement_dm",
+          "detail": "DM+2 to next advancement roll",
+          "value": 2
         },
         {
           "type": "benefit",
@@ -276,8 +278,9 @@
       "effectDescription": "Gain DM+4 to your next advancement roll and gain an Ally.",
       "effects": [
         {
-          "type": "benefit",
-          "detail": "DM+4 to next advancement roll"
+          "type": "advancement_dm",
+          "detail": "DM+4 to next advancement roll",
+          "value": 4
         },
         {
           "type": "ally",

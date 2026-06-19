@@ -108,7 +108,7 @@
       "rollValue": 9,
       "description": "You foil an attempted crime on board, such as piracy, smuggling, or sabotage.",
       "effectDescription": "Gain DM+2 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [{ "type": "advancement_dm", "detail": "DM+2 to next advancement roll", "value": 2 }],
       "hasChoice": false
     },
     {
@@ -122,7 +122,7 @@
       "rollValue": 11,
       "description": "Your commanding officer takes an interest in your career.",
       "effectDescription": "Either gain Tactics (Naval) 1 or DM+4 to your next advancement roll (choose one).",
-      "effects": [{ "type": "choice", "detail": "Tactics (Naval) 1 or DM+4 to next advancement", "options": ["Tactics (Naval) 1", "DM+4 advancement"] }],
+      "effects": [{ "type": "choice", "detail": "Tactics (Naval) 1 or DM+4 to next advancement", "options": ["Tactics (Naval) 1", "DM+4 advancement"], "value": 4 }],
       "hasChoice": true
     },
     {

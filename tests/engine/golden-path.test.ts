@@ -484,3 +484,40 @@ describe('Noble titles (SOCL-02)', () => {
     expect(getNobleTitle(15)).toBe('Duke');
   });
 });
+
+describe('GP6 — CRER-11: event advancement DM applies to both commission and advancement', () => {
+  const army = getCareer('army');
+
+  it('event DM+2 carries a borderline commission roll over the target', () => {
+    const charDM = 1; // e.g. SOC 10 → +1
+    const bonusDM = 2; // from a plain advancement_dm event
+    const effectiveDM = charDM + bonusDM;
+    const diceTotal = 5;
+    const termsInCareer = 1;
+    const target = army.commission!.target; // 8
+
+    const res = resolveCommissionRoll(diceTotal, effectiveDM, target, termsInCareer);
+    // 5 + 3 - 0 = 8 ≥ 8 → success
+    expect(res.success).toBe(true);
+    expect(res.total).toBe(8);
+
+    // Without the event bonus the same dice would fail
+    const resNoBonus = resolveCommissionRoll(diceTotal, charDM, target, termsInCareer);
+    expect(resNoBonus.success).toBe(false);
+    expect(resNoBonus.total).toBe(6);
+  });
+
+  it('the same event DM+2 also raises the advancement total in that term', () => {
+    const charDM = 1;
+    const bonusDM = 2;
+    const effectiveDM = charDM + bonusDM;
+    const diceTotal = 6;
+    const target = 7;
+    const termsServed = 1;
+
+    const res = resolveAdvancementRoll(diceTotal, effectiveDM, target, termsServed);
+    // 6 + 3 = 9 ≥ 7 → advanced, 9 > 1 so not forced to leave
+    expect(res.advanced).toBe(true);
+    expect(res.forcedToLeave).toBe(false);
+  });
+});

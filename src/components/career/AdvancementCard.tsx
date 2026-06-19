@@ -20,6 +20,8 @@ interface AdvancementCardProps {
   termsServed: number;
   currentRank: number;
   isOfficer: boolean;
+  /** Event-granted advancement DM for this term (CRER-11). */
+  bonusDM?: number;
   onResult: (result: AdvancementResult) => void;
 }
 
@@ -35,6 +37,7 @@ export function AdvancementCard({
   termsServed,
   currentRank,
   isOfficer,
+  bonusDM = 0,
   onResult,
 }: AdvancementCardProps) {
   const { loggedRoll2D } = useLoggedRoll();
@@ -52,12 +55,13 @@ export function AdvancementCard({
   } | null>(null);
 
   const charDM = characteristicModifier(characteristicValue);
+  const effectiveDM = charDM + bonusDM;
 
   const handleRoll = useCallback(async () => {
     setRolling(true);
-    const entry = await loggedRoll2D('Advancement Roll', charDM, advancementTarget.target);
+    const entry = await loggedRoll2D('Advancement Roll', effectiveDM, advancementTarget.target);
     const diceTotal = entry.results.reduce((a, b) => a + b, 0);
-    const res = resolveAdvancementRoll(diceTotal, charDM, advancementTarget.target, termsServed);
+    const res = resolveAdvancementRoll(diceTotal, effectiveDM, advancementTarget.target, termsServed);
 
     let newRankTitle: string | null = null;
     if (res.advanced) {
@@ -77,13 +81,13 @@ export function AdvancementCard({
       advanced: res.advanced,
       forcedToLeave: res.forcedToLeave,
       forcedToStay: res.forcedToStay,
-      total: diceTotal + charDM,
+      total: diceTotal + effectiveDM,
       diceTotal,
       newRankTitle,
     });
     setRolled(true);
     setRolling(false);
-  }, [loggedRoll2D, charDM, advancementTarget, termsServed, currentRank, isOfficer, career, addSkill]);
+  }, [loggedRoll2D, effectiveDM, advancementTarget, termsServed, currentRank, isOfficer, career, addSkill]);
 
   return (
     <div className="space-y-6">
@@ -94,7 +98,7 @@ export function AdvancementCard({
 
       <Card>
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-4">
+          <div className={`grid gap-4 ${bonusDM > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Target</p>
               <p className="font-mono text-white font-bold">
@@ -107,6 +111,12 @@ export function AdvancementCard({
                 {charDM >= 0 ? `+${charDM}` : charDM}
               </p>
             </div>
+            {bonusDM > 0 && (
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Event DM</p>
+                <p className="font-mono font-bold text-scanner-blue">+{bonusDM}</p>
+              </div>
+            )}
           </div>
 
           {!rolled && (
@@ -126,7 +136,7 @@ export function AdvancementCard({
         <div className="space-y-3">
           <Card>
             <p className="text-xs text-gray-500 mb-1">
-              Rolled {result.diceTotal} + ({charDM >= 0 ? `+${charDM}` : charDM}) = {result.total}
+              Rolled {result.diceTotal} + ({effectiveDM >= 0 ? `+${effectiveDM}` : effectiveDM}) = {result.total}
             </p>
             {result.advanced ? (
               <p className="text-xl font-bold text-green-400">

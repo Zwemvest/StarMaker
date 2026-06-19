@@ -13,6 +13,8 @@ interface CommissionCardProps {
   commissionTarget: CharacteristicCheck;
   characteristicValue: number;
   termsInCareer: number;
+  /** Event-granted advancement DM that also applies to commission (CRER-11). */
+  bonusDM?: number;
   onResult: (success: boolean) => void;
 }
 
@@ -26,6 +28,7 @@ export function CommissionCard({
   commissionTarget,
   characteristicValue,
   termsInCareer,
+  bonusDM = 0,
   onResult,
 }: CommissionCardProps) {
   const { loggedRoll2D } = useLoggedRoll();
@@ -37,13 +40,16 @@ export function CommissionCard({
 
   const charDM = characteristicModifier(characteristicValue);
   const termPenalty = -Math.max(0, termsInCareer - 1);
-  const totalDM = charDM + termPenalty;
+  // bonusDM is pre-summed into the dm passed to the engine; termPenalty is applied
+  // inside the engine, so it stays out of effectiveDM (display-only here).
+  const effectiveDM = charDM + bonusDM;
+  const totalDM = effectiveDM + termPenalty;
 
   const handleRoll = useCallback(async () => {
     setRolling(true);
-    const entry = await loggedRoll2D('Commission Roll', charDM, commissionTarget.target);
+    const entry = await loggedRoll2D('Commission Roll', effectiveDM, commissionTarget.target);
     const diceTotal = entry.results.reduce((a, b) => a + b, 0);
-    const res = resolveCommissionRoll(diceTotal, charDM, commissionTarget.target, termsInCareer);
+    const res = resolveCommissionRoll(diceTotal, effectiveDM, commissionTarget.target, termsInCareer);
 
     if (res.success) {
       // Apply rank 1 officer bonus skill
@@ -56,7 +62,7 @@ export function CommissionCard({
     setResult({ success: res.success, total: res.total, diceTotal });
     setRolled(true);
     setRolling(false);
-  }, [loggedRoll2D, charDM, commissionTarget, termsInCareer, career, addSkill]);
+  }, [loggedRoll2D, effectiveDM, commissionTarget, termsInCareer, career, addSkill]);
 
   return (
     <div className="space-y-6">
@@ -67,7 +73,7 @@ export function CommissionCard({
 
       <Card>
         <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-3 text-sm">
+          <div className={`grid gap-3 text-sm ${bonusDM > 0 ? 'grid-cols-4' : 'grid-cols-3'}`}>
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Target</p>
               <p className="font-mono text-white font-bold">
@@ -80,6 +86,12 @@ export function CommissionCard({
                 {charDM >= 0 ? `+${charDM}` : charDM}
               </p>
             </div>
+            {bonusDM > 0 && (
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Event DM</p>
+                <p className="font-mono font-bold text-scanner-blue">+{bonusDM}</p>
+              </div>
+            )}
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Term Penalty</p>
               <p className={`font-mono font-bold ${termPenalty < 0 ? 'text-red-400' : 'text-gray-400'}`}>

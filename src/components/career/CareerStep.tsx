@@ -42,7 +42,21 @@ export function CareerStep() {
   const addPreviousCareer = useCharacterStore((s) => s.addPreviousCareer);
   const setLastCareer = useCharacterStore((s) => s.setLastCareer);
   const setDrafted = useCharacterStore((s) => s.setDrafted);
+  const setCreationPhase = useCharacterStore((s) => s.setCreationPhase);
   const { loggedRoll2D } = useLoggedRoll();
+
+  // Wrap send so that completing muster-out also persists the terminal
+  // creationPhase marker. This lets a page refresh fast-forward straight to the
+  // complete summary instead of dropping the user back into career selection.
+  const sendWithCompletion = useCallback(
+    (event: CreationEvent) => {
+      if (event.type === 'MUSTERING_COMPLETE') {
+        setCreationPhase('complete');
+      }
+      send(event);
+    },
+    [send, setCreationPhase],
+  );
 
   // Track local career state
   const [currentCareer, setCurrentCareer] = useState<CareerName | null>(
@@ -114,7 +128,6 @@ export function CareerStep() {
 
   const handleDraft = useCallback(async () => {
     const roll = await loggedRoll2D('Draft Table');
-    const diceTotal = roll.results.reduce((a, b) => a + b, 0);
     const roll1D = Math.max(1, Math.min(6, roll.results[0] ?? 1));
     const draftedCareer = getDraftCareer(roll1D);
     setDrafted();
@@ -164,7 +177,12 @@ export function CareerStep() {
     send({ type: 'MISHAP_RESOLVED' });
   };
 
-  const handleEventResolved = () => {
+  const handleEventResolved = (bonusDM: number) => {
+    // CRER-11: carry an event-granted advancement DM into the term's commission
+    // and advancement rolls. Must be assigned before EVENT_RESOLVED transitions.
+    if (bonusDM > 0) {
+      send({ type: 'SET_EVENT_BONUS_DM', amount: bonusDM });
+    }
     send({ type: 'EVENT_RESOLVED' });
   };
 
@@ -273,7 +291,7 @@ export function CareerStep() {
         enlistedRank={currentRank}
         officerRank={officerRank}
         isMilitary={isMilitary}
-        send={send}
+        send={sendWithCompletion}
       />
     );
   }
@@ -448,6 +466,7 @@ export function CareerStep() {
         commissionTarget={careerData.commission}
         characteristicValue={characteristics[charKey] ?? 0}
         termsInCareer={careerTermCount}
+        bonusDM={state.context.bonusAdvancementDM}
         onResult={handleCommissionResult}
       />,
     );
@@ -464,6 +483,7 @@ export function CareerStep() {
         termsServed={totalTermsServed}
         currentRank={currentRank}
         isOfficer={isOfficer}
+        bonusDM={state.context.bonusAdvancementDM}
         onResult={handleAdvancementResult}
       />,
     );
@@ -510,13 +530,12 @@ export function CareerStep() {
     );
   }
 
-  // Fallback
-  return (
-    <div className="text-gray-400 text-sm">
-      <p>Career state: {subState ?? termLoopState ?? 'unknown'}</p>
-      <p className="text-xs text-gray-600 mt-1">{JSON.stringify(state.value)}</p>
-    </div>
-  );
+  // Fallback: unmatched sub-state. Only reachable for a single frame during the
+  // 'complete' transition (WizardShell routes 'complete' to CompleteSummary).
+  if (import.meta.env.DEV) {
+    console.warn('[CareerStep] Unmatched state value:', state.value);
+  }
+  return null;
 }
 
 /**
@@ -528,7 +547,7 @@ function EventRoller({
   onResolved,
 }: {
   career: ReturnType<typeof getCareer>;
-  onResolved: () => void;
+  onResolved: (bonusDM: number) => void;
 }) {
   const { loggedRoll2D } = useLoggedRoll();
   const [event, setEvent] = useState<(typeof career.events)[0] | null>(null);

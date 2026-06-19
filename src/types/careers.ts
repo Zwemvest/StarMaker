@@ -60,9 +60,12 @@ export interface EventEffect {
     | 'choice'
     | 'special'
     | 'benefit'
-    | 'injury';
+    | 'injury'
+    | 'advancement_dm';
   detail: string;
   options?: string[];
+  /** Numeric DM granted (used by advancement_dm effects and choice options that grant a +DM) */
+  value?: number;
 }
 
 /** A career event entry (2D table, rolls 2-12) */

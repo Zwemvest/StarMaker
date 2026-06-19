@@ -16,6 +16,59 @@ const CIVILIAN_CAREERS: CareerName[] = [
 ];
 const BASIC_TRAINING_EXCEPTION_CAREERS: CareerName[] = ['citizen', 'drifter'];
 
+describe('CRER-11 advancement_dm structural encoding', () => {
+  // Every career except drifter has at least one event granting a +DM to advancement
+  const careersWithAdvancementDM: CareerName[] = [
+    'army', 'marine', 'navy', 'scholar', 'noble', 'merchant',
+    'scout', 'citizen', 'agent', 'entertainer', 'rogue',
+  ];
+
+  it.each(careersWithAdvancementDM)(
+    '%s has at least one structured advancement_dm or valued choice effect',
+    (careerName) => {
+      const career = getCareer(careerName);
+      const hasStructured = career.events.some((e) =>
+        e.effects.some(
+          (eff) => eff.type === 'advancement_dm' && typeof eff.value === 'number',
+        ) ||
+        e.effects.some(
+          (eff) =>
+            eff.type === 'choice' &&
+            eff.options?.some((o) => /advancement/i.test(o)) &&
+            typeof eff.value === 'number',
+        ),
+      );
+      expect(hasStructured).toBe(true);
+    },
+  );
+
+  it('no career encodes an advancement DM as a plain benefit effect', () => {
+    for (const careerName of ALL_CAREER_NAMES) {
+      const career = getCareer(careerName);
+      for (const event of career.events) {
+        for (const eff of event.effects) {
+          if (eff.type === 'benefit') {
+            expect(eff.detail.toLowerCase()).not.toContain('advancement roll');
+          }
+        }
+      }
+    }
+  });
+
+  it('every choice option mentioning advancement belongs to an effect with a numeric value', () => {
+    for (const careerName of ALL_CAREER_NAMES) {
+      const career = getCareer(careerName);
+      for (const event of career.events) {
+        for (const eff of event.effects) {
+          if (eff.type === 'choice' && eff.options?.some((o) => /advancement/i.test(o))) {
+            expect(typeof eff.value).toBe('number');
+          }
+        }
+      }
+    }
+  });
+});
+
 describe('Career Data Index', () => {
   it('exports all 12 career names', () => {
     expect(ALL_CAREER_NAMES).toHaveLength(12);

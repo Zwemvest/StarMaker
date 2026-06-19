@@ -777,4 +777,80 @@ describe('Creation State Machine', () => {
       actor.stop();
     });
   });
+
+  describe('RESTORE_COMPLETE (terminal replay)', () => {
+    it('transitions idle -> complete on RESTORE_COMPLETE', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'RESTORE_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('complete');
+      expect(actor.getSnapshot().status).toBe('done');
+      actor.stop();
+    });
+
+    it('RESTORE_COMPLETE is ignored outside idle', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'RESTORE_COMPLETE' });
+      // Still in characteristics — RESTORE_COMPLETE only fires from idle
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
+      actor.stop();
+    });
+  });
+
+  describe('CRER-11 bonusAdvancementDM carry-over', () => {
+    /** Drive a (military) career to the term-loop event state. */
+    function navigateToArmyEvent() {
+      const actor = navigateToCareer();
+      actor.send({ type: 'CHOOSE_CAREER', career: 'army' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'Infantry' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      return actor;
+    }
+
+    it('initializes bonusAdvancementDM to 0', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      expect(actor.getSnapshot().context.bonusAdvancementDM).toBe(0);
+      actor.stop();
+    });
+
+    it('SET_EVENT_BONUS_DM assigns the amount in the event state', () => {
+      const actor = navigateToArmyEvent();
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'event' } });
+
+      actor.send({ type: 'SET_EVENT_BONUS_DM', amount: 3 });
+      expect(actor.getSnapshot().context.bonusAdvancementDM).toBe(3);
+
+      // The bonus survives the EVENT_RESOLVED transition into commission
+      actor.send({ type: 'EVENT_RESOLVED' });
+      expect(actor.getSnapshot().value).toEqual({ career: { termLoop: 'commission' } });
+      expect(actor.getSnapshot().context.bonusAdvancementDM).toBe(3);
+      actor.stop();
+    });
+
+    it('resets bonusAdvancementDM to 0 on CONTINUE_CAREER', () => {
+      const actor = navigateToArmyEvent();
+      actor.send({ type: 'SET_EVENT_BONUS_DM', amount: 4 });
+      actor.send({ type: 'EVENT_RESOLVED' }); // -> commission
+      actor.send({ type: 'COMMISSION_RESULT', success: false }); // not commissioned -> advancement
+      actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+      actor.send({ type: 'SKILL_SELECTED' }); // -> continueOrLeave (age < 34)
+      expect(actor.getSnapshot().context.bonusAdvancementDM).toBe(4);
+
+      actor.send({ type: 'CONTINUE_CAREER' });
+      expect(actor.getSnapshot().context.bonusAdvancementDM).toBe(0);
+      actor.stop();
+    });
+
+    it('resets bonusAdvancementDM to 0 on CHOOSE_CAREER', () => {
+      const actor = navigateToCareer();
+      actor.send({ type: 'CHOOSE_CAREER', career: 'army' });
+      expect(actor.getSnapshot().context.bonusAdvancementDM).toBe(0);
+      actor.stop();
+    });
+  });
 });
