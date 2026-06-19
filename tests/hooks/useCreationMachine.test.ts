@@ -18,6 +18,18 @@ describe('useCreationMachine — replay derivation', () => {
     expect(result.current.state.status).toBe('done');
   });
 
+  it('fast-forwards into the post-career flow (psionics) when creationPhase is "postCareer"', () => {
+    // A character who has mustered out but not yet finished the sheet must be
+    // restored into the post-career flow, not the terminal complete state and
+    // not back at career selection.
+    useCharacterStore.getState().setCreationPhase('postCareer');
+
+    const { result } = renderHook(() => useCreationMachine());
+
+    expect(result.current.currentPhase).toBe('psionics');
+    expect(result.current.state.status).toBe('active');
+  });
+
   it('stays at characteristics for a fresh active character (regression)', () => {
     // resetCharacter already sets creationPhase 'active' with no rolled data
     const { result } = renderHook(() => useCreationMachine());

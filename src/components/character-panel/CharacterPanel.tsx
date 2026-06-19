@@ -5,6 +5,10 @@ import { getNobleTitle } from '../../engine/career';
 import type { CharacteristicId } from '../../types/common';
 import type { Contact } from '../../types/character';
 import type { CareerTerm } from '../../types/careers';
+import type { AcquiredPsiTalent } from '../../types/psionics';
+import type { OwnedEquipment } from '../../types/equipment';
+import { PsionicsTalentList } from '../sheet/PsionicsList';
+import { EquipmentList } from '../sheet/EquipmentList';
 
 const PHYSICAL: CharacteristicId[] = ['STR', 'DEX', 'END'];
 const MENTAL: CharacteristicId[] = ['INT', 'EDU', 'SOC'];
@@ -153,6 +157,30 @@ function ContactsSection({ contacts }: { contacts: Contact[] }) {
   );
 }
 
+function PsionicsSection({ strength, talents }: { strength: number; talents: AcquiredPsiTalent[] }) {
+  return (
+    <CollapsibleSection title="Psionics" defaultExpanded={true}>
+      <div className="flex items-center justify-between text-sm mb-2">
+        <span className="text-gray-400">PSI Strength</span>
+        <span className="font-mono text-scanner-blue">PSI {strength}</span>
+      </div>
+      {talents.length === 0 ? (
+        <p className="text-sm text-gray-500 italic">No talents</p>
+      ) : (
+        <PsionicsTalentList talents={talents} />
+      )}
+    </CollapsibleSection>
+  );
+}
+
+function EquipmentSection({ items }: { items: OwnedEquipment[] }) {
+  return (
+    <CollapsibleSection title="Equipment" defaultExpanded={true}>
+      <EquipmentList items={items} />
+    </CollapsibleSection>
+  );
+}
+
 export function CharacterPanel() {
   const characteristics = useCharacterStore((s) => s.characteristics);
   const skills = useCharacterStore((s) => s.skills);
@@ -161,6 +189,9 @@ export function CharacterPanel() {
   const credits = useCharacterStore((s) => s.credits);
   const pension = useCharacterStore((s) => s.pension);
   const benefits = useCharacterStore((s) => s.benefits);
+  const psiStrength = useCharacterStore((s) => s.psiStrength);
+  const psiTalents = useCharacterStore((s) => s.psiTalents);
+  const ownedEquipment = useCharacterStore((s) => s.ownedEquipment);
 
   const nobleTitle = getNobleTitle(characteristics.SOC);
 
@@ -280,6 +311,16 @@ export function CharacterPanel() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Psionics */}
+      {psiStrength !== null && (
+        <PsionicsSection strength={psiStrength} talents={psiTalents} />
+      )}
+
+      {/* Equipment */}
+      {ownedEquipment.length > 0 && (
+        <EquipmentSection items={ownedEquipment} />
       )}
     </div>
   );

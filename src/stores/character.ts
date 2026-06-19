@@ -6,6 +6,9 @@ import type { Characteristics, Contact, Skill } from '../types/character';
 import type { RollLogEntry } from '../types/dice';
 import type { PoolItem } from '../components/characteristics/DicePool';
 import type { CareerName, CareerTerm } from '../types/careers';
+import type { AcquiredPsiTalent } from '../types/psionics';
+import type { Equipment, OwnedEquipment } from '../types/equipment';
+import { computeHash } from '../engine/hash';
 
 /** Initial characteristics — all six stats at 0 */
 function initialCharacteristics(): Characteristics {
@@ -37,7 +40,11 @@ interface CharacterState {
   drafted: boolean;
   previousCareers: CareerName[];
   lastCareer: CareerName | null;
-  creationPhase: 'active' | 'complete';
+  psionicsUnlocked: boolean;
+  psiStrength: number | null;
+  psiTalents: AcquiredPsiTalent[];
+  ownedEquipment: OwnedEquipment[];
+  creationPhase: 'active' | 'postCareer' | 'complete';
 }
 
 /** Character store actions */
@@ -61,7 +68,14 @@ interface CharacterActions {
   addPreviousCareer: (career: CareerName) => void;
   setLastCareer: (career: CareerName | null) => void;
   reduceCharacteristic: (id: CharacteristicId, amount: number) => void;
-  setCreationPhase: (phase: 'active' | 'complete') => void;
+  setPsionicsUnlocked: () => void;
+  forcePsionicsUnlock: () => Promise<void>;
+  setPsiStrength: (value: number) => void;
+  addPsiTalent: (talent: AcquiredPsiTalent) => void;
+  addEquipment: (item: Equipment) => void;
+  removeEquipment: (name: string) => void;
+  spendCredits: (amount: number) => void;
+  setCreationPhase: (phase: 'active' | 'postCareer' | 'complete') => void;
 }
 
 /** Combined store type */
@@ -85,6 +99,10 @@ const initialState: CharacterState = {
   drafted: false,
   previousCareers: [],
   lastCareer: null,
+  psionicsUnlocked: false,
+  psiStrength: null,
+  psiTalents: [],
+  ownedEquipment: [],
   creationPhase: 'active',
 };
 
@@ -204,6 +222,73 @@ export const useCharacterStore = create<CharacterStore>()(
           state.characteristics[id] = Math.max(0, state.characteristics[id] - amount);
         }),
 
+      setPsionicsUnlocked: () =>
+        set((state) => {
+          state.psionicsUnlocked = true;
+        }),
+
+      forcePsionicsUnlock: async () => {
+        set((state) => {
+          state.psionicsUnlocked = true;
+          state.isModified = true;
+          // Marker so the legitimacy hash reflects the forced modification (SHEE-05).
+          state.rollLog.push({
+            id: crypto.randomUUID(),
+            context: 'psionics.forceUnlock',
+            notation: '1D',
+            results: [],
+            total: 0,
+            modifier: 0,
+            target: null,
+            success: null,
+            overridden: true,
+          });
+        });
+        // Recompute the certified hash over the updated log so the displayed
+        // legitimacy hash stays consistent with the marker entry immediately,
+        // not just after the next logged roll (mirrors useLoggedRoll). (I-1)
+        const hash = await computeHash(useCharacterStore.getState().rollLog);
+        set((state) => {
+          state.legitimacyHash = hash;
+        });
+      },
+
+      setPsiStrength: (value) =>
+        set((state) => {
+          state.psiStrength = value;
+        }),
+
+      addPsiTalent: (talent) =>
+        set((state) => {
+          state.psiTalents.push(talent);
+        }),
+
+      addEquipment: (item) =>
+        set((state) => {
+          const existing = state.ownedEquipment.find((o) => o.item.name === item.name);
+          if (existing) {
+            existing.quantity += 1;
+          } else {
+            state.ownedEquipment.push({ item, quantity: 1 });
+          }
+        }),
+
+      removeEquipment: (name) =>
+        set((state) => {
+          const idx = state.ownedEquipment.findIndex((o) => o.item.name === name);
+          if (idx === -1) return;
+          const entry = state.ownedEquipment[idx];
+          entry.quantity -= 1;
+          if (entry.quantity <= 0) {
+            state.ownedEquipment.splice(idx, 1);
+          }
+        }),
+
+      spendCredits: (amount) =>
+        set((state) => {
+          state.credits = Math.max(0, state.credits - amount);
+        }),
+
       setCreationPhase: (phase) =>
         set((state) => {
           state.creationPhase = phase;
@@ -220,6 +305,8 @@ export const useCharacterStore = create<CharacterStore>()(
           contacts: [],
           benefits: [],
           previousCareers: [],
+          psiTalents: [],
+          ownedEquipment: [],
         })),
     })),
     {

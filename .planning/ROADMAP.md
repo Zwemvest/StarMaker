@@ -15,8 +15,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 1: Foundation** - Project scaffold, dice engine, roll log, hash system, state architecture, and deployment pipeline
 - [ ] **Phase 2: Pre-Career Creation** - Characteristics, background skills, and pre-career education with working wizard UI
 - [x] **Phase 3: Career Lifecycle** - All 12 careers with full term resolution, aging, mustering out, and social tracking
-- [ ] **Phase 4: Post-Career and Character Sheet** - Psionics, equipment catalog, skill packages, and complete character sheet with export
-- [ ] **Phase 5: Override Mode and Persistence** - Override/reroll system, legitimacy hash display, save/load, and multi-character management
+- [ ] **Phase 4: Post-Career and Character Sheet** - Psionics, equipment catalog, and complete character sheet with export
+- [ ] **Phase 5: Override Mode and Persistence** - Override/reroll system, legitimacy hash display, save/load, and multi-character roster management
+- [ ] **Phase 6: Group and Connections** - Skill packages and the Connections rule (linking characters via shared events and bonus skills) — capstone, builds on Phase 5's multi-character roster
 
 ## Phase Details
 
@@ -91,23 +92,29 @@ Plans:
 - [x] 03-13-PLAN.md — CRER-11: event advancement DM applied to commission roll in same term (gap closure)
 
 ### Phase 4: Post-Career and Character Sheet
-**Goal**: Users can test for psionics, purchase equipment, select skill packages, and view/export a complete character sheet
+**Goal**: Users can test for psionics, purchase equipment, and view/export a complete character sheet
 **Depends on**: Phase 3
-**Requirements**: PSIN-01, PSIN-02, PSIN-03, PSIN-04, PSIN-05, PSIN-06, EQUP-01, EQUP-02, EQUP-03, EQUP-04, SKPK-01, SHEE-01, SHEE-02, SHEE-03, SHEE-04, SHEE-05
+**Requirements**: PSIN-01, PSIN-02, PSIN-03, PSIN-04, PSIN-05, PSIN-06, EQUP-01, EQUP-02, EQUP-03, EQUP-04, SHEE-01, SHEE-02, SHEE-03, SHEE-04, SHEE-05
+**Design**: See `phases/04-post-career-and-sheet/04-DESIGN.md`
 **Success Criteria** (what must be TRUE):
   1. User can test for PSI (2D minus terms served), attempt to learn all 5 talents with correct DMs and cumulative -1 penalty, and Telepathy is auto-granted if chosen first
-  2. User can browse the Core Rulebook equipment catalog with category filtering, see stats (damage, range, protection, cost, TL, traits), and purchase items against their mustering-out credits
-  3. User can select a post-creation skill package to fill group gaps
-  4. A real-time character sheet updates progressively during creation, and a final sheet shows all stats, skills, career history, equipment, and contacts
-  5. User can export/print the character sheet as PDF with the legitimacy hash prominently displayed and a clear Legitimate vs Modified indicator
-**Plans**: TBD
+  2. Psionic testing is event-gated (Unusual Event unlock keeps the character Legitimate); the user may force-unlock it, which flips the character to Modified and logs the action
+  3. User can browse the full Core Rulebook equipment catalog with category filtering, see stats (damage, range, protection, cost, TL, traits), and purchase items against their mustering-out credits
+  4. A real-time character sheet (Mission Dossier) updates progressively during creation, and a final sheet shows all stats, skills, career history, equipment, and contacts
+  5. User can export/print the character sheet as PDF (Field Manual print stylesheet) with the legitimacy hash prominently displayed and a clear Legitimate vs Modified indicator
+**Plans:** 7/7 plans executed (automated verification green — 929 tests; human UAT pending per 04-HUMAN-UAT.md)
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [x] 04-01-PLAN.md — Types & data scaffolding (equipment union, psionics, legitimacy state; talents + Unusual-Events sub-table data)
+- [x] 04-02-PLAN.md — Equipment catalog data (full Core transcription + golden-data tests)
+- [x] 04-03-PLAN.md — Engines: psionics, equipment/budget, unusual-events resolution (TDD)
+- [x] 04-04-PLAN.md — Store extensions + post-career XState sub-states + psionicsUnlocked wiring
+- [x] 04-05-PLAN.md — Post-career UI: psionics step + equipment step
+- [x] 04-06-PLAN.md — Character sheet: Dossier (live + final), legitimacy badge/hash, print/PDF
+- [x] 04-07-PLAN.md — Verification + UAT
 
 ### Phase 5: Override Mode and Persistence
-**Goal**: Users can experiment freely with override mode while the legitimacy system tracks integrity, and characters persist across sessions
+**Goal**: Users can experiment freely with override mode while the legitimacy system tracks integrity, characters persist across sessions, and a multi-character roster can be managed
 **Depends on**: Phase 4
 **Requirements**: OVRD-01, OVRD-02, OVRD-03, OVRD-04, OVRD-05, SAVE-01, SAVE-02, SAVE-03
 **Success Criteria** (what must be TRUE):
@@ -121,15 +128,30 @@ Plans:
 - [ ] 05-01: TBD
 - [ ] 05-02: TBD
 
+### Phase 6: Group and Connections
+**Goal**: Users can link multiple characters created in StarMaker via the Connections rule and apply post-creation skill packages to fill group skill gaps — the group/team creation capstone
+**Depends on**: Phase 5 (requires the multi-character roster)
+**Requirements**: SKPK-01, CONN-01, CONN-02
+**Success Criteria** (what must be TRUE):
+  1. With multiple characters in the roster, the user can link two characters via a shared connection and grant bonus skills (max 2, each with a different character, skill ≤ level 3)
+  2. The user can select a post-creation skill package and distribute its skills across the group to fill gaps
+  3. Connection-granted skills and packages respect creation skill caps and are reflected on each affected character's sheet
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: TBD
+- [ ] 06-02: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/4 | In Progress|  |
 | 2. Pre-Career Creation | 10/11 | In Progress |  |
 | 3. Career Lifecycle | 13/13 | Complete | 2026-06-19 |
-| 4. Post-Career and Character Sheet | 0/? | Not started | - |
+| 4. Post-Career and Character Sheet | 7/7 | Code complete (UAT pending) | - |
 | 5. Override Mode and Persistence | 0/? | Not started | - |
+| 6. Group and Connections | 0/? | Not started | - |

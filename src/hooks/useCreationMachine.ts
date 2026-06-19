@@ -12,10 +12,17 @@ function deriveReplayEvents(): Array<{ type: string; [key: string]: unknown }> {
   const { characteristics, skills, rollLog, dicePool, creationPhase } =
     useCharacterStore.getState();
 
-  // Terminal state: character finished mustering out. Fast-forward straight to
+  // Terminal state: character finished the whole flow. Fast-forward straight to
   // the machine's final 'complete' state and ignore all intermediate phases.
   if (creationPhase === 'complete') {
     return [{ type: 'RESTORE_COMPLETE' }];
+  }
+
+  // Post-career: mustered out but not yet finished the sheet. Restore into the
+  // post-career flow (psionics → equipment → sheet) rather than dumping the
+  // user back at career selection or skipping past the remaining steps.
+  if (creationPhase === 'postCareer') {
+    return [{ type: 'RESTORE_POST_CAREER' }];
   }
 
   const hasNonZeroChars = Object.values(characteristics).some((v) => v > 0);

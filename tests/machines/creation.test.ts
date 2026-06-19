@@ -82,6 +82,10 @@ describe('Creation State Machine', () => {
     actor.send({ type: 'SKILL_SELECTED' });
     actor.send({ type: 'MUSTER_OUT' });
     actor.send({ type: 'MUSTERING_COMPLETE' });
+    // Post-career sequence: psionics -> equipment -> sheet -> complete
+    actor.send({ type: 'PSIONICS_COMPLETE' });
+    actor.send({ type: 'EQUIPMENT_COMPLETE' });
+    actor.send({ type: 'SHEET_COMPLETE' });
     expect(actor.getSnapshot().value).toBe('complete');
     expect(actor.getSnapshot().status).toBe('done');
     actor.stop();
@@ -732,7 +736,8 @@ describe('Creation State Machine', () => {
       expect(actor.getSnapshot().value).toEqual({ career: 'musteringOut' });
 
       actor.send({ type: 'MUSTERING_COMPLETE' });
-      expect(actor.getSnapshot().value).toBe('complete');
+      // Mustering out now routes into the post-career psionics state
+      expect(actor.getSnapshot().value).toBe('psionics');
 
       actor.stop();
     });
@@ -799,6 +804,44 @@ describe('Creation State Machine', () => {
     });
   });
 
+  describe('RESTORE_POST_CAREER (post-career replay)', () => {
+    it('transitions idle -> psionics on RESTORE_POST_CAREER', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'RESTORE_POST_CAREER' });
+      // Lands at the start of the post-career flow, not at complete.
+      expect(actor.getSnapshot().value).toBe('psionics');
+      expect(actor.getSnapshot().status).toBe('active');
+      actor.stop();
+    });
+
+    it('RESTORE_POST_CAREER is ignored outside idle', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'RESTORE_POST_CAREER' });
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
+      actor.stop();
+    });
+  });
+
+  describe('post-career flow reaches completion (C-1)', () => {
+    it('drives musteringOut -> psionics -> equipment -> sheet -> complete', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'RESTORE_POST_CAREER' });
+      expect(actor.getSnapshot().value).toBe('psionics');
+      actor.send({ type: 'PSIONICS_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('equipment');
+      actor.send({ type: 'EQUIPMENT_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('sheet');
+      actor.send({ type: 'SHEET_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('complete');
+      expect(actor.getSnapshot().status).toBe('done');
+      actor.stop();
+    });
+  });
+
   describe('CRER-11 bonusAdvancementDM carry-over', () => {
     /** Drive a (military) career to the term-loop event state. */
     function navigateToArmyEvent() {
@@ -850,6 +893,65 @@ describe('Creation State Machine', () => {
       const actor = navigateToCareer();
       actor.send({ type: 'CHOOSE_CAREER', career: 'army' });
       expect(actor.getSnapshot().context.bonusAdvancementDM).toBe(0);
+      actor.stop();
+    });
+  });
+
+  describe('post-career sequence', () => {
+    /** Drive a minimal civilian career from idle to career.musteringOut. */
+    function navigateToMusteringOut() {
+      const actor = navigateToCareer();
+      actor.send({ type: 'CHOOSE_CAREER', career: 'agent' });
+      actor.send({ type: 'CHOOSE_ASSIGNMENT', assignment: 'corporate' });
+      actor.send({ type: 'QUALIFICATION_SUCCESS' });
+      actor.send({ type: 'BASIC_TRAINING_COMPLETE' });
+      actor.send({ type: 'SURVIVAL_SUCCESS' });
+      actor.send({ type: 'EVENT_RESOLVED' }); // agent is civilian -> advancement
+      actor.send({ type: 'ADVANCEMENT_RESULT', advanced: false, forcedToLeave: false, forcedToStay: false });
+      actor.send({ type: 'SKILL_SELECTED' }); // age 22 < 34, no aging -> continueOrLeave
+      actor.send({ type: 'MUSTER_OUT' });
+      return actor;
+    }
+
+    it('routes musteringOut -> psionics -> equipment -> sheet -> complete', () => {
+      const actor = navigateToMusteringOut();
+      expect(actor.getSnapshot().value).toEqual({ career: 'musteringOut' });
+
+      actor.send({ type: 'MUSTERING_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('psionics');
+
+      actor.send({ type: 'PSIONICS_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('equipment');
+
+      actor.send({ type: 'EQUIPMENT_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('sheet');
+
+      actor.send({ type: 'SHEET_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('complete');
+      expect(actor.getSnapshot().status).toBe('done');
+
+      actor.stop();
+    });
+
+    it('accepts FORCE_PSIONICS as a self-transition in psionics', () => {
+      const actor = navigateToMusteringOut();
+      actor.send({ type: 'MUSTERING_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('psionics');
+
+      actor.send({ type: 'FORCE_PSIONICS' });
+      expect(actor.getSnapshot().value).toBe('psionics');
+
+      actor.stop();
+    });
+
+    it('ignores EQUIPMENT_COMPLETE while in psionics (negative case)', () => {
+      const actor = navigateToMusteringOut();
+      actor.send({ type: 'MUSTERING_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('psionics');
+
+      actor.send({ type: 'EQUIPMENT_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('psionics');
+
       actor.stop();
     });
   });

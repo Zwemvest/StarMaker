@@ -4,6 +4,7 @@ import type { LifeEvent } from '../../data/life-events';
 import { LIFE_EVENTS } from '../../data/life-events';
 import { useCharacterStore } from '../../stores/character';
 import { useLoggedRoll } from '../../hooks/useLoggedRoll';
+import { resolveUnusualEvent } from '../../engine/unusual-events';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 
@@ -44,9 +45,10 @@ function computeAdvancementBonus(
  * Applies effects to store: skills, contacts, characteristics.
  */
 export function CareerEventCard({ event, onResolved }: CareerEventCardProps) {
-  const { loggedRoll2D } = useLoggedRoll();
+  const { loggedRoll2D, loggedRoll1D } = useLoggedRoll();
   const addSkill = useCharacterStore((s) => s.addSkill);
   const addContact = useCharacterStore((s) => s.addContact);
+  const setPsionicsUnlocked = useCharacterStore((s) => s.setPsionicsUnlocked);
 
   const [lifeEvent, setLifeEvent] = useState<LifeEvent | null>(null);
   const [lifeEventRolled, setLifeEventRolled] = useState(false);
@@ -62,7 +64,7 @@ export function CareerEventCard({ event, onResolved }: CareerEventCardProps) {
     setLifeEventRolled(true);
   }, [loggedRoll2D]);
 
-  const applyEffects = useCallback((choiceIndex?: number) => {
+  const applyEffects = useCallback(async (choiceIndex?: number) => {
     const effectSource = lifeEvent ?? event;
     const effects = effectSource.effects;
 
@@ -101,10 +103,23 @@ export function CareerEventCard({ event, onResolved }: CareerEventCardProps) {
         }
       }
     }
-  }, [lifeEvent, event, addSkill, addContact]);
 
-  const handleResolve = (choiceIndex?: number) => {
-    applyEffects(choiceIndex);
+    // Life Events roll 12 -> roll the 1D Unusual sub-table; result 1 ("Psionics")
+    // legitimately unlocks psionics testing (D-2). Other results are narrative.
+    if (lifeEvent?.rollValue === 12) {
+      const subRoll = await loggedRoll1D('Unusual Event Sub-Table');
+      // Resolve against the raw 1D die (always 1-6), never a modifier-inflated
+      // total, so resolveUnusualEvent can't be handed an out-of-range value.
+      const subRollValue = subRoll.results.reduce((a, b) => a + b, 0);
+      const unusual = resolveUnusualEvent(subRollValue);
+      if (unusual.unlocksPsionics) {
+        setPsionicsUnlocked();
+      }
+    }
+  }, [lifeEvent, event, addSkill, addContact, loggedRoll1D, setPsionicsUnlocked]);
+
+  const handleResolve = async (choiceIndex?: number) => {
+    await applyEffects(choiceIndex);
     const bonus = computeAdvancementBonus(lifeEvent ?? event, choiceIndex);
     setChoiceMade(true);
     onResolved(bonus);

@@ -39,5 +39,27 @@ export function useLoggedRoll() {
     [appendRoll, setLegitimacyHash],
   );
 
-  return { loggedRoll2D };
+  const loggedRoll1D = useCallback(
+    async (
+      context: string,
+      modifier: number = 0,
+      target?: number,
+    ): Promise<RollLogEntry> => {
+      const dice = rollDice(1, 6);
+      const entry = createRollLogEntry(context, '1D', dice, modifier, target);
+
+      // Get current log state at call time for hash computation
+      const currentLog = useCharacterStore.getState().rollLog;
+      appendRoll(entry);
+
+      // Recompute hash with new entry
+      const hash = await computeHash([...currentLog, entry]);
+      setLegitimacyHash(hash);
+
+      return entry;
+    },
+    [appendRoll, setLegitimacyHash],
+  );
+
+  return { loggedRoll2D, loggedRoll1D };
 }

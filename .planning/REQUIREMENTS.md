@@ -106,7 +106,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Skill Packages
 
-- [ ] **SKPK-01**: Post-creation skill package selection to fill group gaps
+- [ ] **SKPK-01**: Post-creation skill package selection to fill group gaps *(Phase 6 — requires multi-character roster)*
+
+### Connections
+
+- [ ] **CONN-01**: Connections rule support for group creation (linking characters via shared events) *(Phase 6)*
+- [ ] **CONN-02**: Bonus skill grants from connections (max 2, each with different character, skill ≤ level 3) *(Phase 6)*
 
 ### Character Sheet & Export
 
@@ -139,10 +144,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 Deferred to future release. Tracked but not in current roadmap.
 
-### Connections
-
-- **CONN-01**: Connections rule support for group creation (linking characters via shared events)
-- **CONN-02**: Bonus skill grants from connections (max 2, each with different character, skill ≤ level 3)
+*(Connections — formerly CONN-01/CONN-02 — promoted to v1 Phase 6 on 2026-06-19.)*
 
 ### Polish
 
@@ -233,22 +235,24 @@ Deferred to future release. Tracked but not in current roadmap.
 | MSTR-05 | Phase 3 | Complete |
 | SOCL-01 | Phase 3 | Complete |
 | SOCL-02 | Phase 3 | Complete |
-| PSIN-01 | Phase 4 | Pending |
-| PSIN-02 | Phase 4 | Pending |
-| PSIN-03 | Phase 4 | Pending |
-| PSIN-04 | Phase 4 | Pending |
-| PSIN-05 | Phase 4 | Pending |
-| PSIN-06 | Phase 4 | Pending |
-| EQUP-01 | Phase 4 | Pending |
-| EQUP-02 | Phase 4 | Pending |
-| EQUP-03 | Phase 4 | Pending |
-| EQUP-04 | Phase 4 | Pending |
-| SKPK-01 | Phase 4 | Pending |
-| SHEE-01 | Phase 4 | Pending |
-| SHEE-02 | Phase 4 | Pending |
-| SHEE-03 | Phase 4 | Pending |
-| SHEE-04 | Phase 4 | Pending |
-| SHEE-05 | Phase 4 | Pending |
+| PSIN-01 | Phase 4 | Complete |
+| PSIN-02 | Phase 4 | Complete |
+| PSIN-03 | Phase 4 | Complete |
+| PSIN-04 | Phase 4 | Complete |
+| PSIN-05 | Phase 4 | Complete |
+| PSIN-06 | Phase 4 | Complete |
+| EQUP-01 | Phase 4 | Complete |
+| EQUP-02 | Phase 4 | Complete |
+| EQUP-03 | Phase 4 | Complete |
+| EQUP-04 | Phase 4 | Complete |
+| SKPK-01 | Phase 6 | Pending |
+| CONN-01 | Phase 6 | Pending |
+| CONN-02 | Phase 6 | Pending |
+| SHEE-01 | Phase 4 | Complete |
+| SHEE-02 | Phase 4 | Complete |
+| SHEE-03 | Phase 4 | Complete |
+| SHEE-04 | Phase 4 | Complete |
+| SHEE-05 | Phase 4 | Complete |
 | OVRD-01 | Phase 5 | Pending |
 | OVRD-02 | Phase 5 | Pending |
 | OVRD-03 | Phase 5 | Pending |
@@ -261,8 +265,8 @@ Deferred to future release. Tracked but not in current roadmap.
 | DEPL-02 | Phase 1 | Complete |
 
 **Coverage:**
-- v1 requirements: 75 total
-- Mapped to phases: 75
+- v1 requirements: 77 total (CONN-01/02 promoted from v2 on 2026-06-19)
+- Mapped to phases: 77
 - Unmapped: 0
 
 ---

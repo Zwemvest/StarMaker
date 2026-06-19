@@ -10,6 +10,9 @@ export type CreationPhase =
   | 'education'
   | 'career'
   | 'musteringOut'
+  | 'psionics'
+  | 'equipment'
+  | 'sheet'
   | 'complete';
 
 /** Machine context — workflow position only, no character data */
@@ -34,6 +37,7 @@ interface CreationContext {
 export type CreationEvent =
   | { type: 'START_CREATION' }
   | { type: 'RESTORE_COMPLETE' }
+  | { type: 'RESTORE_POST_CAREER' }
   | { type: 'ROLL_ALL' }
   | { type: 'ASSIGN_COMPLETE' }
   | { type: 'CONFIRM' }
@@ -76,7 +80,11 @@ export type CreationEvent =
   | { type: 'CONTINUE_CAREER' }
   | { type: 'CHANGE_CAREER' }
   | { type: 'SET_EVENT_BONUS_DM'; amount: number }
-  | { type: 'BENEFIT_ROLLED' };
+  | { type: 'BENEFIT_ROLLED' }
+  | { type: 'PSIONICS_COMPLETE' }
+  | { type: 'EQUIPMENT_COMPLETE' }
+  | { type: 'SHEET_COMPLETE' }
+  | { type: 'FORCE_PSIONICS' };
 
 /**
  * XState 5 creation workflow state machine.
@@ -136,6 +144,7 @@ export const creationMachine = setup({
       on: {
         START_CREATION: 'characteristics',
         RESTORE_COMPLETE: '#creation.complete',
+        RESTORE_POST_CAREER: '#creation.psionics',
       },
     },
     characteristics: {
@@ -434,9 +443,27 @@ export const creationMachine = setup({
         musteringOut: {
           on: {
             BENEFIT_ROLLED: 'musteringOut',
-            MUSTERING_COMPLETE: '#creation.complete',
+            MUSTERING_COMPLETE: '#creation.psionics',
           },
         },
+      },
+    },
+    psionics: {
+      on: {
+        // Acknowledged so the UI can fire it; the force-unlock side effect
+        // (psionicsUnlocked + isModified + log marker) lives in the store.
+        FORCE_PSIONICS: { target: 'psionics' },
+        PSIONICS_COMPLETE: 'equipment',
+      },
+    },
+    equipment: {
+      on: {
+        EQUIPMENT_COMPLETE: 'sheet',
+      },
+    },
+    sheet: {
+      on: {
+        SHEET_COMPLETE: 'complete',
       },
     },
     complete: {

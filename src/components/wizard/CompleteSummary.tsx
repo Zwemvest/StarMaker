@@ -1,13 +1,13 @@
 import { useCharacterStore } from '../../stores/character';
 import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
 import { characteristicModifier, CHARACTERISTIC_IDS } from '../../types/common';
 import { getNobleTitle } from '../../engine/career';
 
 /**
- * Terminal view for completed characters. Shown when currentPhase === 'complete'.
- * Read-only summary of everything accumulated during creation. Rendered after
- * mustering out and also on a page refresh (via the persisted creationPhase flag).
+ * Terminal view for completed characters. Shown when creationPhase === 'complete'
+ * (set at SHEET_COMPLETE, after the post-career flow). Read-only summary of
+ * everything accumulated during creation. Also rendered on a page refresh of a
+ * finished character (via the persisted creationPhase flag).
  */
 export function CompleteSummary() {
   const characteristics = useCharacterStore((s) => s.characteristics);
@@ -125,12 +125,6 @@ export function CompleteSummary() {
         <h2 className="text-sm text-gray-400 uppercase tracking-wide mb-1">Legitimacy Hash</h2>
         <p className="text-xs text-gray-500 font-mono break-all">{legitimacyHash || '—'}</p>
       </Card>
-
-      <div className="text-center pt-4">
-        <Button variant="secondary" disabled>
-          Post-Career Features (Phase 4)
-        </Button>
-      </div>
     </div>
   );
 }
