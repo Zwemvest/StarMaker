@@ -31,6 +31,7 @@ interface CreationContext {
 /** All events the creation machine responds to */
 export type CreationEvent =
   | { type: 'START_CREATION' }
+  | { type: 'RESTORE_COMPLETE' }
   | { type: 'ROLL_ALL' }
   | { type: 'ASSIGN_COMPLETE' }
   | { type: 'CONFIRM' }
@@ -130,6 +131,7 @@ export const creationMachine = setup({
     idle: {
       on: {
         START_CREATION: 'characteristics',
+        RESTORE_COMPLETE: '#creation.complete',
       },
     },
     characteristics: {

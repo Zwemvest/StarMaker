@@ -7,6 +7,7 @@ import { CharacteristicsStep } from '../characteristics/CharacteristicsStep';
 import { BackgroundSkillsStep } from '../background-skills/BackgroundSkillsStep';
 import { EducationStep } from '../education/EducationStep';
 import { CareerStep } from '../career/CareerStep';
+import { CompleteSummary } from './CompleteSummary';
 import { Button } from '../ui/Button';
 import { useCreationMachine } from '../../hooks/useCreationMachine';
 import type { CreationPhase } from '../../machines/creation';
@@ -128,12 +129,14 @@ export function WizardShell() {
                 send={send}
                 educationTermsUsed={state.context.educationTermsUsed}
               />
-            ) : currentPhase === 'career' || currentPhase === 'musteringOut' ? (
+            ) : currentPhase === 'career' ? (
               <CareerStep />
+            ) : currentPhase === 'complete' ? (
+              <CompleteSummary />
             ) : (
               <StepPlaceholder
                 label={stepLabels[currentStepIndex]}
-                onContinue={currentPhase !== 'complete' ? handleContinue : undefined}
+                onContinue={handleContinue}
               />
             )}
           </StepContainer>

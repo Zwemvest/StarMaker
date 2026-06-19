@@ -777,4 +777,25 @@ describe('Creation State Machine', () => {
       actor.stop();
     });
   });
+
+  describe('RESTORE_COMPLETE (terminal replay)', () => {
+    it('transitions idle -> complete on RESTORE_COMPLETE', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'RESTORE_COMPLETE' });
+      expect(actor.getSnapshot().value).toBe('complete');
+      expect(actor.getSnapshot().status).toBe('done');
+      actor.stop();
+    });
+
+    it('RESTORE_COMPLETE is ignored outside idle', () => {
+      const actor = createActor(creationMachine);
+      actor.start();
+      actor.send({ type: 'START_CREATION' });
+      actor.send({ type: 'RESTORE_COMPLETE' });
+      // Still in characteristics — RESTORE_COMPLETE only fires from idle
+      expect(actor.getSnapshot().value).toEqual({ characteristics: 'rolling' });
+      actor.stop();
+    });
+  });
 });

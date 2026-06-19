@@ -37,6 +37,7 @@ interface CharacterState {
   drafted: boolean;
   previousCareers: CareerName[];
   lastCareer: CareerName | null;
+  creationPhase: 'active' | 'complete';
 }
 
 /** Character store actions */
@@ -60,6 +61,7 @@ interface CharacterActions {
   addPreviousCareer: (career: CareerName) => void;
   setLastCareer: (career: CareerName | null) => void;
   reduceCharacteristic: (id: CharacteristicId, amount: number) => void;
+  setCreationPhase: (phase: 'active' | 'complete') => void;
 }
 
 /** Combined store type */
@@ -83,6 +85,7 @@ const initialState: CharacterState = {
   drafted: false,
   previousCareers: [],
   lastCareer: null,
+  creationPhase: 'active',
 };
 
 /**
@@ -199,6 +202,11 @@ export const useCharacterStore = create<CharacterStore>()(
       reduceCharacteristic: (id, amount) =>
         set((state) => {
           state.characteristics[id] = Math.max(0, state.characteristics[id] - amount);
+        }),
+
+      setCreationPhase: (phase) =>
+        set((state) => {
+          state.creationPhase = phase;
         }),
 
       resetCharacter: () =>

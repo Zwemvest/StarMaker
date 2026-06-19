@@ -9,7 +9,14 @@ import { useCharacterStore } from '../stores/character';
  * Returns a sequence of events that fast-forwards the machine to the right position.
  */
 function deriveReplayEvents(): Array<{ type: string; [key: string]: unknown }> {
-  const { characteristics, skills, rollLog, dicePool } = useCharacterStore.getState();
+  const { characteristics, skills, rollLog, dicePool, creationPhase } =
+    useCharacterStore.getState();
+
+  // Terminal state: character finished mustering out. Fast-forward straight to
+  // the machine's final 'complete' state and ignore all intermediate phases.
+  if (creationPhase === 'complete') {
+    return [{ type: 'RESTORE_COMPLETE' }];
+  }
 
   const hasNonZeroChars = Object.values(characteristics).some((v) => v > 0);
   const hasSkills = skills.length > 0;
