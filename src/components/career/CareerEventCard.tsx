@@ -9,7 +9,32 @@ import { Button } from '../ui/Button';
 
 interface CareerEventCardProps {
   event: CareerEvent;
-  onResolved: () => void;
+  onResolved: (bonusDM: number) => void;
+}
+
+/**
+ * Compute the advancement DM granted by an event (CRER-11). A plain
+ * `advancement_dm` effect contributes its `value`; a `choice` effect contributes
+ * its `value` only when the user picked an option whose label mentions
+ * "advancement". Returns 0 for events (and life events) that grant no DM.
+ */
+function computeAdvancementBonus(
+  effectSource: { effects: Array<{ type: string; value?: number; options?: string[] }> },
+  choiceIndex?: number,
+): number {
+  let bonus = 0;
+  for (const eff of effectSource.effects) {
+    if (eff.type === 'advancement_dm' && typeof eff.value === 'number') {
+      bonus += eff.value;
+    }
+    if (eff.type === 'choice' && choiceIndex !== undefined && typeof eff.value === 'number') {
+      const option = eff.options?.[choiceIndex];
+      if (option && /advancement/i.test(option)) {
+        bonus += eff.value;
+      }
+    }
+  }
+  return bonus;
 }
 
 /**
@@ -80,8 +105,9 @@ export function CareerEventCard({ event, onResolved }: CareerEventCardProps) {
 
   const handleResolve = (choiceIndex?: number) => {
     applyEffects(choiceIndex);
+    const bonus = computeAdvancementBonus(lifeEvent ?? event, choiceIndex);
     setChoiceMade(true);
-    onResolved();
+    onResolved(bonus);
   };
 
   const displayEvent = lifeEvent ?? event;

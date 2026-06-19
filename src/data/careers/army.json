@@ -108,7 +108,7 @@
       "rollValue": 9,
       "description": "Surrounded and outnumbered by the enemy, you hold out until relief arrives.",
       "effectDescription": "Gain DM+2 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [{ "type": "advancement_dm", "detail": "DM+2 to next advancement roll", "value": 2 }],
       "hasChoice": false
     },
     {
@@ -122,7 +122,7 @@
       "rollValue": 11,
       "description": "You are commanding officer in a major battle.",
       "effectDescription": "Gain Tactics (Military) 1 and either gain an Ally or gain DM+4 to your next advancement roll.",
-      "effects": [{ "type": "skill", "detail": "Gain Tactics (Military) 1" }, { "type": "choice", "detail": "Gain Ally or DM+4 to next advancement", "options": ["Ally", "DM+4 advancement"] }],
+      "effects": [{ "type": "skill", "detail": "Gain Tactics (Military) 1" }, { "type": "choice", "detail": "Gain Ally or DM+4 to next advancement", "options": ["Ally", "DM+4 advancement"], "value": 4 }],
       "hasChoice": true
     },
     {

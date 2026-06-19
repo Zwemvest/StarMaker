@@ -115,14 +115,14 @@
       "rollValue": 10,
       "description": "You are assigned to a black ops mission.",
       "effectDescription": "Gain DM+2 to your next advancement roll.",
-      "effects": [{ "type": "benefit", "detail": "DM+2 to next advancement roll" }],
+      "effects": [{ "type": "advancement_dm", "detail": "DM+2 to next advancement roll", "value": 2 }],
       "hasChoice": false
     },
     {
       "rollValue": 11,
       "description": "Your commanding officer takes an interest in your career.",
       "effectDescription": "Either gain Tactics (Military) 1 or DM+4 to your next advancement roll (choose one).",
-      "effects": [{ "type": "choice", "detail": "Tactics (Military) 1 or DM+4 to next advancement", "options": ["Tactics (Military) 1", "DM+4 advancement"] }],
+      "effects": [{ "type": "choice", "detail": "Tactics (Military) 1 or DM+4 to next advancement", "options": ["Tactics (Military) 1", "DM+4 advancement"], "value": 4 }],
       "hasChoice": true
     },
     {

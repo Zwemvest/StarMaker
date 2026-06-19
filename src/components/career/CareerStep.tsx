@@ -128,7 +128,6 @@ export function CareerStep() {
 
   const handleDraft = useCallback(async () => {
     const roll = await loggedRoll2D('Draft Table');
-    const diceTotal = roll.results.reduce((a, b) => a + b, 0);
     const roll1D = Math.max(1, Math.min(6, roll.results[0] ?? 1));
     const draftedCareer = getDraftCareer(roll1D);
     setDrafted();
@@ -178,7 +177,12 @@ export function CareerStep() {
     send({ type: 'MISHAP_RESOLVED' });
   };
 
-  const handleEventResolved = () => {
+  const handleEventResolved = (bonusDM: number) => {
+    // CRER-11: carry an event-granted advancement DM into the term's commission
+    // and advancement rolls. Must be assigned before EVENT_RESOLVED transitions.
+    if (bonusDM > 0) {
+      send({ type: 'SET_EVENT_BONUS_DM', amount: bonusDM });
+    }
     send({ type: 'EVENT_RESOLVED' });
   };
 
@@ -462,6 +466,7 @@ export function CareerStep() {
         commissionTarget={careerData.commission}
         characteristicValue={characteristics[charKey] ?? 0}
         termsInCareer={careerTermCount}
+        bonusDM={state.context.bonusAdvancementDM}
         onResult={handleCommissionResult}
       />,
     );
@@ -478,6 +483,7 @@ export function CareerStep() {
         termsServed={totalTermsServed}
         currentRank={currentRank}
         isOfficer={isOfficer}
+        bonusDM={state.context.bonusAdvancementDM}
         onResult={handleAdvancementResult}
       />,
     );
@@ -541,7 +547,7 @@ function EventRoller({
   onResolved,
 }: {
   career: ReturnType<typeof getCareer>;
-  onResolved: () => void;
+  onResolved: (bonusDM: number) => void;
 }) {
   const { loggedRoll2D } = useLoggedRoll();
   const [event, setEvent] = useState<(typeof career.events)[0] | null>(null);

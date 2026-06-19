@@ -169,8 +169,9 @@
       "effectDescription": "Gain DM+2 to your next advancement roll.",
       "effects": [
         {
-          "type": "benefit",
-          "detail": "DM+2 to next advancement roll"
+          "type": "advancement_dm",
+          "detail": "DM+2 to next advancement roll",
+          "value": 2
         }
       ],
       "hasChoice": false
@@ -223,9 +224,10 @@
         {
           "type": "choice",
           "detail": "Refuse (nothing) or cheat (DM+2 advancement + Rival)",
+          "value": 2,
           "options": [
             "Refuse",
-            "Cheat"
+            "Cheat (DM+2 advancement)"
           ]
         }
       ],
@@ -237,8 +239,9 @@
       "effectDescription": "Gain DM+2 to your next advancement roll.",
       "effects": [
         {
-          "type": "benefit",
-          "detail": "DM+2 to next advancement roll"
+          "type": "advancement_dm",
+          "detail": "DM+2 to next advancement roll",
+          "value": 2
         }
       ],
       "hasChoice": false
@@ -265,8 +268,9 @@
       "effectDescription": "Gain DM+4 to your next advancement roll.",
       "effects": [
         {
-          "type": "benefit",
-          "detail": "DM+4 to next advancement roll"
+          "type": "advancement_dm",
+          "detail": "DM+4 to next advancement roll",
+          "value": 4
         }
       ],
       "hasChoice": false

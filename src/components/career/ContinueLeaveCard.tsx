@@ -22,7 +22,6 @@ interface ContinueLeaveCardProps {
  */
 export function ContinueLeaveCard({
   currentRank,
-  termsInCareer,
   totalTerms,
   age,
   forcedToLeave,

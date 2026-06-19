@@ -70,7 +70,6 @@ export function SkillTableTabs({
     // Use loggedRoll2D but treat it as 1D for skill table selection
     // We roll 2D to maintain legitimacy log, use single die interpretation
     const entry = await loggedRoll2D(`Skill Table — ${TABLE_LABELS[activeTab] ?? activeTab}`);
-    const diceTotal = entry.results.reduce((a, b) => a + b, 0);
     // 1D emulation: use first die, clamped 1-6
     const roll1D = Math.max(1, Math.min(6, entry.results[0] ?? 1));
     const tableEntries = getTableEntries(activeTab);

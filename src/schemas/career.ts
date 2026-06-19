@@ -21,7 +21,7 @@ const skillEntrySchema = z.union([
 /** Schema for event effect types */
 const eventEffectTypeSchema = z.enum([
   'skill', 'characteristic', 'contact', 'ally', 'rival',
-  'enemy', 'choice', 'special', 'benefit', 'injury',
+  'enemy', 'choice', 'special', 'benefit', 'injury', 'advancement_dm',
 ]);
 
 /** Schema for an event effect */
@@ -29,6 +29,7 @@ const eventEffectSchema = z.object({
   type: eventEffectTypeSchema,
   detail: z.string(),
   options: z.array(z.string()).optional(),
+  value: z.number().optional(),
 });
 
 /** Schema for assignment data */
