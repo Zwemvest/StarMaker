@@ -108,7 +108,10 @@ export function CareerEventCard({ event, onResolved }: CareerEventCardProps) {
     // legitimately unlocks psionics testing (D-2). Other results are narrative.
     if (lifeEvent?.rollValue === 12) {
       const subRoll = await loggedRoll1D('Unusual Event Sub-Table');
-      const unusual = resolveUnusualEvent(subRoll.total);
+      // Resolve against the raw 1D die (always 1-6), never a modifier-inflated
+      // total, so resolveUnusualEvent can't be handed an out-of-range value.
+      const subRollValue = subRoll.results.reduce((a, b) => a + b, 0);
+      const unusual = resolveUnusualEvent(subRollValue);
       if (unusual.unlocksPsionics) {
         setPsionicsUnlocked();
       }

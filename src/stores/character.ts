@@ -296,6 +296,8 @@ export const useCharacterStore = create<CharacterStore>()(
           contacts: [],
           benefits: [],
           previousCareers: [],
+          psiTalents: [],
+          ownedEquipment: [],
         })),
     })),
     {

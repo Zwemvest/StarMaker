@@ -1,8 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
 import { CareerEventCard } from '../../src/components/career/CareerEventCard';
 import { useCharacterStore } from '../../src/stores/character';
+import * as dice from '../../src/engine/dice';
 import type { CareerEvent } from '../../src/types/careers';
 
 function makeEvent(partial: Partial<CareerEvent>): CareerEvent {
@@ -94,5 +95,62 @@ describe('CareerEventCard — advancement DM detection (CRER-11)', () => {
 
     fireEvent.click(screen.getByText('Continue'));
     await waitFor(() => expect(onResolved).toHaveBeenCalledWith(2));
+  });
+});
+
+describe('CareerEventCard — Unusual-Event psionics unlock (Task 3)', () => {
+  beforeEach(() => {
+    useCharacterStore.getState().resetCharacter();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /**
+   * Force the dice engine to drive the Life Events table to roll 12 ("Unusual
+   * Event") and the 1D sub-table to `subRoll`. loggedRoll2D rolls rollDice(2,6)
+   * and loggedRoll1D rolls rollDice(1,6); we route by die count.
+   */
+  function mockDice(subRoll: number) {
+    vi.spyOn(dice, 'rollDice').mockImplementation((count: number) => {
+      if (count === 2) return [6, 6]; // 2D total 12 -> Unusual Event
+      return [subRoll]; // 1D sub-table result
+    });
+  }
+
+  async function rollLifeEventTwelve() {
+    const onResolved = vi.fn();
+    // rollValue 7 redirects to the Life Events table
+    const event = makeEvent({ rollValue: 7, effects: [] });
+    render(createElement(CareerEventCard, { event, onResolved }));
+
+    fireEvent.click(screen.getByText('Roll on Life Events Table'));
+    await waitFor(() => screen.getByText('Continue'));
+    fireEvent.click(screen.getByText('Continue'));
+    await waitFor(() => expect(onResolved).toHaveBeenCalled());
+  }
+
+  it('unlocks psionics when the 1D Unusual sub-roll is 1 (Psionics), keeping isModified false', async () => {
+    mockDice(1);
+    await rollLifeEventTwelve();
+
+    const state = useCharacterStore.getState();
+    expect(state.psionicsUnlocked).toBe(true);
+    // Legitimate unlock path must not flag the character as modified.
+    expect(state.isModified).toBe(false);
+  });
+
+  it('does not unlock psionics when the 1D Unusual sub-roll is a non-unlock result (2-6)', async () => {
+    for (const subRoll of [2, 3, 4, 5, 6]) {
+      useCharacterStore.getState().resetCharacter();
+      vi.restoreAllMocks();
+      mockDice(subRoll);
+      await rollLifeEventTwelve();
+
+      const state = useCharacterStore.getState();
+      expect(state.psionicsUnlocked).toBe(false);
+      expect(state.isModified).toBe(false);
+    }
   });
 });
